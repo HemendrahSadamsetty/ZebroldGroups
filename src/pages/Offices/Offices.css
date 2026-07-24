@@ -1,0 +1,115 @@
+.offices-page { background-color: var(--color-off-white); }
+.offices-hero { background: linear-gradient(160deg, var(--color-black) 0%, var(--color-blue-900) 100%); }
+.offices-map-section { background-color: var(--color-black); }
+
+.offices-region {
+  background-color: var(--color-off-white);
+}
+
+.offices-region:nth-child(even) { background-color: var(--color-white); }
+
+.offices-region-header {
+  margin-bottom: 2.5rem;
+}
+
+.offices-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+}
+
+.office-card {
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-100);
+  border-radius: 4px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+  transition:
+    transform var(--duration-fast) var(--ease-out-expo),
+    border-color var(--duration-fast) var(--ease-out-expo),
+    box-shadow var(--duration-fast) var(--ease-out-expo);
+}
+
+.office-card:hover {
+  border-color: var(--color-blue-400);
+  box-shadow: 0 8px 32px rgba(4,44,83,0.1);
+}
+
+.office-card--hq {
+  background: linear-gradient(135deg, var(--color-blue-900), var(--color-blue-800));
+  border-color: transparent;
+  grid-column: span 2;
+}
+
+.office-card--hq .office-card-city,
+.office-card--hq .office-card-country,
+.office-card--hq .office-card-function {
+  color: var(--color-white);
+}
+
+.office-card--hq .office-card-country { color: var(--color-blue-100); }
+.office-card--hq .office-card-function { color: var(--color-blue-100); }
+
+.office-card-hq-badge {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.6rem;
+  background-color: var(--color-gold);
+  color: var(--color-blue-900);
+  border-radius: 2px;
+}
+
+.office-card-top {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.office-card-city {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.375rem;
+  color: var(--color-blue-900);
+}
+
+.office-card-country {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-gray-300);
+}
+
+.office-card-function {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--color-gray-500);
+  flex: 1;
+}
+
+.office-card-region-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-gray-300);
+}
+
+.office-region-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-blue-400);
+}
+
+@media (max-width: 1024px) { .offices-grid { grid-template-columns: 1fr 1fr; } .office-card--hq { grid-column: span 1; } }
+@media (max-width: 600px) { .offices-grid { grid-template-columns: 1fr; } }

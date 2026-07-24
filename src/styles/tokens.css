@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ── Core ── */
+  --color-black: #050505;
+  --color-white: #FFFFFF;
+  --color-off-white: #FDFBF7;
+
+  /* ── Borders & Substrates (Double-Bezel) ── */
+  --color-glass-substrate: rgba(255, 255, 255, 0.02);
+  --color-border-hairline: rgba(255, 255, 255, 0.05);
+  --color-border-highlight: rgba(255, 255, 255, 0.1);
+  --color-shadow-ambient: rgba(0, 0, 0, 0.6);
+
+  /* ── Deep Blue (Zebrold brand) ── */
+  --color-blue-950: #021D38;
+  --color-blue-900: #042C53;
+  --color-blue-800: #0C447C;
+  --color-blue-600: #185FA5;
+  --color-blue-500: #2270BE;
+  --color-blue-400: #378ADD;
+  --color-blue-100: #B5D4F4;
+  --color-blue-50: #E6F1FB;
+
+  /* ── Accent (used very sparingly) ── */
+  --color-gold: #5EAAA8;
+  --color-gold-light: #82C4C2;
+
+  /* ── Neutrals ── */
+  --color-gray-950: #0A0A0A;
+  --color-gray-900: #111111;
+  --color-gray-800: #1A1A18;
+  --color-gray-700: #2C2C2A;
+  --color-gray-600: #3D3D3A;
+  --color-gray-500: #5F5E5A;
+  --color-gray-400: #8A8880;
+  --color-gray-300: #B4B2A9;
+  --color-gray-200: #D4D2CB;
+  --color-gray-100: #E8E7E3;
+  --color-gray-50: #F5F4F0;
+
+  /* ── Semantic ── */
+  --color-surface: #F7F6F3;
+  --color-surface-2: #EFEDE8;
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-mid: rgba(0, 0, 0, 0.14);
+  --color-border-dark: rgba(255, 255, 255, 0.12);
+
+  /* ── Typography — Tata-style: Inter body, Playfair display ── */
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+
+  /* ── Font scales ── */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.75rem;
+  --text-5xl: clamp(2.5rem, 5vw, 4rem);
+  --text-hero: clamp(3rem, 6.5vw, 5.5rem);
+
+  /* ── Easing (Premium Fluid Physics) ── */
+  --ease-out-expo: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-in-out: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --duration-fast: 0.25s;
+  --duration-base: 0.6s;
+  --duration-slow: 1.2s;
+
+  /* ── Breakpoints ── */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1280px;
+  --bp-2xl: 1536px;
+
+  /* ── Spacing (Macro-Whitespace) ── */
+  --section-py: clamp(8rem, 12vw, 12rem);
+  --section-py-sm: clamp(5rem, 8vw, 8rem);
+  --container-px: clamp(1.25rem, 4vw, 4rem);
+  --container-max: 1440px;
+
+  /* ── Navbar ── */
+  --navbar-h: 72px;
+  --topbar-h: 40px;
+}

@@ -1,0 +1,162 @@
+.sub-card {
+  position: relative;
+  background: transparent;
+  padding: 1px; /* Outer hairline metallic shell */
+  border-radius: 1.5rem;
+  cursor: pointer;
+  background-image: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0.02));
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: transform 0.6s var(--ease-out-expo), box-shadow 0.6s var(--ease-out-expo);
+  will-change: transform;
+  transform-style: preserve-3d; /* Required for the React 3D mouse tracking tilt */
+}
+
+.sub-card:hover {
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(201, 168, 76, 0.12);
+  /* Note: The physical tilt transform is handled via React JS inline styles on hover */
+}
+
+.sub-card-glass-core {
+  position: relative;
+  background: var(--color-black); /* Inner Vantablack core */
+  border-radius: calc(1.5rem - 1px);
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* Glass Reflection Sweep */
+.sub-card-shimmer {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.04), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.8s var(--ease-out-expo);
+  pointer-events: none;
+}
+
+.sub-card:hover .sub-card-shimmer {
+  left: 200%;
+}
+
+.sub-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sub-card-sector {
+  font-size: 0.6875rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px !important;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sub-card-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.35rem;
+  color: var(--color-white);
+  line-height: 1.2;
+}
+
+.sub-card-desc {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.6;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Progressive Expansion Details ── */
+.sub-card-details {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.6s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo);
+}
+
+.sub-card:hover .sub-card-details {
+  max-height: 150px;
+  opacity: 1;
+}
+
+.sub-card-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sub-card-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sub-card-meta-label {
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.sub-card-meta-value {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--color-gold);
+}
+
+/* Footer & Interactivity */
+.sub-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.sub-card-markets {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.4);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub-card-cta {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-gold);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color var(--duration-fast) var(--ease-out-expo), gap var(--duration-fast) var(--ease-out-expo);
+}
+
+.sub-card:hover .sub-card-cta {
+  color: var(--color-white);
+  gap: 0.6rem;
+}

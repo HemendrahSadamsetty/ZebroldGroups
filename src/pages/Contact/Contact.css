@@ -1,0 +1,162 @@
+.contact-page { background-color: var(--color-off-white); }
+.contact-hero { background: linear-gradient(135deg, var(--color-blue-900) 0%, var(--color-black) 60%); }
+.contact-main { background-color: var(--color-off-white); }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+/* Form */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.form-label {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--color-gray-700);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-gray-100);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-black);
+  background-color: var(--color-white);
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-out-expo), box-shadow var(--duration-fast) var(--ease-out-expo);
+  appearance: none;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-blue-600);
+  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+}
+
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5E5A' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 2.5rem;
+  cursor: pointer;
+}
+
+.form-textarea { resize: vertical; min-height: 140px; }
+
+/* Contact offices */
+.contact-info-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: var(--color-blue-900);
+  margin-bottom: 1.5rem;
+}
+
+.contact-offices {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.contact-office-card {
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--color-gray-100);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.contact-office-card:last-child { border-bottom: none; }
+
+.contact-office-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.contact-office-city {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--color-blue-900);
+}
+
+.contact-office-country {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-gray-300);
+}
+
+.contact-office-role {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-gray-500);
+}
+
+.contact-office-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.contact-office-link {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--color-blue-600);
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.contact-office-link:hover { color: var(--color-blue-900); }
+
+/* Map */
+.contact-map-section { height: 280px; position: relative; overflow: hidden; }
+
+.contact-map-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--color-blue-900), var(--color-black));
+  display: flex;
+  align-items: flex-end;
+}
+
+.contact-map-overlay {
+  width: 100%;
+  padding: 1.25rem 2rem;
+  background: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+.contact-map-label {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--color-white);
+}
+
+@media (max-width: 1024px) { .contact-grid { grid-template-columns: 1fr; gap: 3rem; } }
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }

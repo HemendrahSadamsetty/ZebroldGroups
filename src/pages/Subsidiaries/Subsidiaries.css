@@ -1,0 +1,88 @@
+.subs-page { background-color: var(--color-off-white); }
+.subs-hero { background: linear-gradient(135deg, var(--color-blue-900) 0%, var(--color-black) 60%); }
+.subs-main { background-color: var(--color-off-white); }
+
+.subs-filters {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.subs-search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+}
+
+.subs-search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--color-gray-300);
+  pointer-events: none;
+}
+
+.subs-search {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.75rem;
+  border: 1px solid var(--color-gray-100);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-black);
+  background-color: var(--color-white);
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.subs-search:focus { border-color: var(--color-blue-400); }
+
+.subs-sector-select {
+  padding: 0.65rem 2.5rem 0.65rem 1rem;
+  border: 1px solid var(--color-gray-100);
+  border-radius: 4px;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  color: var(--color-black);
+  background-color: var(--color-white);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235F5E5A' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.subs-sector-select:focus { border-color: var(--color-blue-400); }
+
+.subs-count {
+  font-size: 0.8125rem;
+  color: var(--color-gray-300);
+  white-space: nowrap;
+}
+
+.subs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.subs-empty {
+  text-align: center;
+  padding: 5rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  color: var(--color-gray-500);
+}
+
+@media (max-width: 1024px) { .subs-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) {
+  .subs-grid { grid-template-columns: 1fr; }
+  .subs-filters { flex-direction: column; align-items: stretch; }
+}

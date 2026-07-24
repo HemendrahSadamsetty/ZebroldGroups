@@ -1,0 +1,64 @@
+.mobbin-sector-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  cursor: pointer;
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 1.5rem; /* Large pill-like corners on the card itself */
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+}
+
+.mobbin-sector-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+}
+
+.mobbin-sector-visual {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3.75; /* Perfect proportion for the top image block */
+  overflow: hidden;
+  background: var(--color-gray-100);
+}
+
+.mobbin-sector-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.mobbin-sector-card:hover .mobbin-sector-img {
+  transform: scale(1.05); /* Very subtle internal zoom */
+}
+
+.mobbin-sector-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2rem 1.75rem 2.5rem; /* Heavy padding exactly like the screenshot */
+  background-color: #FFFFFF;
+}
+
+.mobbin-sector-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #111111; /* Deep black massive headline */
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.mobbin-sector-subtitle {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  color: #666666; /* Clean legible gray */
+  line-height: 1.5;
+}

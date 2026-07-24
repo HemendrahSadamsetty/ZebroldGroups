@@ -1,0 +1,348 @@
+.footer {
+  background-color: #000000;
+  color: rgba(255, 255, 255, 0.85);
+  padding-top: 0;
+  border-top: none;
+}
+
+.footer-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Brand Carousel Strip ── */
+.footer-carousel-wrapper {
+  background-color: #151515;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.footer-carousel {
+  display: flex;
+  gap: 1.25rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  width: 100%;
+  padding-right: 4rem;
+  scrollbar-width: none; /* Firefox */
+}
+
+.footer-carousel::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.footer-carousel-card {
+  flex-shrink: 0;
+  width: 140px;
+  height: 80px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color var(--duration-fast) var(--ease-out-expo);
+}
+
+.footer-carousel-card:hover {
+  border-color: var(--color-gold);
+}
+
+.footer-carousel-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.75);
+  transition: filter var(--duration-fast) var(--ease-out-expo);
+}
+
+.footer-carousel-card:hover .footer-carousel-card-img {
+  filter: brightness(1);
+}
+
+.footer-carousel-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 60%, transparent 100%);
+  pointer-events: none;
+}
+
+.footer-carousel-card-name {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.footer-carousel-next {
+  position: absolute;
+  right: var(--container-px);
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  background-color: var(--color-gold);
+  color: #1F1F1F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  z-index: 10;
+}
+
+.footer-carousel-next:hover {
+  background-color: #E2BF65;
+  transform: scale(1.04);
+}
+
+.footer-carousel-next:active {
+  transform: scale(0.96);
+}
+
+/* ── Footer Grid Layout ── */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1.25fr 2fr;
+  gap: 3rem;
+  padding-top: 5rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-col-heading {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.footer-col-heading-large {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.footer-link-large {
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: color var(--duration-fast);
+}
+
+.footer-link-large:hover {
+  color: var(--color-gold);
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links--spaced {
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.footer-link {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color var(--duration-fast), padding-left var(--duration-fast);
+  display: inline-block;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--color-gold);
+  padding-left: 3px;
+}
+
+.footer-browse-brands {
+  display: inline-block;
+  margin-top: 2rem;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--color-gold);
+  text-decoration: none;
+  border-bottom: 1.5px solid var(--color-gold);
+  width: max-content;
+  padding-bottom: 2px;
+  transition: opacity var(--duration-fast);
+}
+
+.footer-browse-brands:hover {
+  opacity: 0.8;
+}
+
+/* ── Right Panel: Socials & Newsletter ── */
+.footer-col--right {
+  align-items: flex-end;
+  gap: 2rem;
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.footer-social-icon {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color var(--duration-fast), transform var(--duration-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-social-icon:hover {
+  color: #FFFFFF;
+  transform: translateY(-2px);
+}
+
+.footer-subscribe {
+  display: flex;
+  width: 100%;
+  max-width: 320px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  padding-bottom: 0.5rem;
+  align-items: center;
+  transition: border-color var(--duration-fast);
+}
+
+.footer-subscribe:focus-within {
+  border-color: var(--color-gold);
+}
+
+.footer-subscribe-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  padding-right: 0.5rem;
+}
+
+.footer-subscribe-input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.footer-subscribe-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color var(--duration-fast), transform var(--duration-fast);
+  padding: 0;
+}
+
+.footer-subscribe-btn:hover {
+  color: var(--color-gold);
+  transform: translateX(3px);
+}
+
+.footer-brand-logo-container {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 1rem;
+}
+
+.footer-brand-logo {
+  height: 38px;
+  width: auto;
+  filter: invert(1);
+  opacity: 0.85;
+}
+
+/* ── Bottom Bar ── */
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+}
+
+/* ── Responsive styling ── */
+@media (max-width: 1100px) {
+  .footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .footer-col--right {
+    grid-column: span 3;
+    align-items: flex-start;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 2.5rem;
+  }
+  .footer-subscribe {
+    max-width: 100%;
+  }
+  .footer-brand-logo-container {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-col--legal, .footer-col--right {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-col--legal, .footer-col--right {
+    grid-column: span 1;
+  }
+  .footer-carousel-card {
+    width: 120px;
+    height: 70px;
+  }
+}

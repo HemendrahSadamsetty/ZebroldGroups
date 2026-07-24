@@ -1,0 +1,36 @@
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.stat-block-number {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  color: var(--color-black);
+  line-height: 1;
+}
+
+.stat-block--dark .stat-block-number {
+  color: var(--color-gold);
+}
+
+.stat-block-count {
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+}
+
+.stat-block-label {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--color-gray-500);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.stat-block--dark .stat-block-label {
+  color: var(--color-blue-100);
+}

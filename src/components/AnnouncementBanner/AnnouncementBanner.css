@@ -1,0 +1,49 @@
+.announcement {
+  width: 100%;
+  padding: 0.625rem 0;
+}
+
+.announcement--blue { background-color: var(--color-blue-600); }
+.announcement--black { background-color: var(--color-gray-900); }
+.announcement--gold  { background-color: var(--color-gold); }
+
+.announcement-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.announcement-text {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-white);
+  letter-spacing: 0.02em;
+  flex: 1;
+  text-align: center;
+}
+
+.announcement--gold .announcement-text {
+  color: var(--color-blue-900);
+}
+
+.announcement-close {
+  color: rgba(255,255,255,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color var(--duration-fast) var(--ease-out-expo);
+}
+
+.announcement-close:hover {
+  color: var(--color-white);
+}
+
+.announcement--gold .announcement-close {
+  color: rgba(4, 44, 83, 0.6);
+}
+
+.announcement--gold .announcement-close:hover {
+  color: var(--color-blue-900);
+}

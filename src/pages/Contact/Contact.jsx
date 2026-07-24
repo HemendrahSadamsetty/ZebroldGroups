@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import Toast from '../../components/Toast/Toast';
+import { sendContactEmail } from '../../services/emailService';
 import './Contact.css';
 
 const subjects = [
@@ -24,9 +25,10 @@ export default function Contact() {
   const [toast, setToast] = useState(null);
   const [form, setForm] = useState({ name: '', company: '', email: '', subject: '', message: '' });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setToast({ message: 'Your enquiry has been sent. We will respond within 2 business days.', type: 'success' });
+    sendContactEmail(form);
     setForm({ name: '', company: '', email: '', subject: '', message: '' });
   };
 

@@ -5,6 +5,7 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../../context/LanguageContext';
 import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker } from '../../utils/homepageData';
+import { sendContactEmail } from '../../services/emailService';
 import './Home.css';
 import heroBg1 from '../../assets/hero_bg_meridian.png';
 import heroBg2 from '../../assets/hero_bg_northvolt.png';
@@ -499,6 +500,12 @@ export default function Home() {
   const handleQuickSubmit = (e) => {
     e.preventDefault();
     setChatSent(true);
+    sendContactEmail({
+      name: chatName,
+      email: chatEmail,
+      subject: 'Executive Desk Chat Inquiry',
+      message: chatMsg
+    });
     setTimeout(() => {
       setChatSent(false);
       setIsChatOpen(false);

@@ -96,15 +96,28 @@ export default function Careers() {
     setSubmitting(true);
 
     setTimeout(() => {
+      const jobTitle = activeJobForApp?.title || (lang === 'en' ? 'Spontaneous Application' : 'Initiativbewerbung');
+      const department = activeJobForApp?.department || 'General';
+
       addApplication({
         jobId: activeJobForApp?.id || 'spontaneous',
-        jobTitle: activeJobForApp?.title || (lang === 'en' ? 'Spontaneous Application' : 'Initiativbewerbung'),
+        jobTitle: jobTitle,
         candidateName: form.candidateName,
         email: form.email,
         phone: form.phone,
         linkedin: form.linkedin,
         coverNote: form.coverNote,
         cvFile: cvFile
+      });
+
+      sendApplicationEmail({
+        candidateName: form.candidateName,
+        email: form.email,
+        phone: form.phone,
+        jobTitle: jobTitle,
+        department: department,
+        coverNote: form.coverNote,
+        cvFileName: cvFile?.name,
       });
 
       setSubmitting(false);

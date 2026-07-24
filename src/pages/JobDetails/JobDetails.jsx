@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { getStoredJobs, addApplication } from '../../data/careersData';
+import { sendApplicationEmail } from '../../services/emailService';
 import Toast from '../../components/Toast/Toast';
 import './JobDetails.css';
 
@@ -106,6 +107,16 @@ export default function JobDetails() {
         portfolio: form.portfolio,
         coverNote: form.coverNote,
         cvFile: cvFile
+      });
+
+      sendApplicationEmail({
+        candidateName: form.candidateName,
+        email: form.email,
+        phone: form.phone,
+        jobTitle: job.title,
+        department: job.department,
+        coverNote: form.coverNote,
+        cvFileName: cvFile?.name,
       });
 
       setSubmitting(false);

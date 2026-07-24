@@ -1,151 +1,76 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../../context/LanguageContext';
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import zebroldLogoMark from '../../assets/zebrold_logo_mark.png';
 import './Navbar.css';
-
-import { IconWorld, IconMail, IconSearch, IconSun } from '@tabler/icons-react';
-import zebroldLogo from '../../assets/zebrold_logo.svg';
-
-const navLinks = [
-  {
-    label: 'Business',
-    path: '/sectors',
-    mega: true,
-    columns: [
-      ['EV Charging & Battery', 'Semiconductors', 'Car Manufacturing', 'Retail & Consumer'],
-      ['Education', 'Technology & IT', 'Finance & Investment', 'Healthcare & Pharma'],
-      ['Logistics & Supply Chain', 'Agriculture & Food', 'Industrial & Engineering', 'Media & Entertainment'],
-    ],
-  },
-  {
-    label: 'Community',
-    path: '/subsidiaries',
-    mega: true,
-    columns: [
-      ['Everstone Energy', 'Northvolt Power', 'Meridian Microelectronics', 'Silicon Crest Technologies', 'Redford Automotive'],
-      ['Westbridge Motors', 'PrimeMart Retail', 'Brighton Education Group', 'Skybridge Technologies', 'Sterling Financial Services'],
-      ['Oakwell Healthcare', 'PrimeRoute Logistics', 'Greenfield Agri', 'Ironclad Engineering', 'Northstar Entertainment'],
-    ],
-    footer: '26 companies across 12 sectors →',
-    footerPath: '/subsidiaries',
-  },
-  { label: 'About Us', path: '/about' },
-  { label: 'Newsroom', path: '/news' },
-  { label: 'Careers', path: '/careers' },
-];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeMega, setActiveMega] = useState(null);
   const location = useLocation();
+  const { t } = useLanguage();
+
+  const navLinks = [
+    { label: t('nav_business'), path: '/sectors', hasDropdown: true },
+    { label: t('nav_portfolio'), path: '/subsidiaries', hasDropdown: true },
+    { label: t('nav_about'), path: '/#about', hasDropdown: false },
+    { label: t('nav_news'), path: '/news', hasDropdown: false },
+    { label: t('nav_offices'), path: '/offices', hasDropdown: false },
+    { label: t('nav_careers'), path: '/careers', hasDropdown: false },
+  ];
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   useEffect(() => {
     setMobileOpen(false);
-    setActiveMega(null);
   }, [location]);
 
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav
-      className={`navbar ${scrolled ? 'navbar--solid' : 'navbar--transparent'} ${mobileOpen ? 'navbar--mobile-open' : ''}`}
-      aria-label="Main navigation"
-    >
-      <div className="navbar-inner container">
-        {/* Logo */}
-        <Link to="/" className="navbar-logo" aria-label="Zebrold Group — Home">
-          <img src={zebroldLogo} alt="Zebrold Group" className="navbar-logo-img" />
+    <header className={`arrodz-navbar ${scrolled ? 'is-scrolled' : 'is-transparent'}`}>
+      <div className="arrodz-nav-container container-large">
+        {/* Left: Brand Logo */}
+        <Link to="/" className="arrodz-logo-link" aria-label="Zebrold Group — Home">
+          <img src={zebroldLogoMark} alt="Zebrold Group" className="arrodz-logo-img" />
         </Link>
 
-        {/* Desktop nav */}
-        <ul className="navbar-links" role="list">
-          {navLinks.map((link) => (
-            <li
-              key={link.label}
-              className="navbar-item"
-              onMouseEnter={() => link.mega && setActiveMega(link.label)}
-              onMouseLeave={() => setActiveMega(null)}
-            >
-              <Link
-                to={link.path}
-                className={`navbar-link ${isActive(link.path) ? 'navbar-link--active' : ''}`}
-              >
-                {link.label}
-                {link.mega && <span className="navbar-chevron">▾</span>}
-              </Link>
+        {/* Center: Nav Links */}
+        <nav className="arrodz-nav-menu" aria-label="Main Navigation">
+          <ul className="arrodz-nav-list" role="list">
+            {navLinks.map((link, i) => (
+              <li key={i} className="arrodz-nav-item">
+                <Link
+                  to={link.path}
+                  className={`arrodz-nav-link ${isActive(link.path) ? 'is-active' : ''}`}
+                >
+                  <span>{link.label}</span>
+                  {link.hasDropdown && <span className="nav-chevron">▾</span>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
-              {/* Mega menu with Framer Motion */}
-              <AnimatePresence>
-                {link.mega && activeMega === link.label && (
-                  <motion.div
-                    className="mega-menu"
-                    initial={{ opacity: 0, y: 15, scale: 0.99 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.99 }}
-                    transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <div className="mega-menu-inner container">
-                      <p className="mega-menu-heading label">{link.label}</p>
-                      <div className="mega-menu-cols">
-                        {link.columns.map((col, ci) => (
-                          <ul key={ci} className="mega-menu-col" role="list">
-                            {col.map((item, ii) => (
-                              <motion.li 
-                                key={item}
-                                initial={{ opacity: 0, y: 15 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 + (ci * 0.05) + (ii * 0.05), ease: [0.32, 0.72, 0, 1] }}
-                              >
-                                <Link
-                                  to={link.path}
-                                  className="mega-menu-item"
-                                >
-                                  {item}
-                                </Link>
-                              </motion.li>
-                            ))}
-                          </ul>
-                        ))}
-                      </div>
-                      {link.footer && (
-                        <Link to={link.footerPath} className="mega-menu-footer">
-                          {link.footer}
-                        </Link>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </li>
-          ))}
-        </ul>
-
-        {/* Right actions */}
-        <div className="navbar-actions">
-          <button className="navbar-icon-btn" aria-label="Region">
-            <IconWorld size={20} stroke={1.5} />
-          </button>
-          <Link to="/contact" className="navbar-icon-btn" aria-label="Contact">
-            <IconMail size={20} stroke={1.5} />
+        {/* Right: Language Switcher & Contact Pill */}
+        <div className="arrodz-nav-actions">
+          <LanguageSwitcher className="nav-lang-switcher" />
+          <Link to="/contact" className="arrodz-contact-btn">
+            {t('nav_contact')}
           </Link>
-          <button className="navbar-icon-btn" aria-label="Search">
-            <IconSearch size={20} stroke={1.5} />
-          </button>
-          <button className="navbar-icon-btn" aria-label="Theme Toggle">
-            <IconSun size={20} stroke={1.5} />
-          </button>
         </div>
 
-        {/* Hamburger */}
+        {/* Mobile Hamburger */}
         <button
-          className="navbar-hamburger"
+          className="arrodz-hamburger"
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={mobileOpen}
           onClick={() => setMobileOpen(!mobileOpen)}
@@ -154,30 +79,38 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile menu with Framer Motion */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            className="mobile-menu"
+            className="arrodz-mobile-drawer"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            aria-hidden={!mobileOpen}
+            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
-            <ul role="list">
-              {navLinks.map((link) => (
-                <li key={link.label}>
-                  <Link to={link.path} className="mobile-menu-link">
-                    {link.label}
+            <div className="arrodz-mobile-inner container">
+              <ul className="mobile-nav-list">
+                {navLinks.map((link, i) => (
+                  <li key={i}>
+                    <Link to={link.path} className="mobile-nav-link">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+                <li className="mobile-lang-row">
+                  <LanguageSwitcher className="is-light" />
+                </li>
+                <li>
+                  <Link to="/contact" className="mobile-contact-pill">
+                    {t('nav_contact')}
                   </Link>
                 </li>
-              ))}
-              <li><Link to="/admin" className="mobile-menu-link">Admin</Link></li>
-            </ul>
+              </ul>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
 }

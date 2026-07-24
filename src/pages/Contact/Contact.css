@@ -1,6 +1,6 @@
-.contact-page { background-color: var(--color-off-white); }
-.contact-hero { background: linear-gradient(135deg, var(--color-blue-900) 0%, var(--color-black) 60%); }
-.contact-main { background-color: var(--color-off-white); }
+.contact-page { background-color: var(--color-surface); }
+.contact-hero { background: linear-gradient(135deg, var(--color-wine-dark) 0%, var(--color-black) 60%); }
+.contact-main { background-color: var(--color-surface); }
 
 .contact-grid {
   display: grid;
@@ -34,7 +34,7 @@
   font-size: 0.8125rem;
   font-weight: 500;
   letter-spacing: 0.04em;
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary);
 }
 
 .form-input,
@@ -42,8 +42,8 @@
 .form-textarea {
   width: 100%;
   padding: 0.75rem 1rem;
-  border: 1px solid var(--color-gray-100);
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   font-family: var(--font-body);
   font-size: 0.9375rem;
   color: var(--color-black);
@@ -56,8 +56,8 @@
 .form-input:focus,
 .form-select:focus,
 .form-textarea:focus {
-  border-color: var(--color-blue-600);
-  box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.1);
+  border-color: var(--color-wine);
+  box-shadow: 0 0 0 3px rgba(110, 42, 42, 0.12);
 }
 
 .form-select {
@@ -73,9 +73,9 @@
 /* Contact offices */
 .contact-info-title {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 800;
   font-size: 1.5rem;
-  color: var(--color-blue-900);
+  color: var(--color-wine);
   margin-bottom: 1.5rem;
 }
 
@@ -87,7 +87,7 @@
 
 .contact-office-card {
   padding: 1.25rem 0;
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -102,22 +102,22 @@
 }
 
 .contact-office-city {
-  font-family: var(--font-body);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 1rem;
-  color: var(--color-blue-900);
+  color: var(--color-wine);
 }
 
 .contact-office-country {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.75rem;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
 }
 
 .contact-office-role {
   font-family: var(--font-body);
   font-size: 0.875rem;
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
 }
 
 .contact-office-links {
@@ -127,13 +127,14 @@
 }
 
 .contact-office-link {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: var(--color-blue-600);
+  font-weight: 600;
+  color: var(--color-wine);
   transition: color var(--duration-fast) var(--ease-out-expo);
 }
 
-.contact-office-link:hover { color: var(--color-blue-900); }
+.contact-office-link:hover { color: var(--color-wine-dark); }
 
 /* Map */
 .contact-map-section { height: 280px; position: relative; overflow: hidden; }
@@ -141,7 +142,7 @@
 .contact-map-placeholder {
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--color-blue-900), var(--color-black));
+  background: linear-gradient(135deg, var(--color-wine), var(--color-black));
   display: flex;
   align-items: flex-end;
 }
@@ -153,7 +154,7 @@
 }
 
 .contact-map-label {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.875rem;
   color: var(--color-white);
 }

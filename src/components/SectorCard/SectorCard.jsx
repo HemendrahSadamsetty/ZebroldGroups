@@ -36,11 +36,12 @@ export default function SectorCard({ sector, delay = 0, index = 0 }) {
   else if (sector.name === "Media & Entertainment") bgImg = mediaSectorImg;
   
   // Create a realistic dense paragraph out of the sector companies array
-  const previewCompanies = sector.companies.slice(0, 3).join(', ');
+  const previewCompanies = sector.companies ? sector.companies.slice(0, 3).join(', ') : '';
+  const slug = sector.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
   return (
     <Link
-      to="/sectors"
+      to={`/sectors/${slug}`}
       className="mobbin-sector-card reveal"
       data-delay={delay}
       aria-label={`${sector.name} sector`}
@@ -52,7 +53,7 @@ export default function SectorCard({ sector, delay = 0, index = 0 }) {
       <div className="mobbin-sector-meta">
         <h3 className="mobbin-sector-title">{sector.name}.</h3>
         <p className="mobbin-sector-subtitle">
-          Leading the group with {sector.companies.length} subsidiaries. 
+          Leading the group with {sector.companies ? sector.companies.length : 2} subsidiaries. 
           Key innovators include {previewCompanies}. 
           Total operational working capital of {sector.wc}.
         </p>

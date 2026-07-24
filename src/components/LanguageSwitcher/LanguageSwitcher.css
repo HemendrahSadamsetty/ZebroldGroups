@@ -1,0 +1,74 @@
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 600;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.lang-switcher:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.lang-icon {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  line-height: 1;
+}
+
+.lang-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: color 0.2s ease, transform 0.2s ease;
+  border-radius: 4px;
+}
+
+.lang-btn:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lang-btn.is-active {
+  color: #FFFFFF;
+  background-color: #111111;
+  padding-inline: 0.4rem;
+  border-radius: 999px;
+}
+
+.lang-divider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 0.7rem;
+  margin-inline: -0.1rem;
+}
+
+/* Light background theme variant (e.g. for light navbar or footer) */
+.lang-switcher.is-light {
+  background-color: rgba(34, 37, 35, 0.05);
+  border-color: rgba(34, 37, 35, 0.15);
+}
+
+.lang-switcher.is-light .lang-btn {
+  color: rgba(34, 37, 35, 0.6);
+}
+
+.lang-switcher.is-light .lang-btn.is-active {
+  color: #FFFFFF;
+  background-color: #111111;
+}
+
+.lang-switcher.is-light .lang-divider {
+  color: rgba(34, 37, 35, 0.2);
+}

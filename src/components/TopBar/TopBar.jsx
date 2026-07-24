@@ -1,3 +1,5 @@
+import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import { useLanguage } from '../../context/LanguageContext';
 import './TopBar.css';
 
 const stockData = [
@@ -5,13 +7,15 @@ const stockData = [
   { label: 'FY25 Revenue', value: 'EUR 2.1B', change: '+4.2%', up: true },
 ];
 
-const utilityLinks = [
-  { label: 'Investor Portal', href: '#' },
-  { label: 'Fraud Alert', href: '#' },
-  { label: 'Contact Us', href: '/contact' },
-];
-
 export default function TopBar() {
+  const { t } = useLanguage();
+
+  const utilityLinks = [
+    { label: t('investor_portal'), href: '#' },
+    { label: t('fraud_alert'), href: '#' },
+    { label: t('contact_us'), href: '/contact' },
+  ];
+
   return (
     <div className="topbar" role="banner" aria-label="Utility information bar">
       <div className="topbar-inner">
@@ -34,13 +38,14 @@ export default function TopBar() {
           ))}
         </div>
 
-        {/* Right: utility links */}
+        {/* Right: utility links & Language switcher */}
         <div className="topbar-right">
           {utilityLinks.map((link, i) => (
             <a key={i} href={link.href} className="topbar-util-link">
               {link.label}
             </a>
           ))}
+          <LanguageSwitcher />
         </div>
       </div>
     </div>

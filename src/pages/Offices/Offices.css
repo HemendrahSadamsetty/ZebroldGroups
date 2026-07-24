@@ -1,9 +1,9 @@
-.offices-page { background-color: var(--color-off-white); }
-.offices-hero { background: linear-gradient(160deg, var(--color-black) 0%, var(--color-blue-900) 100%); }
+.offices-page { background-color: var(--color-surface); }
+.offices-hero { background: linear-gradient(160deg, var(--color-black) 0%, var(--color-wine-dark) 100%); }
 .offices-map-section { background-color: var(--color-black); }
 
 .offices-region {
-  background-color: var(--color-off-white);
+  background-color: var(--color-surface);
 }
 
 .offices-region:nth-child(even) { background-color: var(--color-white); }
@@ -20,8 +20,8 @@
 
 .office-card {
   background-color: var(--color-white);
-  border: 1px solid var(--color-gray-100);
-  border-radius: 4px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   padding: 1.75rem;
   display: flex;
   flex-direction: column;
@@ -34,12 +34,12 @@
 }
 
 .office-card:hover {
-  border-color: var(--color-blue-400);
-  box-shadow: 0 8px 32px rgba(4,44,83,0.1);
+  border-color: var(--color-wine);
+  box-shadow: 0 8px 32px rgba(110,42,42,0.12);
 }
 
 .office-card--hq {
-  background: linear-gradient(135deg, var(--color-blue-900), var(--color-blue-800));
+  background: linear-gradient(135deg, var(--color-wine), var(--color-wine-dark));
   border-color: transparent;
   grid-column: span 2;
 }
@@ -50,21 +50,21 @@
   color: var(--color-white);
 }
 
-.office-card--hq .office-card-country { color: var(--color-blue-100); }
-.office-card--hq .office-card-function { color: var(--color-blue-100); }
+.office-card--hq .office-card-country { color: var(--color-cream); }
+.office-card--hq .office-card-function { color: rgba(255,255,255,0.85); }
 
 .office-card-hq-badge {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.6875rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.1em;
   padding: 0.2rem 0.6rem;
-  background-color: var(--color-gold);
-  color: var(--color-blue-900);
-  border-radius: 2px;
+  background-color: var(--color-cream);
+  color: var(--color-wine);
+  border-radius: 100px;
 }
 
 .office-card-top {
@@ -75,21 +75,21 @@
 
 .office-card-city {
   font-family: var(--font-display);
-  font-weight: 600;
+  font-weight: 800;
   font-size: 1.375rem;
-  color: var(--color-blue-900);
+  color: var(--color-wine);
 }
 
 .office-card-country {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
 }
 
 .office-card-function {
   font-family: var(--font-body);
   font-size: 0.9rem;
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
   flex: 1;
 }
 
@@ -97,18 +97,18 @@
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.6875rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
 }
 
 .office-region-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background-color: var(--color-blue-400);
+  background-color: var(--color-wine);
 }
 
 @media (max-width: 1024px) { .offices-grid { grid-template-columns: 1fr 1fr; } .office-card--hq { grid-column: span 1; } }

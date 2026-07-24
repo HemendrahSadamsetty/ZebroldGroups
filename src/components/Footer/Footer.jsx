@@ -1,222 +1,90 @@
-import { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { IconBrandFacebook, IconBrandLinkedin, IconBrandX, IconBrandYoutube, IconBrandInstagram, IconMail, IconArrowRight } from '@tabler/icons-react';
+import { useLanguage } from '../../context/LanguageContext';
+import zebroldLogoMark from '../../assets/zebrold_logo_mark.png';
 import './Footer.css';
-import zebroldLogo from '../../assets/zebrold_logo.svg';
 
-import evSectorImg from '../../assets/ev_sector.png';
-import semiSectorImg from '../../assets/semi_sector.jpg';
-import carSectorImg from '../../assets/car_sector.png';
-import retailSectorImg from '../../assets/retail_sector.png';
-import educationSectorImg from '../../assets/education_sector.png';
-import techSectorImg from '../../assets/tech_sector.png';
-import financeSectorImg from '../../assets/finance_sector.png';
-import healthcareSectorImg from '../../assets/healthcare_sector.png';
-import logisticsSectorImg from '../../assets/logistics_sector.png';
-import agricultureSectorImg from '../../assets/agriculture_sector.png';
-import industrialSectorImg from '../../assets/industrial_sector.png';
-import mediaSectorImg from '../../assets/media_sector.png';
-
-const carouselBrands = [
-  { name: 'Everstone Energy', img: evSectorImg },
-  { name: 'Meridian Micro', img: semiSectorImg },
-  { name: 'Redford Auto', img: carSectorImg },
-  { name: 'PrimeMart Retail', img: retailSectorImg },
-  { name: 'Brighton Edu', img: educationSectorImg },
-  { name: 'Skybridge Tech', img: techSectorImg },
-  { name: 'Sterling Finance', img: financeSectorImg },
-  { name: 'Oakwell Health', img: healthcareSectorImg },
-  { name: 'PrimeRoute Logistics', img: logisticsSectorImg },
-  { name: 'Greenfield Agri', img: agricultureSectorImg },
-  { name: 'Ironclad Eng', img: industrialSectorImg },
-  { name: 'Silverline Studios', img: mediaSectorImg },
-];
-
-const businessSectors = [
-  'Technology & IT',
-  'Semiconductors',
-  'Car Manufacturing',
-  'EV Charging & Battery',
-  'Finance & Investment',
-  'Healthcare & Pharma',
-  'Industrial & Engineering',
-  'Logistics & Supply Chain',
-  'Media & Entertainment',
-  'Education',
-  'Retail & Consumer',
-  'Agriculture & Food',
-];
-
-const communityLinks = ['Health', 'Education', 'Empowerment', 'Environment'];
-
-const aboutLinks = [
-  'The Zebrold group',
-  'Values and Purpose',
-  'Leadership',
-  'Heritage',
-  'Sustainability',
-  'Innovation',
-  'Sponsorships',
-  'Investors',
-  'Code of Conduct',
-];
+const BRAND_LETTERS = ['Z', 'E', 'B', 'R', 'O', 'L', 'D'];
 
 export default function Footer() {
-  const carouselRef = useRef(null);
-
-  const scrollNext = () => {
-    if (carouselRef.current) {
-      const container = carouselRef.current;
-      const maxScrollLeft = container.scrollWidth - container.clientWidth;
-      if (container.scrollLeft >= maxScrollLeft - 10) {
-        container.scrollTo({ left: 0, behavior: 'smooth' });
-      } else {
-        container.scrollBy({ left: 240, behavior: 'smooth' });
-      }
-    }
-  };
+  const { t, lang } = useLanguage();
 
   return (
     <footer className="footer" role="contentinfo">
-      {/* ── Brand Carousel Strip ── */}
-      <div className="footer-carousel-wrapper">
-        <div className="footer-carousel-container container">
-          <div className="footer-carousel" ref={carouselRef}>
-            {carouselBrands.map((brand, idx) => (
-              <div key={idx} className="footer-carousel-card">
-                <img src={brand.img} alt={brand.name} className="footer-carousel-card-img" />
-                <div className="footer-carousel-card-overlay" />
-                <span className="footer-carousel-card-name">{brand.name}</span>
+      <div className="footer-main">
+        <div className="padding-global footer-pad">
+          <div className="container-large">
+            <div className="footer-grid-layout">
+              {/* Left Column: Big Bold Tagline & Logo Mark */}
+              <div className="footer-col-left">
+                <img src={zebroldLogoMark} alt="Zebrold Group Logo" className="footer-logo-mark-img" />
+                <h2 className="footer-giant-tagline">
+                  {lang === 'en' ? 'WE BUILD WHAT DEFINES YOU' : 'WIR BAUEN, WAS SIE AUSZEICHNET'}
+                </h2>
               </div>
-            ))}
+
+              {/* Right Column: Links, CTA, Socials, and Partners */}
+              <div className="footer-col-right-container">
+                {/* Top Row: Nav Links & CTA */}
+                <div className="footer-top-row">
+                  <div className="footer-nav-list">
+                    <Link to="/sectors" className="footer-nav-item">{t('nav_business')}</Link>
+                    <Link to="/subsidiaries" className="footer-nav-item">{t('nav_portfolio')}</Link>
+                    <Link to="/#about" className="footer-nav-item">{t('nav_about')}</Link>
+                    <Link to="/news" className="footer-nav-item">{t('nav_news')}</Link>
+                    <Link to="/careers" className="footer-nav-item">{t('nav_careers')}</Link>
+                  </div>
+
+                  <div className="footer-cta-wrapper">
+                    <p className="footer-cta-heading">{lang === 'en' ? 'Would you like to discuss your project?' : 'Möchten Sie Ihr Projekt besprechen?'}</p>
+                    <Link to="/contact" className="footer-cta-button">
+                      {lang === 'en' ? 'Request Project' : 'Projekt anfragen'}
+                    </Link>
+                  </div>
+                </div>
+
+                {/* Social Links Row */}
+                <div className="footer-social-row">
+                  <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="footer-social-pill">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                    </svg>
+                    <span>LinkedIn</span>
+                  </a>
+                  <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="footer-social-pill">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                    <span>Instagram</span>
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
-          <button className="footer-carousel-next" onClick={scrollNext} aria-label="Next brands">
-            <IconArrowRight size={20} stroke={2} />
-          </button>
         </div>
       </div>
 
-      {/* ── Main Footer Grid ── */}
-      <div className="footer-inner container">
-        <div className="footer-grid">
-          {/* Column 1: Business */}
-          <div className="footer-col">
-            <p className="footer-col-heading">Business</p>
-            <ul className="footer-links">
-              {businessSectors.map((sector) => (
-                <li key={sector}>
-                  <Link to="/sectors" className="footer-link">
-                    {sector}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <Link to="/subsidiaries" className="footer-browse-brands">
-              Browse our brands
-            </Link>
-          </div>
-
-          {/* Column 2: Community */}
-          <div className="footer-col">
-            <p className="footer-col-heading">Community</p>
-            <ul className="footer-links">
-              {communityLinks.map((link) => (
-                <li key={link}>
-                  <Link to="/about" className="footer-link">
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: About */}
-          <div className="footer-col">
-            <p className="footer-col-heading">About</p>
-            <ul className="footer-links">
-              {aboutLinks.map((link) => (
-                <li key={link}>
-                  <Link to="/about" className="footer-link">
-                    {link}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4: Newsroom / Careers / Legal */}
-          <div className="footer-col footer-col--legal">
-            <p className="footer-col-heading-large">
-              <Link to="/news" className="footer-link-large">Newsroom</Link>
-            </p>
-            <p className="footer-col-heading-large">
-              <Link to="/careers" className="footer-link-large">Careers</Link>
-            </p>
-            <p className="footer-col-heading-large">
-              <Link to="/careers" className="footer-link-large">Jobs</Link>
-            </p>
-            <ul className="footer-links footer-links--spaced">
-              <li>
-                <Link to="/careers" className="footer-link">Equal Opportunity</Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="footer-link">Privacy Policy</Link>
-              </li>
-              <li>
-                <Link to="/disclaimer" className="footer-link">Legal Disclaimer</Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 5: Right panel (Socials, Subscription, Logo) */}
-          <div className="footer-col footer-col--right">
-            {/* Social Icons */}
-            <div className="footer-socials">
-              <a href="#" className="footer-social-icon" aria-label="Facebook">
-                <IconBrandFacebook size={22} stroke={1.5} />
-              </a>
-              <a href="#" className="footer-social-icon" aria-label="LinkedIn">
-                <IconBrandLinkedin size={22} stroke={1.5} />
-              </a>
-              <a href="#" className="footer-social-icon" aria-label="X">
-                <IconBrandX size={22} stroke={1.5} />
-              </a>
-              <a href="#" className="footer-social-icon" aria-label="YouTube">
-                <IconBrandYoutube size={22} stroke={1.5} />
-              </a>
-              <a href="#" className="footer-social-icon" aria-label="Instagram">
-                <IconBrandInstagram size={22} stroke={1.5} />
-              </a>
-              <a href="#" className="footer-social-icon" aria-label="Mail">
-                <IconMail size={22} stroke={1.5} />
-              </a>
-            </div>
-
-            {/* Newsletter Subscription */}
-            <form className="footer-subscribe" onSubmit={(e) => e.preventDefault()}>
-              <input
-                type="email"
-                placeholder="Enter your email ID to subscribe"
-                className="footer-subscribe-input"
-                required
-              />
-              <button type="submit" className="footer-subscribe-btn" aria-label="Subscribe">
-                <IconArrowRight size={18} stroke={1.5} />
-              </button>
-            </form>
-
-            {/* Brand Logo */}
-            <div className="footer-brand-logo-container">
-              <img src={zebroldLogo} alt="Zebrold Group" className="footer-brand-logo" />
-            </div>
-          </div>
+      {/* Giant Cream Letters ZEBROLD */}
+      <div className="footer-giant-brand-banner">
+        <div className="footer-giant-letters-wrap">
+          {BRAND_LETTERS.map((letter, i) => (
+            <span key={i} className="footer-giant-letter-item">{letter}</span>
+          ))}
         </div>
+      </div>
 
-        {/* ── Copyright Bar ── */}
-        <div className="footer-bottom">
-          <p className="footer-copy">
-            © {new Date().getFullYear()} Zebrold Group of Companies GmbH. All rights reserved.
-          </p>
+      {/* Cream Bottom Bar */}
+      <div className="footer-cream-bar">
+        <div className="padding-global">
+          <div className="container-large footer-cream-inner">
+            <div className="footer-cream-left">
+              <span>© {new Date().getFullYear()} Zebrold Group - {t('footer_rights')}</span>
+              <Link to="/terms" className="footer-legal-link">{t('footer_imprint')}</Link>
+              <Link to="/privacy" className="footer-legal-link">{t('footer_privacy')}</Link>
+            </div>
+            <div className="footer-cream-right">
+              <span>{lang === 'en' ? 'An excellence initiative of the' : 'Eine Exzellenz-Initiative der'} <strong>Zebrold Group</strong></span>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { sectors } from '../../data/sectors';
 import { subsidiaries } from '../../data/subsidiaries';
@@ -115,6 +116,14 @@ export default function Sectors() {
                         </div>
                       </div>
                     ))}
+                    <div style={{ marginTop: '1.5rem', textAlign: 'right' }}>
+                      <Link
+                        to={`/sectors/${sector.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}`}
+                        className="button button-small"
+                      >
+                        View Full {sector.name} Domain Page →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );

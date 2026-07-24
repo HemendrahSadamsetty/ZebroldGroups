@@ -1,17 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useScrollReveal } from '../../hooks/useScrollReveal';
-import { useCountUp } from '../../hooks/useCountUp';
-import SubsidiaryCard from '../../components/SubsidiaryCard/SubsidiaryCard';
-import NewsCard from '../../components/NewsCard/NewsCard';
-import { sectors } from '../../data/sectors';
-import { subsidiaries } from '../../data/subsidiaries';
-import { news } from '../../data/news';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLanguage } from '../../context/LanguageContext';
+import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker } from '../../utils/homepageData';
+import './Home.css';
 import heroBg1 from '../../assets/hero_bg_meridian.png';
 import heroBg2 from '../../assets/hero_bg_northvolt.png';
 import heroBg3 from '../../assets/hero_bg_everstone.png';
-import companyHqImg from '../../assets/company_hq.png';
 import evSectorImg from '../../assets/ev_sector.png';
 import semiSectorImg from '../../assets/semi_sector.jpg';
 import carSectorImg from '../../assets/car_sector.png';
@@ -24,895 +21,1365 @@ import logisticsSectorImg from '../../assets/logistics_sector.png';
 import agricultureSectorImg from '../../assets/agriculture_sector.png';
 import industrialSectorImg from '../../assets/industrial_sector.png';
 import mediaSectorImg from '../../assets/media_sector.png';
-import './Home.css';
-
-/* Sector image map — keyed by sector name */
-const sectorImageMap = {
-  'EV Charging & Battery': evSectorImg,
-  'Semiconductors': semiSectorImg,
-  'Car Manufacturing': carSectorImg,
-  'Retail & Consumer': retailSectorImg,
-  'Education': educationSectorImg,
-  'Technology & IT': techSectorImg,
-  'Finance & Investment': financeSectorImg,
-  'Healthcare & Pharma': healthcareSectorImg,
-  'Logistics & Supply Chain': logisticsSectorImg,
-  'Agriculture & Food': agricultureSectorImg,
-  'Industrial & Engineering': industrialSectorImg,
-  'Media & Entertainment': mediaSectorImg,
-};
-
-const PRESS_RELEASES = [
-  {
-    title: "Zebrold Semiconductor and ASML Announce Strategic Partnership",
-    quote: "to advance semiconductor manufacturing ecosystem in India and EMEA regions",
-    category: "PRESS RELEASE"
-  },
-  {
-    title: "Northvolt Power Launches Next-Generation Cell Grid Storage Battery",
-    quote: "delivering sustainable lithium-ion utility and grid-scale storage solutions",
-    category: "PRESS RELEASE"
-  },
-  {
-    title: "Everstone Energy Reaches 1.5GW Operational Clean Energy Milestones",
-    quote: "accelerating local net-zero transition targets across European markets",
-    category: "PRESS RELEASE"
-  }
+import countryHealthLogo from '../../assets/country_health_logo.png';
+import instructisLogo from '../../assets/instructis_logo.png';
+import leadershipTeamImg from '../../assets/leadership_team_zebrold.jpg';
+gsap.registerPlugin(ScrollTrigger);
+/* ── Data ── */
+const BRAND_LETTERS = ['Z', 'E', 'B', 'R', 'O', 'L', 'D'];
+const COMPANY_TICKER_ITEMS = [
+  { name: 'Country Health', logo: countryHealthLogo, country: 'Düsseldorf, Deutschland', sector: 'Gesundheitswesen & Pharma' },
+  { name: 'Instructis', logo: instructisLogo, country: 'Hyderabad, Indien', sector: 'Bildung & Karriere' },
 ];
-
-const FACTS = [
+const EXPERTISE_ITEMS = [
   {
-    text: "Zebrold pioneered carbon-neutral last-mile logistics in Europe: Zebrold Logistics Service was set up on October 15, 2013. It later became PrimeRoute Logistics.",
-    author: "Wings for a Nation"
+    id: 'industrial-excellence',
+    num: '01',
+    caption: 'Industrielle Exzellenz',
+    title: 'Ingenieurspräzision auf institutioneller Ebene',
+    body: 'Wir entwerfen, bauen und betreiben Infrastruktur in zwölf Sektoren — von der Halbleiterfertigung bis zu sauberen Energienetzen. Unsere Tochtergesellschaften liefern industrielle Lösungen mit deutscher Ingenieurspräzision und verbinden fortschrittliche Fertigungskapazitäten mit nachhaltigen Praktiken auf globalen Märkten.',
+    cta: 'Sektoren erkunden',
+    ctaPath: '/sectors',
+    image: semiSectorImg,
+    badge1: 'Digitale Transformation',
+    badge2: 'Präzisionsfertigung',
+    badge3: 'Nachhaltige Innovation',
   },
   {
-    text: "We design MEMS sensors and automotive chips powering 15M+ vehicles worldwide: Meridian Microelectronics was established in Munich in 2014.",
-    author: "Precision Engineering"
+    id: 'healthcare-education',
+    num: '02',
+    caption: 'Gesundheitswesen & Bildung',
+    title: 'Innovation im Gesundheitswesen und in der Bildung',
+    body: 'Wir investieren in die Zukunft menschlichen Wohlergehens und Wissensaufbaus. Durch spezialisierte Tochtergesellschaften verbinden wir lebensrettende Medizintechnik mit moderner Bildungs- und Plattformtechnologie für globale Märkte.',
+    cta: 'Initiativen entdecken',
+    ctaPath: '/sectors',
+    image: healthcareSectorImg,
+    badge1: 'Medizintechnik & Pharma',
+    badge2: 'Digitale Bildung',
+    badge3: 'Skalierbare Gesundheitssysteme',
   },
   {
-    text: "Zebrold's education vertical trains 45,000+ professionals annually: Brighton Education Group has active campuses across three continents.",
-    author: "Empowering Future Talent"
-  }
-];
-
-/* Sector descriptions — industry-level copy for each business vertical */
-const sectorDescriptions = {
-  'EV Charging & Battery': 'Zebrold Group entered the electric mobility value chain in 2017 with a focus on ultra-fast charging infrastructure and next-generation battery cell manufacturing. Our subsidiaries operate across Central and Northern Europe, deploying proprietary battery management software and sustainable lithium-ion technology for automotive and grid-scale storage applications.',
-  'Semiconductors': 'Our semiconductor division designs and fabricates advanced power management ICs, automotive-grade chips, and MEMS sensor technology. With fabrication facilities in Munich and Dresden, and supply partnerships spanning South Korea, Taiwan, and Japan, we serve precision-critical applications across automotive, industrial, and consumer electronics markets.',
-  'Car Manufacturing': 'The automotive manufacturing arm of Zebrold Group produces premium electric vehicles and commercial EV fleets. From the iconic Redford Series crafted in Stuttgart to Westbridge Motors\' light trucks for last-mile logistics, our vehicles combine German engineering precision with zero-emission performance across European markets.',
-  'Retail & Consumer': 'Our retail portfolio spans omnichannel premium consumer goods across 85 locations in the DACH region and technology-first grocery delivery serving urban consumers in Asia and the Middle East. Combined, our retail subsidiaries serve millions of customers through physical stores and app-based rapid delivery platforms.',
-  'Education': 'Zebrold\'s education vertical delivers accredited degree programmes, corporate upskilling, and placement-linked career acceleration across three continents. From Brighton\'s international campuses to Clearpath\'s Fortune 500 partnerships and Instructis Career\'s placement-linked training in India, we are building the workforce infrastructure for the next decade.',
-  'Technology & IT': 'Our technology division delivers enterprise cloud infrastructure, cybersecurity solutions, and AI-powered digital transformation consulting. Serving critical government and financial sector clients across 18 countries, our subsidiaries combine deep engineering capability with regulated-market compliance expertise.',
-  'Finance & Investment': 'The financial services arm manages EUR 8B+ in assets under management across infrastructure, real estate, technology growth funds, distressed assets, and structured credit. Our investment professionals operate from Frankfurt, London, and Dubai with a combined track record spanning 15 years of top-quartile returns.',
-  'Healthcare & Pharma': 'Zebrold\'s healthcare group operates 12 multi-specialty hospitals, 80 diagnostic centres, and FDA/EMA/WHO-GMP certified pharmaceutical production facilities. From precision diagnostics in Germany to specialty pharmaceutical manufacturing supplying 45 markets globally, we deliver clinical excellence at institutional scale.',
-  'Logistics & Supply Chain': 'Our integrated logistics platform operates 22 distribution centres across Europe with dedicated cold-chain, last-mile, and digital supply chain orchestration capabilities. Connecting manufacturers, freight carriers, and retailers across 30 countries through a visibility-first technology platform.',
-  'Agriculture & Food': 'The agriculture and food division leverages satellite imagery, AI crop analytics, and sustainable agricultural inputs to manage 850,000+ hectares. Our food processing arm produces organic specialty grains, plant-based proteins, and premium packaged foods for European retail markets.',
-  'Industrial & Engineering': 'Our industrial group delivers heavy engineering, precision manufacturing, specialised process engineering, and premium commercial interiors. From structural steel and industrial machinery in Essen to modular plant construction and award-winning workplace environments across three continents.',
-  'Media & Entertainment': 'Zebrold\'s media vertical produces premium drama, documentary, live event programming, and multilingual digital content. Our studios in Berlin and Hyderabad create high-volume entertainment, branded content, and gaming experiences distributed across OTT platforms globally.',
-};
-
-const heroSlides = [
-  {
-    image: heroBg1,
-    company: 'Meridian Microelectronics',
-    sector: 'Semiconductors',
-    headline1: 'Precision',
-    headline2: 'Silicon',
-    sub: 'Cutting-edge semiconductor solutions\nby Zebrold Group',
-    cta: 'Explore Company',
-    ctaPath: '/subsidiaries',
-  },
-  {
-    image: heroBg2,
-    company: 'Northvolt Power',
-    sector: 'EV & Battery',
-    headline1: 'Deutsche',
-    headline2: 'Technik',
-    sub: 'The art of German Engineering by\nZebrold Group',
-    cta: 'Story and pics',
-    ctaPath: '/about',
-  },
-  {
+    id: 'global-presence',
+    num: '03',
+    caption: 'Globale Präsenz',
+    title: 'Lokale Expertise, globale Infrastruktur',
+    body: 'Mit Produktionsstätten in München und Dresden, Vertriebszentren in 22 europäischen Märkten und Standorten auf drei Kontinenten kombinieren wir tiefes lokales Wissen mit Ausführung im institutionellen Maßstab. Unsere Teams arbeiten weltweit in regulierten, präzisionskritischen Umgebungen.',
+    cta: 'Unsere Büros',
+    ctaPath: '/offices',
     image: heroBg3,
-    company: 'Everstone Energy',
-    sector: 'Clean Energy',
-    headline1: 'Green',
-    headline2: 'Future',
-    sub: 'Sustainable energy solutions\nfor a changing world',
-    cta: 'Our Vision',
-    ctaPath: '/about',
+    badge1: '3 Kontinente',
+    badge2: '22 DACH Märkte',
+    badge3: 'Institutioneller Maßstab',
   },
 ];
-
-const heroImages = heroSlides.map(s => s.image);
-
-/* Hero stat countUp component */
-function HeroStat({ value, prefix, suffix, label }) {
-  const [ref, count] = useCountUp(value, 2000);
-  return (
-    <motion.div
-      ref={ref}
-      className="hero-stat"
-      whileHover={{ y: -4, transition: { duration: 0.3 } }}
-    >
-      <span className="hero-stat-num">
-        {prefix}{count.toLocaleString()}{suffix}
-      </span>
-      <span className="hero-stat-label">{label}</span>
-    </motion.div>
-  );
+const CASE_STUDIES = [
+  {
+    title: 'Meridian Microelectronics',
+    subtitle: 'Fortschrittliche Halbleiterfertigung',
+    tags: ['Halbleiter'],
+    desc: 'Entwicklung von Power-Management-ICs der nächsten Generation und Automotive-Chips an den Standorten München und Dresden.',
+    image: heroBg1,
+    thumb: semiSectorImg,
+    link: '/subsidiaries',
+  },
+  {
+    title: 'Northvolt Power',
+    subtitle: 'Zellfertigung der nächsten Generation',
+    tags: ['EV & Batterie'],
+    desc: 'Bereitstellung nachhaltiger Lithium-Ionen-Technologie für Automobil- und Netzspeicheranwendungen.',
+    image: heroBg2,
+    thumb: evSectorImg,
+    link: '/subsidiaries',
+  },
+  {
+    title: 'Everstone Energy',
+    subtitle: 'Infrastruktur für saubere Energie',
+    tags: ['Saubere Energie'],
+    desc: 'Betrieb von 1,5 GW an sauberer Energiekapazität zur Beschleunigung des Net-Zero-Übergangs in europäischen Märkten.',
+    image: heroBg3,
+    thumb: financeSectorImg,
+    link: '/subsidiaries',
+  },
+];
+const DOMAINS_LIST = [
+  {
+    id: 'ev-battery',
+    title: 'EV-Laden & Batterien',
+    subtitle: 'EV Charging & Battery',
+    companies: 'Everstone Energy, Northvolt Power',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+      </svg>
+    ),
+  },
+  {
+    id: 'semiconductors',
+    title: 'Halbleiter',
+    subtitle: 'Semiconductors',
+    companies: 'Meridian Microelectronics, Silicon Crest',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="9" y="9" width="6" height="6" />
+        <line x1="9" y1="1" x2="9" y2="4" />
+        <line x1="15" y1="1" x2="15" y2="4" />
+        <line x1="9" y1="20" x2="9" y2="23" />
+        <line x1="15" y1="20" x2="15" y2="23" />
+        <line x1="20" y1="9" x2="23" y2="9" />
+        <line x1="20" y1="15" x2="23" y2="15" />
+        <line x1="1" y1="9" x2="4" y2="9" />
+        <line x1="1" y1="15" x2="4" y2="15" />
+      </svg>
+    ),
+  },
+  {
+    id: 'car-manufacturing',
+    title: 'Automobilbau',
+    subtitle: 'Car Manufacturing',
+    companies: 'Redford Automotive, Westbridge Motors',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.2 1 12.1 1 13v3c0 .6.4 1 1 1h2" />
+        <circle cx="7" cy="17" r="2" />
+        <circle cx="17" cy="17" r="2" />
+      </svg>
+    ),
+  },
+  {
+    id: 'education',
+    title: 'Bildung',
+    subtitle: 'Education',
+    companies: 'Instructis, Brighton Education, Clearpath',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+      </svg>
+    ),
+  },
+  {
+    id: 'technology',
+    title: 'Technologie & IT',
+    subtitle: 'Technology & IT',
+    companies: 'Skybridge Technologies, Arden Digital',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="16 18 22 12 16 6" />
+        <polyline points="8 6 2 12 8 18" />
+      </svg>
+    ),
+  },
+  {
+    id: 'finance',
+    title: 'Finanzen & Investitionen',
+    subtitle: 'Finance & Investment',
+    companies: 'Sterling Financial, Harrington Capital',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="12" y1="1" x2="12" y2="23" />
+        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+      </svg>
+    ),
+  },
+  {
+    id: 'healthcare',
+    title: 'Gesundheitswesen & Pharma',
+    subtitle: 'Healthcare & Pharma',
+    companies: 'Country Health, Oakwell, Greenford',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    ),
+  },
+  {
+    id: 'logistics',
+    title: 'Logistik & Lieferkette',
+    subtitle: 'Logistics & Supply Chain',
+    companies: 'PrimeRoute Logistics, GlobalLink',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="1" y="3" width="15" height="13" />
+        <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+        <circle cx="5.5" cy="18.5" r="2.5" />
+        <circle cx="18.5" cy="18.5" r="2.5" />
+      </svg>
+    ),
+  },
+  {
+    id: 'retail',
+    title: 'Einzelhandel & Konsumgüter',
+    subtitle: 'Retail & Consumer',
+    companies: 'PrimeMart Retail, UrbanBasket Stores',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+        <line x1="3" y1="6" x2="21" y2="6" />
+        <path d="M16 10a4 4 0 0 1-8 0" />
+      </svg>
+    ),
+  },
+  {
+    id: 'agriculture',
+    title: 'Landwirtschaft & Lebensmittel',
+    subtitle: 'Agriculture & Food',
+    companies: 'Greenfield Agri, Harvest Hill Foods',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2a10 10 0 0 1 10 10c0 5.5-4.5 10-10 10S2 17.5 2 12A10 10 0 0 1 12 2z" />
+        <path d="M12 12c-2.5 0-5 2.5-5 5" />
+        <path d="M12 12c2.5 0 5-2.5 5-5" />
+      </svg>
+    ),
+  },
+  {
+    id: 'industrial',
+    title: 'Industrie & Maschinenbau',
+    subtitle: 'Industrial & Engineering',
+    companies: 'Ironclad Engineering, Stonebridge',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 20h20" />
+        <path d="M5 20V8l5 3V8l5 3V4h4v16" />
+      </svg>
+    ),
+  },
+  {
+    id: 'media',
+    title: 'Medien & Unterhaltung',
+    subtitle: 'Media & Entertainment',
+    companies: 'Northstar Entertainment, Silverline',
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
+        <line x1="7" y1="2" x2="7" y2="22" />
+        <line x1="17" y1="2" x2="17" y2="22" />
+        <line x1="2" y1="12" x2="22" y2="12" />
+        <line x1="2" y1="7" x2="7" y2="7" />
+        <line x1="2" y1="17" x2="7" y2="17" />
+        <line x1="17" y1="17" x2="22" y2="17" />
+        <line x1="17" y1="7" x2="22" y2="7" />
+      </svg>
+    ),
+  },
+];
+const STATS = [
+  { value: 2.1, prefix: '€', suffix: ' Mrd.', label: 'Umsatz der Tochtergesellschaften' },
+  { value: 26, prefix: '', suffix: '', label: 'Unternehmen in unserem Portfolio' },
+  { value: 40, prefix: '+', suffix: '%', label: 'Wachstum gegenüber dem Vorjahr in Schlüsselsektoren' },
+];
+function getFaqItems(t, lang) {
+  /* Read from admin-editable data (localStorage), fall back to hardcoded FAQ_ITEMS */
+  const adminFaq = getFaq();
+  return adminFaq.map(item => ({
+    q: lang === 'en' ? (item.q_en || item.q_de || item.q || '') : (item.q_de || item.q || ''),
+    a: lang === 'en' ? (item.a_en || item.a_de || item.a || '') : (item.a_de || item.a || ''),
+  }));
 }
 
-/* Hero headline word reveal using Framer Motion */
-function AnimatedHeadline({ line1, line2 }) {
-  const words1 = line1.split(' ');
-  const words2 = line2.split(' ');
-
-  const containerVars = {
-    animate: { transition: { staggerChildren: 0.1 } }
-  };
-
-  const wordVars = {
-    initial: { y: '100%', clipPath: 'inset(0 0 100% 0)' },
-    animate: { y: '0%', clipPath: 'inset(0 0 0% 0)', transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-  };
-
+const FAQ_ITEMS = [
+  {
+    q: 'In welchen Sektoren ist die Zebrold Group tätig?',
+    a: 'Die Zebrold Group ist in zwölf strategischen Sektoren tätig, darunter EV-Laden & Batterien, Halbleiter, Automobilbau, Gesundheitswesen & Pharma, Finanzen & Investitionen, Technologie & IT, Bildung, Einzelhandel & Konsumgüter, Logistik & Lieferkette, Landwirtschaft & Lebensmittel, Industrie & Maschinenbau sowie Medien & Unterhaltung.',
+  },
+  {
+    q: 'Wie viele Tochtergesellschaften hat die Gruppe?',
+    a: 'Wir verwalten sechsundzwanzig marktführende Tochtergesellschaften auf drei Kontinenten. Jede Tochtergesellschaft agiert mit voller operativer Autonomie und profitiert gleichzeitig vom einheitlichen Kapitalrahmen und der institutionellen Governance-Struktur der Gruppe.',
+  },
+  {
+    q: 'Wo befindet sich der Hauptsitz der Zebrold Group?',
+    a: 'Der Hauptsitz der Zebrold Group ist in Frankfurt am Main, Deutschland. Wir unterhalten operative Niederlassungen in Europa, Indien und Australien sowie Produktionsstätten in München, Dresden, Stuttgart und an anderen strategischen Standorten.',
+  },
+  {
+    q: 'Was unterscheidet Zebrold von anderen Konglomeraten?',
+    a: 'Unser Unterscheidungsmerkmal ist die Kombination aus deutscher Ingenieurspräzision und globaler Ausführung. Jede Tochtergesellschaft profitiert von tiefgreifender Branchenexpertise, einer institutionellen Governance durch einen unabhängigen Aufsichtsrat und einem einheitlichen Kapitalrahmen, der den industriellen Wandel beschleunigt.',
+  },
+  {
+    q: 'Investiert Zebrold in Nachhaltigkeit?',
+    a: 'Nachhaltigkeit ist der Kern unserer Strategie. Vom 1,5-GW-Portfolio für saubere Energie von Everstone Energy über die Batterien der nächsten Generation von Northvolt Power bis hin zur kohlenstoffneutralen Logistik von PrimeRoute treiben wir die emissionsfreie Transformation der globalen Infrastruktur aktiv voran.',
+  },
+  {
+    q: 'Wie kann ich mit der Zebrold Group zusammenarbeiten?',
+    a: 'Wir begrüßen strategische Partnerschaften in allen zwölf Sektoren. Ob Sie nach Investitionspartnerschaften, Technologiekooperationen oder Supply-Chain-Integration suchen, unser Team bewertet Möglichkeiten durch einen strukturierten Bewertungsprozess. Kontaktieren Sie uns, um Ihr Projekt zu besprechen.',
+  },
+  {
+    q: 'Wie sieht die Governance-Struktur der Gruppe aus?',
+    a: 'Die Zebrold Group wird von einem unabhängigen Aufsichtsrat geleitet, der Finanzdisziplin und operative Autonomie für jede Tochtergesellschaft garantiert. Wir arbeiten mit institutioneller Strenge und legen Wert auf starke Cash-Generierung, Governance-Compliance und transparente Berichterstattung an die Stakeholder.',
+  },
+  {
+    q: 'Bietet Zebrold Karrieremöglichkeiten?',
+    a: 'Ja. Mit sechsundzwanzig Tochtergesellschaften in zwölf Sektoren bieten wir vielfältige Karrierewege in den Bereichen Ingenieurwesen, Finanzen, Technologie, Gesundheitswesen, Bildung und mehr. Jede Tochtergesellschaft leitet ihre eigene Rekrutierung, während die Gruppe übergreifende Mobilitätsprogramme für Talente koordiniert.',
+  },
+];
+/* ═══════════════════════════════════════════
+   LOADER COMPONENT
+   ═══════════════════════════════════════════ */
+function HomeLoader({ onComplete }) {
+  const loaderRef = useRef(null);
+  const counterRef = useRef(null);
+  useEffect(() => {
+    const seen = localStorage.getItem('hasSeenLoader');
+    const ts = parseInt(seen, 10);
+    if (seen && (Date.now() - ts < 3600000)) {
+      onComplete();
+      return;
+    }
+    const tl = gsap.timeline({
+      onComplete: () => {
+        localStorage.setItem('hasSeenLoader', Date.now().toString());
+        onComplete();
+      },
+    });
+    /* Phase 1: Counter 0→100 */
+    const counter = { val: 0 };
+    tl.to(counter, {
+      val: 100,
+      duration: 1.6,
+      ease: 'power2.inOut',
+      onUpdate: () => {
+        if (counterRef.current) {
+          counterRef.current.textContent = Math.floor(counter.val) + '%';
+        }
+      },
+    });
+    /* Phase 2: Letters stagger in */
+    tl.fromTo(
+      '.loader-letter',
+      { y: '120%', opacity: 0, rotateX: -40 },
+      {
+        y: '0%',
+        opacity: 1,
+        rotateX: 0,
+        duration: 0.7,
+        stagger: 0.06,
+        ease: 'power4.out',
+      },
+      '-=0.5'
+    );
+    /* Phase 3: Pause + scale down + blur out */
+    tl.to({}, { duration: 0.4 })
+      .to('.loader-counter', {
+        opacity: 0,
+        y: -20,
+        duration: 0.3,
+        ease: 'power2.in',
+      })
+      .to('.loader-letter', {
+        scale: 1.3,
+        letterSpacing: '0.2em',
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.in',
+        stagger: 0.03,
+      })
+      .to('.loader-progress-fill', {
+        scaleX: 0,
+        transformOrigin: 'right center',
+        duration: 0.4,
+        ease: 'power2.in',
+      }, '<')
+      .to(loaderRef.current, {
+        clipPath: 'inset(0% 0% 100% 0%)',
+        duration: 0.7,
+        ease: 'power3.inOut',
+      }, '-=0.2');
+    return () => tl.kill();
+  }, [onComplete]);
   return (
-    <motion.h1
-      className="hero-headline"
-      variants={containerVars}
-      initial="initial"
-      animate="animate"
-    >
-      <span className="hero-headline-line" style={{ display: 'block', overflow: 'hidden' }}>
-        {words1.map((w, idx) => (
-          <motion.span key={idx} variants={wordVars} style={{ display: 'inline-block', marginRight: '0.25em' }}>
-            {w}
-          </motion.span>
-        ))}
-      </span>
-      <span className="hero-headline-line" style={{ display: 'block', overflow: 'hidden' }}>
-        {words2.map((w, idx) => (
-          <motion.span key={idx} variants={wordVars} style={{ display: 'inline-block', marginRight: '0.25em' }}>
-            {w}
-          </motion.span>
-        ))}
-      </span>
-    </motion.h1>
-  );
-}
-
-const SECTORS_LIST = [
-  'All',
-  'EV Charging & Battery',
-  'Semiconductors',
-  'Car Manufacturing',
-  'Retail & Consumer',
-  'Education',
-  'Technology & IT',
-  'Finance & Investment',
-  'Healthcare & Pharma',
-  'Logistics & Supply Chain',
-  'Agriculture & Food',
-  'Industrial & Engineering',
-  'Media & Entertainment'
-];
-
-const sectorIcons = {
-  'EV Charging & Battery': '⚡',
-  'Semiconductors': '🔬',
-  'Car Manufacturing': '🚗',
-  'Retail & Consumer': '🛒',
-  'Education': '🎓',
-  'Technology & IT': '💻',
-  'Finance & Investment': '💰',
-  'Healthcare & Pharma': '🏥',
-  'Logistics & Supply Chain': '🚚',
-  'Agriculture & Food': '🌱',
-  'Industrial & Engineering': '🏗️',
-  'Media & Entertainment': '🎬'
-};
-
-const getCompanyEmblem = (name, sector) => {
-  switch (sector) {
-    case 'EV Charging & Battery':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      );
-    case 'Semiconductors':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" />
-          <path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3M9 9h6v6H9z" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Car Manufacturing':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9C2 11.2 2 11.6 2 12v4c0 .6.4 1 1 1h2" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="7" cy="17" r="2" />
-          <circle cx="17" cy="17" r="2" />
-        </svg>
-      );
-    case 'Retail & Consumer':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Education':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Technology & IT':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" />
-          <line x1="8" y1="21" x2="16" y2="21" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="12" y1="17" x2="12" y2="21" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Finance & Investment':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <line x1="12" y1="1" x2="12" y2="23" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Healthcare & Pharma':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Logistics & Supply Chain':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="1" y="3" width="15" height="13" rx="1" />
-          <polygon points="16 8 20 8 23 11 23 16 16 16" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="5.5" cy="18.5" r="2.5" />
-          <circle cx="18.5" cy="18.5" r="2.5" />
-        </svg>
-      );
-    case 'Agriculture & Food':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M2 22s10-14 20-14M22 8c0 3.3-1 6.5-3 9M16 12s-3-2-6-1" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Industrial & Engineering':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    case 'Media & Entertainment':
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
-          <line x1="7" y1="2" x2="7" y2="22" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="17" y1="2" x2="17" y2="22" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="2" y1="12" x2="22" y2="12" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="2" y1="7" x2="7" y2="7" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="2" y1="17" x2="7" y2="17" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="17" y1="17" x2="22" y2="17" strokeLinecap="round" strokeLinejoin="round" />
-          <line x1="17" y1="7" x2="22" y2="7" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      );
-    default:
-      return (
-        <svg className="company-emblem" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="12" cy="12" r="10" />
-        </svg>
-      );
-  }
-};
-
-const SHOWCASE_SECTORS = [
-  "EV Charging & Battery",
-  "Semiconductors",
-  "Car Manufacturing",
-  "Retail & Consumer",
-  "Education",
-  "Technology & IT"
-];
-
-const SHOWCASE_COMPANIES = [
-  "Everstone Energy",
-  "Northvolt Power",
-  "Meridian Microelectronics",
-  "Silicon Crest Technologies",
-  "Redford Automotive",
-  "Westbridge Motors",
-  "PrimeMart Retail",
-  "UrbanBasket Stores",
-  "Brighton Education Group",
-  "Clearpath Learning",
-  "Instructis Career",
-  "Skybridge Technologies",
-  "Arden Digital Solutions",
-  "Sterling Financial Services",
-  "Harrington Capital Group",
-  "Oakwell Healthcare",
-  "Greenford Pharmaceuticals",
-  "PrimeRoute Logistics",
-  "GlobalLink Supply Chain",
-  "Greenfield Agri",
-  "Harvest Hill Foods",
-  "Ironclad Engineering",
-  "Stonebridge Industries",
-  "Stonecraft Interiors",
-  "Northstar Entertainment",
-  "Silverline Studios"
-];
-
-function ShowcaseStat({ value, label }) {
-  const [ref, count] = useCountUp(value, 2000);
-  return (
-    <div ref={ref} className="showcase-stat">
-      <span className="showcase-stat-num">{count}</span>
-      <span className="showcase-stat-label">{label}</span>
+    <div ref={loaderRef} className="home-loader">
+      <div className="loader-container">
+        <div className="loader-counter" ref={counterRef}>0%</div>
+        <div className="loader-letters">
+          {BRAND_LETTERS.map((letter, i) => (
+            <span key={i} className="loader-letter">{letter}</span>
+          ))}
+        </div>
+        <div className="loader-progress">
+          <div className="loader-progress-fill" />
+        </div>
+      </div>
     </div>
   );
 }
-
-/* ─────────────────────────────────────────────────────────────────────
- * About the Group
- *
- * A single-column editorial block that introduces the Group. Themed
- * to match the site: dark navy substrate, Playfair Display headline,
- * gold accent rules, mono caps for labels — same vocabulary as the
- * hero and the existing sections.
- * ───────────────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────────────
- * About the Group
- *
- * A single-column editorial block that introduces the Group. Themed
- * to match the site: dark navy substrate, Playfair Display headline,
- * gold accent rules, mono caps for labels — same vocabulary as the
- * hero and the existing sections.
- * ───────────────────────────────────────────────────────────────────── */
-
-function AboutGroup() {
+/* ═══════════════════════════════════════════
+   ANIMATED COUNTER COMPONENT
+   ═══════════════════════════════════════════ */
+function AnimatedCounter({ value, prefix = '', suffix = '', isDecimal = false }) {
+  const ref = useRef(null);
+  const numRef = useRef(null);
+  const hasAnimated = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          const counter = { val: 0 };
+          gsap.to(counter, {
+            val: value,
+            duration: 2,
+            ease: 'power2.out',
+            onUpdate: () => {
+              if (numRef.current) {
+                const display = isDecimal
+                  ? counter.val.toFixed(1)
+                  : Math.floor(counter.val);
+                numRef.current.textContent = `${prefix}${display}${suffix}`;
+              }
+            },
+          });
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [value, prefix, suffix, isDecimal]);
   return (
-    <section
-      className="about-section"
-      aria-labelledby="about-heading"
-    >
-      {/* Subtle radial wash to match site hero feel */}
-      <div className="about-bg" aria-hidden="true">
-        <div className="about-bg-radial" />
-        <div className="about-bg-grid" />
-      </div>
-
-      <div className="about-container">
-        {/* Eyebrow + brand mark */}
-        <div className="about-eyebrow">
-          <span className="about-eyebrow-line" />
-          <span className="about-eyebrow-text">About the Group</span>
-          <span className="about-eyebrow-stamp">N° 01 — Profile</span>
-          <span className="about-eyebrow-line about-eyebrow-line--end" />
-        </div>
-
-        {/* Image + body spread */}
-        <figure className="about-figure">
-          <div className="about-figure-imgwrap">
-            <img
-              src={companyHqImg}
-              alt="Zebrold Group headquarters, Frankfurt am Main"
-              className="about-figure-img"
-              loading="lazy"
-            />
-            <figcaption className="about-figure-cap">
-              <span className="about-figure-cap-key">Headquarters</span>
-              <span className="about-figure-cap-val">
-                Frankfurt am Main · Est. 2017
-              </span>
-            </figcaption>
-          </div>
-
-          <div className="about-copy">
-            <p className="about-lede">
-              Zebrold Group is a premier multi-sector conglomerate operating a portfolio of twenty-six market-leading companies. Across twelve strategic sectors, we manage a unified capital framework designed to accelerate industrial transition and technological leadership globally.
-            </p>
-            <p className="about-body">
-              Through flagship subsidiaries like Meridian Microelectronics in semiconductors, Everstone Energy and Northvolt Power in EV charging and clean batteries, and Redford Automotive in automotive manufacturing, we operate at the intersection of precision engineering and sustainable infrastructure. Our presence spans Dresden and Munich fabrication facilities, global logistics networks, and international enterprise platforms.
-            </p>
-            <p className="about-body">
-              We operate with institutional rigor, governed by an independent supervisory board that guarantees financial discipline and operational autonomy for each of our subsidiaries. By prioritizing strong cash generation and governance compliance, we support the zero-emission transformation of global infrastructure.
-            </p>
-          </div>
-        </figure>
-
-      </div>
-    </section>
+    <span ref={ref}>
+      <span ref={numRef} className="data-value-num">
+        {prefix}0{suffix}
+      </span>
+    </span>
   );
 }
-
-export default function Home() {
-  const pageRef = useScrollReveal();
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [exitSlide, setExitSlide] = useState(null);
-  const [progressTrigger, setProgressTrigger] = useState(0);
-  const [hoveredCompany, setHoveredCompany] = useState(null);
-  const [activeSlot, setActiveSlot] = useState(null); // null | 0 | 1 | 2 | 3 | 4 | 5
-  const [cycleIndex, setCycleIndex] = useState(0);
-  const [activeSector, setActiveSector] = useState(0);
-  const [activePressIdx, setActivePressIdx] = useState(0);
-  const [activeFactIdx, setActiveFactIdx] = useState(0);
-
-  // Auto-play press release slider
-  useEffect(() => {
-    const pressInterval = setInterval(() => {
-      setActivePressIdx((prev) => (prev + 1) % PRESS_RELEASES.length);
-    }, 6000);
-    return () => clearInterval(pressInterval);
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCycleIndex((prev) => prev + 1);
-    }, 2000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const SLOT_COMPANIES = [
-    ["Everstone Energy", "Northvolt Power", "Redford Automotive", "Westbridge Motors"],
-    ["Meridian Microelectronics", "Silicon Crest Technologies", "PrimeMart Retail", "UrbanBasket Stores"],
-    ["Brighton Education Group", "Clearpath Learning", "Instructis Career"],
-    ["Skybridge Technologies", "Arden Digital Solutions", "Sterling Financial Services", "Harrington Capital Group"],
-    ["Oakwell Healthcare", "Greenford Pharmaceuticals", "PrimeRoute Logistics", "GlobalLink Supply Chain", "Greenfield Agri"],
-    ["Harvest Hill Foods", "Ironclad Engineering", "Stonebridge Industries", "Stonecraft Interiors", "Northstar Entertainment", "Silverline Studios"]
-  ];
-
-  // Get active company for each slot
-  const getActiveCompanyForSlot = (slotIdx) => {
-    const list = SLOT_COMPANIES[slotIdx];
-    const name = list[cycleIndex % list.length];
-    return subsidiaries.find(c => c.name === name);
-  };
-
-  const cardContainerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.05
-      }
-    }
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.7,
-        ease: [0.22, 1, 0.36, 1]
-      }
-    }
-  };
-
-  const headingVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.16, 1, 0.3, 1]
-      }
-    }
-  };
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => {
-        setExitSlide(prev);
-        setTimeout(() => setExitSlide(null), 1200);
-        return (prev + 1) % 3;
-      });
-      setProgressTrigger(prev => prev + 1);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const handleSlideChange = (index) => {
-    setExitSlide(currentSlide);
-    setTimeout(() => setExitSlide(null), 1200);
-    setCurrentSlide(index);
-    setProgressTrigger(prev => prev + 1);
-  };
-
+/* ═══════════════════════════════════════════
+   FAQ ACCORDION ITEM
+   ═══════════════════════════════════════════ */
+function FaqItem({ question, answer, index }) {
+  const [open, setOpen] = useState(false);
+  const contentRef = useRef(null);
   return (
-    <div ref={pageRef} className="home">
-      {/* ── 1. Hero ── */}
-      <section className="hero" aria-label="Hero">
-        <div className="hero-bg-slider">
-          {heroImages.map((img, index) => (
-            <div
-              key={index}
-              className={`hero-slide ${index === currentSlide ? 'active' : ''} ${index === exitSlide ? 'exit' : ''}`}
-              style={{ backgroundImage: `url(${img})` }}
-            />
-          ))}
-          <div className="hero-grid-pattern" aria-hidden="true" />
-          <div className="hero-particles" aria-hidden="true" />
-          <div className="hero-gradient" aria-hidden="true" />
+    <div className={`faq-accordion ${open ? 'is-open' : ''}`} data-faq-index={index}>
+      <button
+        className="faq-question"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+      >
+        <p className="faq-question-text">{question}</p>
+        <div className="faq-icon-wrapper">
+          <div className="faq-plus-v" />
+          <div className="faq-plus-h" />
+          <div className="faq-plus-dot" />
         </div>
-
-        <div className="hero-content container">
-          <div className="hero-layout-left">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`badge-${currentSlide}`}
-                className="hero-company-badge"
-                initial={{ opacity: 0, y: -15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <span className="hero-company-sector">{heroSlides[currentSlide].sector}</span>
-                <span className="hero-company-name">{heroSlides[currentSlide].company}</span>
-              </motion.div>
-            </AnimatePresence>
-
-            <AnimatedHeadline
-              key={`headline-${currentSlide}`}
-              line1={heroSlides[currentSlide].headline1}
-              line2={heroSlides[currentSlide].headline2}
-            />
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`subtext-${currentSlide}`}
-                className="hero-subtext-block"
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="hero-vertical-line"></div>
-                <p className="hero-sub">
-                  {heroSlides[currentSlide].sub.split('\n').map((line, i) => (
-                    <span key={i}>{line}{i === 0 && <br />}</span>
-                  ))}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`cta-${currentSlide}`}
-                className="hero-ctas"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-                transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <Link to={heroSlides[currentSlide].ctaPath} className="btn btn-premium-cta" id="hero-cta-explore">
-                  {heroSlides[currentSlide].cta} <span className="arrow">→</span>
-                </Link>
-              </motion.div>
-            </AnimatePresence>
-          </div>
-        </div>
-
-        {/* Bottom Elements */}
-        <div className="hero-bottom-bar reveal" data-delay="6">
-          <div className="container hero-bottom-container">
-            <div className="hero-slider-controls">
-              <span className="slider-pause">||</span>
-              <span className="slider-count">{currentSlide + 1} / 3</span>
-              <div className="slider-progress-bars">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="progress-bar"
-                    onClick={() => handleSlideChange(i)}
-                    style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
-                  >
-                    <div
-                      key={`${i}-${progressTrigger}`}
-                      className="progress-bar-fill"
-                      style={{
-                        width: i === currentSlide ? '100%' : '0%',
-                        transition: i === currentSlide ? 'width 6000ms linear' : 'none'
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="hero-scroll-indicator">
-              <div className="scroll-chevron"></div>
-              <div className="scroll-chevron"></div>
-              <div className="scroll-chevron"></div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Vertical Nav */}
-        <div className="hero-vertical-nav reveal" data-delay="6">
-          <div className="nav-line"></div>
-          <div className="nav-dot active"></div>
-          <div className="nav-dot"></div>
-          <div className="nav-dot"></div>
-          <div className="nav-line"></div>
-        </div>
-      </section>
-
-      {/* Stats strip - Moved below hero */}
-      <div className="hero-stats-wrapper">
-        <div className="container">
-          <motion.div
-            className="hero-stats-grid"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <HeroStat value={2} prefix="EUR " suffix=".1B" label="Revenue FY25" />
-            <div className="hero-stats-divider" aria-hidden="true" />
-            <HeroStat value={26} label="Subsidiaries" />
-            <div className="hero-stats-divider" aria-hidden="true" />
-            <HeroStat value={12} label="Sectors" />
-            <div className="hero-stats-divider" aria-hidden="true" />
-            <HeroStat value={13705} suffix=" Cr" label="Working Capital (INR)" />
-            <div className="hero-stats-divider" aria-hidden="true" />
-            <HeroStat value={26} label="Global Offices" />
-          </motion.div>
+      </button>
+      <div
+        className="faq-answer"
+        style={{
+          maxHeight: open ? '1000px' : '0px',
+        }}
+      >
+        <div ref={contentRef} className="faq-answer-inner">
+          <p>{answer}</p>
         </div>
       </div>
+    </div>
+  );
+}
+/* ═══════════════════════════════════════════
+   MAIN HOME COMPONENT
+   ═══════════════════════════════════════════ */
+export default function Home() {
+  const { t, lang } = useLanguage();
+  const [loaderDone, setLoaderDone] = useState(false);
+  const homeRef = useRef(null);
+  const aboutSectionRef = useRef(null);
+  const aboutTextRef = useRef(null);
 
-      {/* ── 2. Our Businesses — Interactive Sector Showcase ── */}
-      <section className="biz-showcase" aria-labelledby="biz-showcase-heading">
-        {/* Background images — crossfade on active sector */}
-        <div className="biz-bg-layer" aria-hidden="true">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`biz-bg-${activeSector}`}
-              className="biz-bg-image"
-              style={{ backgroundImage: `url(${sectorImageMap[sectors[activeSector].name]})` }}
-              initial={{ opacity: 0, scale: 1.01 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            />
-          </AnimatePresence>
-          <div className="biz-bg-gradient" />
-        </div>
+  /* Chatbot Floating Widget state */
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatName, setChatName] = useState('');
+  const [chatEmail, setChatEmail] = useState('');
+  const [chatMsg, setChatMsg] = useState('');
+  const [chatSent, setChatSent] = useState(false);
 
-        <div className="container biz-container">
-          {/* Left — Active sector content */}
-          <div className="biz-left">
-            <motion.div
-              className="biz-label-row"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+  const handleQuickSubmit = (e) => {
+    e.preventDefault();
+    setChatSent(true);
+    setTimeout(() => {
+      setChatSent(false);
+      setIsChatOpen(false);
+      setChatName('');
+      setChatEmail('');
+      setChatMsg('');
+    }, 2500);
+  };
+
+  /* Read expertise from admin-editable data; fall back to translation keys for unedited fields */
+  const IMAGE_MAP = { semi_sector: semiSectorImg, healthcare_sector: healthcareSectorImg, hero_bg_everstone: heroBg3 };
+  const adminExpertise = getExpertise();
+  const expertiseItems = adminExpertise.map((item, idx) => {
+    const fallbackCaptions = [t('exp_1_caption'), t('exp_2_caption'), t('exp_3_caption')];
+    const fallbackTitles = [t('exp_1_title'), t('exp_2_title'), t('exp_3_title')];
+    const fallbackBodies = [t('exp_1_body'), t('exp_2_body'), t('exp_3_body')];
+    const fallbackCtas = [t('exp_1_cta'), t('exp_2_cta'), t('exp_3_cta')];
+    return {
+      id: item.id,
+      num: item.num,
+      caption: lang === 'en' ? (item.caption_en || fallbackCaptions[idx]) : (item.caption_de || fallbackCaptions[idx]),
+      title: lang === 'en' ? (item.title_en || fallbackTitles[idx]) : (item.title_de || fallbackTitles[idx]),
+      body: lang === 'en' ? (item.body_en || fallbackBodies[idx]) : (item.body_de || fallbackBodies[idx]),
+      cta: lang === 'en' ? (item.cta_en || fallbackCtas[idx]) : (item.cta_de || fallbackCtas[idx]),
+      ctaPath: item.ctaPath,
+      image: item.imagePreview || IMAGE_MAP[item.imageKey] || semiSectorImg,
+    };
+  });
+
+  /* Read stats from admin-editable data */
+  const adminStats = getStats();
+  const statsList = adminStats.map((stat, idx) => {
+    const fallbackLabels = [t('stat_1_label'), t('stat_2_label'), t('stat_3_label')];
+    return {
+      value: stat.value,
+      prefix: stat.prefix,
+      suffix: stat.suffix,
+      label: lang === 'en' ? (stat.label_en || fallbackLabels[idx]) : (stat.label_de || fallbackLabels[idx]),
+    };
+  });
+
+
+
+  /* ════════════════════════════════════════
+     MASTER GSAP ANIMATION SETUP
+     ════════════════════════════════════════ */
+  useEffect(() => {
+    if (!loaderDone || !homeRef.current) return;
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduced) return;
+    const ctx = gsap.context(() => {
+      /* ── 1. Hero entrance sequence ── */
+      const heroTL = gsap.timeline({ delay: 0.1 });
+      heroTL
+        .fromTo('.hero-bg-img',
+          { opacity: 0 },
+          { opacity: 1, duration: 2, ease: 'power2.out' }
+        )
+        .fromTo('.hero-title',
+          { x: -120, opacity: 0, filter: 'blur(8px)' },
+          { x: 0, opacity: 1, filter: 'blur(0px)', duration: 1, ease: 'power4.out' },
+          0.3
+        )
+        .fromTo('.hero-desc-wrap',
+          { x: 120, opacity: 0, filter: 'blur(8px)' },
+          { x: 0, opacity: 1, filter: 'blur(0px)', duration: 1, ease: 'power4.out' },
+          0.5
+        )
+        .fromTo('.hero-letter',
+          { y: '100%', opacity: 0 },
+          { y: '0%', opacity: 1, duration: 0.8, stagger: 0.06, ease: 'power4.out' },
+          0.7
+        );
+      /* ── 2. Hero parallax on scroll ── */
+      gsap.to('.hero-bg-img', {
+        yPercent: 25,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero-section',
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+      gsap.to('.hero-content', {
+        y: -80,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.hero-section',
+          start: '60% top',
+          end: 'bottom top',
+          scrub: true,
+        },
+      });
+
+      /* ── 4. Expertise section reveals ── */
+      // Heading
+      gsap.fromTo('.expertise-section .heading-wrapper',
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1, y: 0,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.expertise-section .heading-wrapper',
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      /* ── 4b. Sticky Envelope Card Stacking Animation ── */
+      const expCards = gsap.utils.toArray('.exp-card-row');
+      expCards.forEach((card, i) => {
+        // Scale down & dim current card as next card comes up over it like an envelope layer
+        if (i < expCards.length - 1) {
+          gsap.to(card, {
+            scale: 0.92,
+            opacity: 0.45,
+            filter: 'blur(4px)',
+            ease: 'none',
+            scrollTrigger: {
+              trigger: expCards[i + 1],
+              start: 'top 90%',
+              end: 'top 100px',
+              scrub: true,
+            },
+          });
+        }
+      });
+      /* ── 5. Case title & marquee ── */
+      const caseTitleTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.case-title-section',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+        },
+      });
+      caseTitleTL
+        .fromTo('.case-title-section .caption',
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
+        )
+        .fromTo('.case-title-section .heading-style-h2',
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+          0.1
+        )
+        .fromTo('.case-title-section .text-size-small',
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
+          0.3
+        );
+      /* ── 7. Domain words list stagger ── */
+      gsap.fromTo('.domain-word-item',
+        { y: 30, opacity: 0 },
+        {
+          y: 0, opacity: 1,
+          duration: 0.5,
+          stagger: 0.04,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.domains-words-list',
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      /* ── 8. Data / Stats section ── */
+      const dataTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.data-section',
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+        },
+      });
+      dataTL
+        .fromTo('.data-title-wrap',
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' }
+        )
+        .fromTo('.data-item',
+          { y: 60, opacity: 0, scale: 0.8 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.8, stagger: 0.15, ease: 'power3.out' },
+          0.2
+        )
+        .fromTo('.data-cta-wrap',
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
+          0.6
+        );
+      /* ── 10. CTA section ── */
+      const ctaTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.cta-section',
+          start: 'top 70%',
+          toggleActions: 'play none none none',
+        },
+      });
+      ctaTL
+        .fromTo('.cta-section .caption',
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
+        )
+        .fromTo('.cta-h3',
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out' },
+          0.1
+        )
+        .fromTo('.cta-big-text',
+          { y: 80, opacity: 0, scale: 0.7 },
+          { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power4.out' },
+          0.2
+        )
+        .fromTo('.cta-bottom',
+          { y: 40, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' },
+          0.5
+        );
+      /* ── 11. FAQ section ── */
+      const faqTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.faq-section',
+          start: 'top 75%',
+          toggleActions: 'play none none none',
+        },
+      });
+      faqTL
+        .fromTo('.faq-section .heading-wrapper',
+          { y: 50, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' }
+        )
+        .fromTo('.faq-accordion',
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, stagger: 0.06, ease: 'power2.out' },
+          0.2
+        )
+        .fromTo('.faq-cta-card',
+          { y: 50, opacity: 0, scale: 0.95 },
+          { y: 0, opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' },
+          0.3
+        );
+      /* ── 13. About horizontal scroll & overlay sequence ── */
+      const aboutTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: '.about-scroll-section',
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+        },
+      });
+
+      // 1. Giant text scrolls horizontally across the image (0 to 0.85)
+      aboutTl.to('.about-scroll-text', {
+        x: () => {
+          const el = document.querySelector('.about-scroll-text');
+          return el ? -(el.scrollWidth - window.innerWidth + window.innerWidth * 0.15) : -1500;
+        },
+        ease: 'none',
+        duration: 0.85,
+      }, 0);
+
+      // 2. Giant text fades out smoothly (0.5 to 0.65)
+      aboutTl.to('.about-scroll-text', {
+        opacity: 0,
+        duration: 0.15,
+      }, 0.5);
+
+      // 3. Right-side paragraph fades & slides in (0.5 to 1.3)
+      aboutTl.fromTo('.about-split-overlay',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, ease: 'power2.out', duration: 0.8 },
+        0.5
+      );
+
+      /* ── 12. Footer letter reveal ── */
+      gsap.fromTo('.footer-links-area',
+        { y: 50, opacity: 0 },
+        {
+          y: 0, opacity: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.footer',
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      gsap.fromTo('.footer-giant-letter',
+        { yPercent: 120, opacity: 0 },
+        {
+          yPercent: 0, opacity: 1,
+          duration: 1,
+          ease: 'power4.out',
+          stagger: 0.08,
+          scrollTrigger: {
+            trigger: '.footer-letters-wrap',
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }, homeRef);
+    return () => ctx.revert();
+  }, [loaderDone]);
+
+  /* Callback for loader */
+  const handleLoaderComplete = useCallback(() => setLoaderDone(true), []);
+  if (!loaderDone) {
+    return <HomeLoader onComplete={handleLoaderComplete} />;
+  }
+
+  return (
+    <div className="home-page" ref={homeRef}>
+      {/* Floating Contact Chatbot Widget */}
+      {isChatOpen && (
+        <div className="home-chat-widget">
+          <div className="chat-widget-header">
+            <div className="chat-widget-title-wrap">
+              <span className="chat-online-dot" />
+              <div>
+                <h4 className="chat-widget-title">Zebrold Executive Desk</h4>
+                <span className="chat-widget-subtitle">Usually replies in &lt; 5 mins</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="chat-widget-close"
+              onClick={() => setIsChatOpen(false)}
+              aria-label="Close widget"
             >
-              <span className="biz-label-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" /></svg>
-              </span>
-              <span className="biz-label-text">Our Businesses</span>
-            </motion.div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`biz-content-${activeSector}`}
-                className="biz-content"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <h2 id="biz-showcase-heading" className="biz-sector-name">
-                  {sectors[activeSector].name}
-                </h2>
-
-                <p className="biz-sector-desc">
-                  {sectorDescriptions[sectors[activeSector].name]}
-                </p>
-
-                <div className="biz-sector-meta">
-                  <div className="biz-meta-item">
-                    <span className="biz-meta-val">{sectors[activeSector].companies.length}</span>
-                    <span className="biz-meta-key">Subsidiaries</span>
-                  </div>
-                  <div className="biz-meta-divider" />
-                  <div className="biz-meta-item">
-                    <span className="biz-meta-val">{sectors[activeSector].wc}</span>
-                    <span className="biz-meta-key">Working Capital</span>
-                  </div>
-                </div>
-
-                <div className="biz-companies-list">
-                  {sectors[activeSector].companies.map((c) => (
-                    <span key={c} className="biz-company-tag">{c}</span>
-                  ))}
-                </div>
-
-                <Link to="/sectors" className="biz-cta" id="biz-readmore-cta">
-                  read more <span className="biz-cta-arrow">→</span>
-                </Link>
-              </motion.div>
-            </AnimatePresence>
+              ✕
+            </button>
           </div>
 
-          {/* Right — Sector tab navigation */}
-          <nav className="biz-right" aria-label="Sector navigation">
-            {sectors.map((sector, idx) => (
-              <button
-                key={sector.id}
-                className={`biz-tab ${idx === activeSector ? 'biz-tab-active' : ''}`}
-                onClick={() => setActiveSector(idx)}
-                onMouseEnter={() => setActiveSector(idx)}
-                aria-current={idx === activeSector ? 'true' : undefined}
-              >
-                <span className="biz-tab-name">{sector.name.toUpperCase()}</span>
-                {idx === activeSector && (
-                  <motion.div
-                    className="biz-tab-indicator"
-                    layoutId="biz-tab-bar"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          <div className="chat-widget-body">
+            {chatSent ? (
+              <div className="chat-success-msg">
+                <span className="success-icon">✓</span>
+                <h4>Vielen Dank / Thank you!</h4>
+                <p>Your inquiry has been logged. An executive will reach out shortly.</p>
+              </div>
+            ) : (
+              <>
+                <div className="chat-welcome-msg">
+                  <p>👋 Hallo! How can our industrial management team assist you today?</p>
+                </div>
+
+                <div className="chat-options">
+                  <a href="tel:+496912345670" className="chat-channel-btn">
+                    <span className="channel-icon">📞</span>
+                    <div>
+                      <strong>Direct Call</strong>
+                      <small>+49 (0) 69 1234 5670</small>
+                    </div>
+                  </a>
+
+                  <a href="mailto:contact@zebrold.de" className="chat-channel-btn">
+                    <span className="channel-icon">✉️</span>
+                    <div>
+                      <strong>Official Email</strong>
+                      <small>contact@zebrold.de</small>
+                    </div>
+                  </a>
+                </div>
+
+                <form onSubmit={handleQuickSubmit} className="chat-quick-form">
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    className="chat-input"
+                    value={chatName}
+                    onChange={(e) => setChatName(e.target.value)}
                   />
-                )}
-              </button>
-            ))}
-          </nav>
+                  <input
+                    type="email"
+                    placeholder="Business Email"
+                    required
+                    className="chat-input"
+                    value={chatEmail}
+                    onChange={(e) => setChatEmail(e.target.value)}
+                  />
+                  <textarea
+                    placeholder="How can we assist your business?"
+                    rows={2}
+                    required
+                    className="chat-input chat-textarea"
+                    value={chatMsg}
+                    onChange={(e) => setChatMsg(e.target.value)}
+                  />
+                  <button type="submit" className="chat-submit-btn">
+                    Send Inquiry →
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Contact Button */}
+      <button
+        type="button"
+        onClick={() => setIsChatOpen(!isChatOpen)}
+        className={`home-floating-phone ${isChatOpen ? 'active' : ''}`}
+        aria-label="Toggle Contact Chat Widget"
+      >
+        {isChatOpen ? (
+          <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>✕</span>
+        ) : (
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+        )}
+      </button>
+
+      {/* ═══════ SECTION 1: HERO ═══════ */}
+      <section className="hero-section">
+        <div className="hero-bg">
+          <img src={heroBg1} alt="" className="hero-bg-img" />
+          <div className="hero-overlay" />
+        </div>
+        <div className="hero-content">
+          <div className="padding-global hero-padding-bottom-zero">
+            <div className="container-large hero-layout">
+              <div className="hero-copy">
+                <h2 className="hero-title">
+                  {t('hero_title')}
+                </h2>
+                <div className="hero-desc-wrap">
+                  <p className="hero-desc">
+                    {t('hero_desc')}
+                  </p>
+                </div>
+              </div>
+              {/* Brand Letters - Arrodz Layout */}
+              <div className="hero-brand-letters">
+                {/* Floating Badges */}
+                <div className="hero-badges-wrapper">
+                  <div className="hero-badge hero-badge-cream">
+                    {t('hero_badge_1')}
+                  </div>
+                  <div className="hero-badge hero-badge-brown">
+                    {t('hero_badge_2')}
+                  </div>
+                </div>
+                {BRAND_LETTERS.map((letter, i) => {
+                  const isBrown = letter === 'E' || letter === 'R' || letter === 'L';
+                  const isO = letter === 'O';
+                  return (
+                    <span
+                      key={i}
+                      className={`hero-letter ${isBrown ? 'is-brown' : ''} ${isO ? 'is-o' : ''}`}
+                    >
+                      {isO ? (
+                        <Link to="/contact" className="hero-o-pill">
+                          <span className="hero-o-pill-text">{t('hero_cta')}</span>
+                          <span className="hero-o-pill-arrow">
+                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                              <path d="M2.15 10c0 .46.37.83.83.83h8.91c.89 0 1.34 1.08.71 1.71l-2.11 2.11a.83.83 0 001.18 1.18l5.12-5.13a1 1 0 000-1.41L11.67 4.17a.83.83 0 00-1.18 1.18l2.11 2.11c.63.63.19 1.71-.71 1.71H2.99A.83.83 0 002.15 10z" fill="currentColor" />
+                            </svg>
+                          </span>
+                        </Link>
+                      ) : (
+                        letter
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── 4. About the Group ── */}
-      <AboutGroup />
 
 
-
-      {/* ── 6. News Strip (Tata-Style Asymmetric Grid) ── */}
-      <section className="news-strip section" aria-labelledby="news-strip-heading">
-        <div className="container">
-          <div className="news-section-tag">
-            In the News
+      {/* ═══════ SECTION 3: EXPERTISE (SINGLE LAYOUT, CARD GRID) ═══════ */}
+      <section className="expertise-section">
+        <div className="padding-global padding-section-large">
+          <div className="container-large">
+            <div className="heading-wrapper">
+              <div className="caption">{t('exp_caption')}</div>
+              <div className="heading-title-wrapper">
+                <div className="max-width-large">
+                  <h2 className="heading-style-h2">
+                    {t('exp_title')}
+                  </h2>
+                </div>
+              </div>
+              <div className="max-width-medium">
+                <p className="text-size-small">
+                  {t('exp_sub')}
+                </p>
+              </div>
+            </div>
+            {/* All cards in one single layout */}
+            <div className="exp-cards-list">
+              {expertiseItems.map((item, idx) => (
+                <div
+                  key={item.id}
+                  id={item.id}
+                  className={`exp-card-row exp-card-reveal ${idx === 0 || idx === 2 ? 'exp-card-row--brown' : ''}`}
+                >
+                  {/* Left: text card */}
+                  <div className="exp-card-text-block">
+                    <span className="exp-card-pill">{item.caption}</span>
+                    <h3 className="exp-card-heading">{item.title}</h3>
+                    <p className="exp-card-body">{item.body}</p>
+                    <div className="exp-card-cta">
+                      <Link to={item.ctaPath} className="button">
+                        <span className="button-text">{item.cta}</span>
+                      </Link>
+                    </div>
+                  </div>
+                  {/* Right: image */}
+                  <div className="exp-card-image-block">
+                    {item.id === 'global-presence' ? (
+                      <div className="continent-list-container">
+                        <div className="continent-group-card">
+                          <div className="continent-card-header">
+                            <span className="continent-badge">Europa</span>
+                            <span className="continent-role">{lang === 'en' ? 'Global HQ & High-Tech Manufacturing' : 'Globaler Hauptsitz & High-Tech Fertigung'}</span>
+                          </div>
+                          <div className="continent-cities-footer">
+                            <h4 className="continent-cities">München & Dresden</h4>
+                            <p className="continent-countries">{lang === 'en' ? 'Germany' : 'Deutschland'}</p>
+                          </div>
+                        </div>
+                        <div className="continent-group-card">
+                          <div className="continent-card-header">
+                            <span className="continent-badge">APAC (Asia-Pacific)</span>
+                            <span className="continent-role">{lang === 'en' ? 'APAC Operational Hub & Engineering' : 'APAC-Betriebszentrale & Engineering'}</span>
+                          </div>
+                          <div className="continent-cities-footer">
+                            <h4 className="continent-cities">Sydney & Bangalore</h4>
+                            <p className="continent-countries">{lang === 'en' ? 'Australia / India' : 'Australien / Indien'}</p>
+                          </div>
+                        </div>
+                        <div className="continent-group-card">
+                          <div className="continent-card-header">
+                            <span className="continent-badge">Americas</span>
+                            <span className="continent-role">{lang === 'en' ? 'Americas Hub & Capital Allocation' : 'Americas Hub & Capital Allocation'}</span>
+                          </div>
+                          <div className="continent-cities-footer">
+                            <h4 className="continent-cities">New York</h4>
+                            <p className="continent-countries">USA</p>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="exp-card-img-wrap">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="exp-card-img"
+                          loading="lazy"
+                        />
+                        <div className="exp-card-img-overlay" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div className="news-asymmetric-grid">
-            
-            {/* Card 1: Press Release (span 3) */}
-            <div className="news-card-press">
-              <div className="news-press-left">
-                <div className="cyber-grid-graphic" />
-                <div className="cyber-grid-glow" />
-                <div className="carousel-indicators">
-                  {PRESS_RELEASES.map((_, i) => (
-                    <button
-                      key={i}
-                      className={`carousel-indicator-dot ${i === activePressIdx ? 'active' : ''}`}
-                      onClick={() => setActivePressIdx(i)}
-                      aria-label={`Go to slide ${i + 1}`}
-                    />
+      {/* ═══════ SECTION 4: DOMAINS SHOWCASE ═══════ */}
+      <section className="domains-showcase-section">
+        <div className="padding-global padding-section-large">
+          <div className="container-large">
+            <div className="heading-wrapper is-center">
+              <div className="heading-title-wrapper is-center">
+                <div className="caption">{t('kat_caption')}</div>
+                <div className="max-width-large">
+                  <h2 className="heading-style-h2">
+                    {t('kat_title')}
+                  </h2>
+                </div>
+              </div>
+              <div className="max-width-medium">
+                <p className="text-size-small">
+                  {t('kat_desc')}
+                </p>
+              </div>
+            </div>
+
+            {/* Sector Detail Card (Reference Screenshot Layout) */}
+            <div className="sector-detail-card-container">
+              <div className="sector-detail-header">
+                <span>SECTOR DETAIL</span>
+              </div>
+              <div className="sector-detail-list">
+                {getDomains().map((domain) => {
+                  const sectorName = lang === 'en' ? (domain.subtitle || domain.title) : domain.title;
+                  const slug = sectorName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                  return (
+                    <Link
+                      key={domain.id}
+                      to={`/sectors/${slug}`}
+                      className="sector-detail-row-item"
+                    >
+                      <span className="sector-detail-row-title">{sectorName}</span>
+                      <span className="sector-detail-row-arrow">→</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="domains-cta-bar">
+              <Link to="/sectors" className="button button-large">
+                <span className="button-text">{t('kat_explore_all')}</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ SECTION 7: DATA / STATS ═══════ */}
+      <section id="about" className="data-section">
+        <div className="padding-global padding-section-small">
+          <div className="container-medium">
+            <div className="data-component">
+              <div className="data-title-wrap">
+                <h2 className="heading-style-h4">
+                  {t('stats_title')}
+                </h2>
+                <p className="data-subtitle-text">
+                  {lang === 'en'
+                    ? 'Uncompromising commitment to capital deployment, operational precision, and long-term value creation across 12 strategic divisions.'
+                    : 'Kompromissloser Anspruch an Kapitalallokation, operative Präzision und langfristige Wertschöpfung in 12 strategischen Bereichen.'}
+                </p>
+              </div>
+              <div className="data-grid">
+                {statsList.map((stat, i) => {
+                  const statSubtext = [
+                    lang === 'en'
+                      ? 'Aggregated annual turnover generated across global subsidiaries.'
+                      : 'Aggregierter Jahresumsatz aller globalen Tochtergesellschaften.',
+                    lang === 'en'
+                      ? 'Specialized market leaders operating across Europe, Asia & Americas.'
+                      : 'Spezialisierte Marktführer in Europa, Asien und Amerika.',
+                    lang === 'en'
+                      ? 'Accelerated expansion in EV, Semiconductors & AI infrastructure.'
+                      : 'Beschleunigtes Wachstum in EV, Halbleitern & KI-Infrastruktur.'
+                  ];
+                  return (
+                    <div key={i} className="data-item">
+                      <div className="data-value">
+                        <AnimatedCounter
+                          value={stat.value}
+                          prefix={stat.prefix}
+                          suffix={stat.suffix}
+                          isDecimal={stat.value % 1 !== 0}
+                        />
+                      </div>
+                      <div className="data-label">{stat.label}</div>
+                      <div className="data-desc-line">{statSubtext[i]}</div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="data-cta-wrap">
+                <p className="text-size-medium text-weight-bold">{t('stat_cta_title')}</p>
+                <Link to="/contact" className="button button-small">
+                  <span className="button-text">{t('stat_cta_btn')}</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ SECTION 8: IN THE NEWS ═══════ */}
+      <section className="home-news-section">
+        <div className="home-news-tab">{t('news_tab')}</div>
+        <div className="padding-global padding-section-large">
+          <div className="container-large">
+            <div className="home-news-grid">
+              {/* Top row */}
+              <div className="home-news-row-top">
+                <div className="home-news-card news-featured-card">
+                  <div className="news-featured-image-side" style={getNewsSection().featured.imagePreview ? { backgroundImage: `url(${getNewsSection().featured.imagePreview})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+                    <div className="news-dots">
+                      <span className="news-dot"></span>
+                      <span className="news-dot active"></span>
+                      <span className="news-dot"></span>
+                    </div>
+                  </div>
+                  <div className="news-featured-content-side">
+                    <div className="news-tag">{lang === 'en' ? (getNewsSection().featured.tag_en || t('news_tag_press')) : (getNewsSection().featured.tag_de || t('news_tag_press'))}</div>
+                    <h3 className="news-title">{lang === 'en' ? (getNewsSection().featured.title_en || t('news_title_1')) : (getNewsSection().featured.title_de || t('news_title_1'))}</h3>
+                    <div className="news-body-line">
+                      <p className="news-desc">{lang === 'en' ? (getNewsSection().featured.desc_en || t('news_desc_1')) : (getNewsSection().featured.desc_de || t('news_desc_1'))}</p>
+                    </div>
+                    <div className="news-arrow">→</div>
+                  </div>
+                </div>
+                <div className="home-news-card news-facts-card" style={getNewsSection().facts.imagePreview ? { backgroundImage: `url(${getNewsSection().facts.imagePreview})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+                  <div className="news-tag">{lang === 'en' ? (getNewsSection().facts.tag_en || 'FACTS') : (getNewsSection().facts.tag_de || 'FAKTEN')}</div>
+                  <h3 className="news-title-large">{lang === 'en' ? (getNewsSection().facts.title_en || 'Did You Know') : (getNewsSection().facts.title_de || 'Wussten Sie schon')}</h3>
+                  <div className="news-body-line">
+                    <p>{lang === 'en' ? (getNewsSection().facts.body_en || '') : (getNewsSection().facts.body_de || '')}</p>
+                  </div>
+                  <div className="news-reload-icon">↻</div>
+                </div>
+              </div>
+              {/* Bottom row */}
+              <div className="home-news-row-bottom">
+                <div className="home-news-card news-social-card fb-card" style={getNewsSection().facebook.imagePreview ? { backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${getNewsSection().facebook.imagePreview})`, backgroundSize: 'cover', backgroundPosition: 'center', color: '#fff' } : {}}>
+                  <div className="social-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                  </div>
+                  <div className="news-body-line">
+                    <p>{lang === 'en' ? (getNewsSection().facebook.body_en || '') : (getNewsSection().facebook.body_de || '')}</p>
+                    <p className="news-hashtags">{getNewsSection().facebook.hashtags || '#ZebroldGroups #InnovationSummit #FutureTech2026'}</p>
+                  </div>
+                  <p className="news-date">{lang === 'en' ? (getNewsSection().facebook.date_en || '3 months ago') : (getNewsSection().facebook.date_de || 'Vor 3 Monaten')}</p>
+                  <div className="external-link-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </div>
+                </div>
+                <div className="home-news-card news-social-card ig-card" style={getNewsSection().instagram.imagePreview ? { backgroundImage: `linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url(${getNewsSection().instagram.imagePreview})`, backgroundSize: 'cover', backgroundPosition: 'center', color: '#fff' } : {}}>
+                  <div className="social-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                  </div>
+                  <div className="news-body-line">
+                    <p>{lang === 'en' ? (getNewsSection().instagram.body_en || '') : (getNewsSection().instagram.body_de || '')}</p>
+                    <p className="news-hashtags">{getNewsSection().instagram.hashtags || '#ZebroldGroups #TechSummit #Innovation2026'}</p>
+                  </div>
+                  <p className="news-date">{lang === 'en' ? (getNewsSection().instagram.date_en || '3 months ago') : (getNewsSection().instagram.date_de || 'Vor 3 Monaten')}</p>
+                  <div className="external-link-icon">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                      <polyline points="15 3 21 3 21 9"></polyline>
+                      <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div className="home-news-cta-wrap">
+                <Link to="/news" className="home-news-pill-btn">
+                  {t('news_all')}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ SECTION 9: ABOUT HORIZONTAL SCROLL + SPLIT OVERLAY ═══════ */}
+      <section className="about-home-section">
+        <div className="about-bg-image">
+          <img src={leadershipTeamImg} alt="Leadership" className="about-bg-img-inner" />
+          <div className="about-image-overlay"></div>
+        </div>
+        <div className="about-scroll-section">
+          <div className="about-scroll-sticky">
+            <h2 className="about-scroll-text">
+              {lang === 'en' ? (getAboutScroll().text_en || 'WORKING WITH YOU, NOT JUST FOR YOU') : (getAboutScroll().text_de || 'WIR ARBEITEN MIT IHNEN, NICHT NUR FÜR SIE')}
+            </h2>
+
+            <div className="about-split-overlay">
+              <div className="about-split-content">
+                <p>
+                  {lang === 'en'
+                    ? "We observe, listen, and build strategies that align with your reality. No templated models, no artificial layers: authentic, precise, and sustainable."
+                    : "Wir beobachten, hören zu und entwickeln Strategien, die Ihrer Realität entsprechen. Keine vorgefertigten Modelle, keine künstlichen Schichten: authentisch, präzise und nachhaltig."}
+                </p>
+                <p>
+                  {lang === 'en'
+                    ? "Zebrold was born from a simple idea: to empower the industries that move the world. Those with a clear vision, a dedicated team, and an eye for detail."
+                    : "Zebrold entstand aus einer einfachen Idee: die Industrien zu stärken, die die Welt bewegen. Diejenigen mit einer klaren Vision, einem engagierten Team und einem Auge fürs Detail."}
+                </p>
+                <p>
+                  {lang === 'en'
+                    ? "Our approach relies on exchange and observation. We take the time to understand your daily operations, what sets you apart, and what you aim to achieve."
+                    : "Unser Ansatz basiert auf Austausch und Beobachtung. Wir nehmen uns die Zeit, Ihre täglichen Abläufe zu verstehen, was Sie auszeichnet und was Sie erreichen wollen."}
+                </p>
+                <p>
+                  {lang === 'en'
+                    ? "We don't overplay anything. We just seek the right way to show who you are: sincere content, a coherent strategy, a clear identity. A framework that doesn't distort you, but reveals you."
+                    : "Wir spielen nichts vor. Wir suchen nur den richtigen Weg zu zeigen, wer Sie sind: aufrichtige Inhalte, eine kohärente Strategie, eine klare Identität. Ein Rahmen, der Sie nicht verzerrt, sondern Sie enthüllt."}
+                </p>
+                <p className="text-bold">
+                  {lang === 'en'
+                    ? "We understand your stakes, not just your requests."
+                    : "Wir verstehen Ihre Herausforderungen, nicht nur Ihre Anfragen."}
+                </p>
+              </div>
+              <div className="about-bottom-cta">
+                <Link to="/contact" className="about-bottom-btn">
+                  {lang === 'en' ? "Ready to advance?" : "Bereit voranzukommen?"}
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="cta-section">
+        <div className="padding-global padding-section-large">
+          <div className="container-medium">
+            <div className="cta-component">
+              <div className="caption" style={{ color: 'var(--color-cream)', opacity: 0.85 }}>
+                {t('cta_bottom_caption')}
+              </div>
+              <div className="cta-title-wrap">
+                <h2 className="heading-style-h3 cta-h3" style={{ color: '#ffffff', opacity: 1 }}>
+                  {t('cta_bottom_h3')}
+                </h2>
+                <div className="cta-big-text">{t('cta_bottom_big')}</div>
+              </div>
+              <div className="cta-bottom">
+                <div className="max-width-medium">
+                  <p className="cta-desc-text">
+                    {t('cta_bottom_desc')}
+                  </p>
+                </div>
+                <div className="cta-btn-group">
+                  <Link to="/contact" className="button is-beige">
+                    <span className="button-text">{t('cta_bottom_btn')}</span>
+                  </Link>
+                  <span className="cta-fine-print">{t('cta_bottom_fine')}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* ═══════ SECTION 10: FAQ ═══════ */}
+      <section className="faq-section">
+        <div className="padding-global padding-section-large">
+          <div className="container-large">
+            <div className="faq-component">
+              <div className="faq-left">
+                <div className="heading-wrapper">
+                  <div className="heading-title-wrapper">
+                    <div className="caption">{t('faq_caption')}</div>
+                    <div className="max-width-medium">
+                      <h2 className="heading-style-h2">
+                        {t('faq_h2')}
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="max-width-medium">
+                    <p className="text-size-small">
+                      {t('faq_desc')}
+                    </p>
+                  </div>
+                </div>
+                <div className="faq-list">
+                  {getFaqItems(t, lang).map((item, i) => (
+                    <FaqItem key={i} question={item.q} answer={item.a} index={i} />
                   ))}
                 </div>
               </div>
-              <div className="news-press-right">
-                <span className="press-tag">{PRESS_RELEASES[activePressIdx].category}</span>
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activePressIdx}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <h3 className="press-title">{PRESS_RELEASES[activePressIdx].title}</h3>
-                    <div className="press-quote-box">
-                      <p className="press-quote-text">
-                        {PRESS_RELEASES[activePressIdx].quote}
-                      </p>
-                    </div>
-                  </motion.div>
-                </AnimatePresence>
-                <div className="press-arrow">→</div>
+              <div className="faq-cta-card">
+                <Link to="/contact" className="faq-cta-link">
+                  <p className="text-size-medium text-weight-semibold">
+                    {t('faq_cta_text')}
+                  </p>
+                  <span className="faq-cta-contact">{t('faq_cta_btn')}</span>
+                </Link>
               </div>
             </div>
-
-            {/* Card 2: Facts "Did you know" (span 2) */}
-            <div className="news-card-facts">
-              <div className="facts-bg-glow" />
-              <div>
-                <span className="facts-tag">FACTS</span>
-                <h3 className="facts-title">Did you know</h3>
-              </div>
-              <div className="facts-quote-box">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeFactIdx}
-                    initial={{ opacity: 0, x: 10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <p className="facts-quote-text">
-                      {FACTS[activeFactIdx].text}
-                    </p>
-                    <p className="facts-quote-author">
-                      {FACTS[activeFactIdx].author}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-              <button
-                className="facts-cycle-btn"
-                onClick={() => setActiveFactIdx((prev) => (prev + 1) % FACTS.length)}
-                aria-label="Next fact"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M23 4v6h-6" />
-                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Card 3: Facebook (span 2) */}
-            <div className="news-card-fb">
-              <div className="social-icon-top">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-                </svg>
-              </div>
-              <div className="social-quote-box">
-                <p className="social-text">
-                  The excitement returns! Welcome to a new season of our global technology summit. The teams are ready and showcasing tomorrow's innovations. Are you? #ZebroldGroups #InnovationSummit #FutureTech2026
-                </p>
-                <span className="social-time">3 months ago</span>
-              </div>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-expand" aria-label="Open Facebook post">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-              </a>
-            </div>
-
-            {/* Card 4: Instagram (span 3) */}
-            <div className="news-card-ig">
-              <div className="social-icon-top">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-                </svg>
-              </div>
-              <div className="social-quote-box">
-                <p className="social-text">
-                  The wait is over. The excitement returns. Welcome back to a new season of #ZebroldSummit. The teams are ready. Are you? #ZebroldGroups #TechSummit #Innovation2026
-                </p>
-                <span className="social-time">3 months ago</span>
-              </div>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="social-expand" aria-label="Open Instagram post">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-              </a>
-            </div>
-
-          </div>
-
-          <div className="news-bottom-cta">
-            <Link to="/news" className="btn btn-premium-pill" id="home-news-cta">
-              View all news & announcements <span className="arrow">→</span>
-            </Link>
           </div>
         </div>
       </section>

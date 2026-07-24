@@ -1,0 +1,261 @@
+.job-details-page {
+  background-color: var(--color-surface);
+  min-height: 100vh;
+  padding-bottom: 6rem;
+  color: var(--color-gray-900);
+  font-family: var(--font-body);
+}
+
+.job-details-page.not-found {
+  padding-top: calc(var(--navbar-h) + 4rem);
+  text-align: center;
+  background-color: var(--color-surface);
+  color: var(--color-gray-900);
+  min-height: 100vh;
+}
+
+.job-details-page.not-found h2 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Header */
+.job-details-header {
+  padding-top: calc(var(--navbar-h) + 4rem);
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.job-breadcrumbs {
+  font-size: 0.85rem;
+  color: var(--color-gray-500);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.job-breadcrumbs a {
+  color: var(--color-gray-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.job-breadcrumbs a:hover {
+  color: var(--color-gray-900);
+}
+
+.job-details-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+  color: var(--color-gray-900);
+}
+
+.job-details-meta {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  font-size: 0.95rem;
+  color: var(--color-gray-600);
+}
+
+.job-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Split Layout */
+.job-details-split-section {
+  padding-top: 4rem;
+}
+
+.job-split-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+}
+
+@media screen and (min-width: 992px) {
+  .job-split-layout {
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+  }
+}
+
+/* Left side JD */
+.job-description-block h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-gray-900);
+}
+
+.job-quick-facts {
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  color: var(--color-gray-700);
+}
+
+.job-quick-facts p {
+  margin-bottom: 0.5rem;
+}
+
+.section-subheading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  color: var(--color-gray-900);
+}
+
+.job-description-block p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-gray-700);
+  margin-bottom: 1.5rem;
+}
+
+.job-req-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.job-req-list li {
+  font-size: 1rem;
+  color: var(--color-gray-700);
+  line-height: 1.5;
+}
+
+/* Right side Form */
+.inline-app-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.9rem;
+  color: var(--color-gray-900);
+}
+
+.req-star {
+  color: #d32f2f;
+}
+
+.form-input,
+.form-textarea {
+  width: 100%;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--color-gray-900);
+  transition: border-color 0.2s;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-gray-900);
+}
+
+.form-textarea {
+  resize: vertical;
+}
+
+/* CV attach */
+.cv-attach-btn {
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: var(--color-gray-900);
+  background-color: var(--color-white);
+}
+
+.cv-attach-btn:hover {
+  background-color: var(--color-gray-100);
+}
+
+.cv-attach-btn.is-dragover {
+  background-color: var(--color-gray-200);
+  border-color: var(--color-gray-900);
+}
+
+.cv-help-text {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+  margin-top: 0.25rem;
+}
+
+.cv-file-attached {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  background-color: var(--color-white);
+}
+
+.cv-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cv-file-name {
+  font-size: 0.9rem;
+  color: var(--color-gray-900);
+}
+
+.cv-file-remove {
+  background: transparent;
+  border: none;
+  color: var(--color-gray-900);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* Submit button */
+.submit-app-btn {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--color-wine);
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-top: 1rem;
+}
+
+.submit-app-btn:hover {
+  opacity: 0.9;
+}
+
+.submit-app-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

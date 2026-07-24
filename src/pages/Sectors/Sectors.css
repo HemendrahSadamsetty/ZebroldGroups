@@ -1,6 +1,6 @@
-.sectors-page { background-color: var(--color-off-white); }
-.sectors-hero { background: linear-gradient(135deg, var(--color-black) 0%, var(--color-blue-900) 100%); }
-.sectors-main { background-color: var(--color-off-white); }
+.sectors-page { background-color: var(--color-surface); }
+.sectors-hero { background: linear-gradient(135deg, var(--color-black) 0%, var(--color-wine-dark) 100%); }
+.sectors-main { background-color: var(--color-surface); }
 
 .sector-filters {
   display: flex;
@@ -14,29 +14,29 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.45rem 1.1rem;
-  border: 1px solid var(--color-gray-100);
+  border: 1px solid var(--color-border);
   border-radius: 99px;
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 500;
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
   background-color: var(--color-white);
   transition: all var(--duration-fast) var(--ease-out-expo);
 }
 
 .sector-filter-btn:hover {
-  border-color: var(--color-blue-400);
-  color: var(--color-blue-800);
+  border-color: var(--color-wine);
+  color: var(--color-wine);
 }
 
 .sector-filter-btn.active {
-  background-color: var(--color-blue-900);
-  border-color: var(--color-blue-900);
+  background-color: var(--color-wine);
+  border-color: var(--color-wine);
   color: var(--color-white);
 }
 
 .sector-filter-count {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.75rem;
   opacity: 0.7;
 }
@@ -51,24 +51,24 @@
 /* ── Accordion ── */
 .sector-accordion {
   background-color: var(--color-white);
-  border: 1px solid var(--color-gray-100);
-  border-radius: 6px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
   overflow: hidden;
 }
 
 .sector-accordion-heading {
   font-family: var(--font-body);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.8125rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
   padding: 1.25rem 1.75rem;
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .sector-accordion-item {
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .sector-accordion-item:last-child { border-bottom: none; }
@@ -86,10 +86,10 @@
 .sector-accordion-trigger:hover { background-color: var(--color-surface); }
 
 .sector-accordion-name {
-  font-family: var(--font-body);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 1rem;
-  color: var(--color-blue-900);
+  color: var(--color-wine);
 }
 
 .sector-accordion-meta {
@@ -101,17 +101,18 @@
 
 .sector-accordion-wc {
   font-size: 0.9rem;
-  color: var(--color-gold);
+  color: var(--color-wine);
+  font-weight: 600;
 }
 
 .sector-accordion-count {
   font-size: 0.8125rem;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
 }
 
 .sector-accordion-chevron {
   font-size: 0.8rem;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
   transition: transform var(--duration-fast) var(--ease-out-expo);
 }
 
@@ -127,8 +128,8 @@
 
 .sector-acc-company {
   padding: 1.5rem 1.75rem;
-  border-top: 1px solid var(--color-gray-100);
-  background-color: var(--color-off-white);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-surface);
 }
 
 .sector-acc-co-header {
@@ -141,20 +142,20 @@
 }
 
 .sector-acc-co-name {
-  font-family: var(--font-body);
-  font-weight: 500;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 1rem;
-  color: var(--color-blue-900);
+  color: var(--color-wine);
 }
 
 .sector-acc-co-hq {
   font-size: 0.8125rem;
-  color: var(--color-gray-300);
+  color: var(--color-text-secondary);
 }
 
 .sector-acc-co-desc {
   font-size: 0.9rem;
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
   line-height: 1.65;
   margin-bottom: 0.75rem;
 }
@@ -162,13 +163,13 @@
 .sector-acc-co-stats {
   display: flex;
   gap: 2rem;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.8125rem;
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary);
   flex-wrap: wrap;
 }
 
-.sector-acc-co-stats strong { color: var(--color-blue-900); }
+.sector-acc-co-stats strong { color: var(--color-wine); }
 
 @media (max-width: 1024px) { .sector-cards-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) {

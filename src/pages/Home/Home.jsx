@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../../context/LanguageContext';
-import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker } from '../../utils/homepageData';
+import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker, getWhatWeDo } from '../../utils/homepageData';
 import { sendContactEmail } from '../../services/emailService';
 import './Home.css';
 import heroBg1 from '../../assets/hero_bg_meridian.png';
@@ -28,6 +28,91 @@ import leadershipTeamImg from '../../assets/leadership_team_zebrold.jpg';
 gsap.registerPlugin(ScrollTrigger);
 /* ── Data ── */
 const BRAND_LETTERS = ['Z', 'E', 'B', 'R', 'O', 'L', 'D'];
+const WWD_ITEMS_EN = [
+  {
+    col: 1,
+    items: [
+      { title: 'EV CHARGING & BATTERIES', path: '/sectors/ev-charging-battery' },
+      { title: 'SEMICONDUCTOR MANUFACTURING', path: '/sectors/semiconductors' },
+      { title: 'AUTOMOTIVE MANUFACTURING', path: '/sectors/car-manufacturing' },
+      { title: 'PRECISION ENGINEERING', path: '/sectors/industrial-engineering' },
+      { title: 'CLEAN ENERGY GRIDS', path: '/sectors/ev-charging-battery' },
+    ],
+  },
+  {
+    col: 2,
+    items: [
+      { title: 'HEALTHCARE & PHARMA', path: '/sectors/healthcare-pharma' },
+      { title: 'DIGITAL EDUCATION PLATFORMS', path: '/sectors/education' },
+      { title: 'MEDICAL TECHNOLOGY', path: '/sectors/healthcare-pharma' },
+      { title: 'INSTITUTIONAL GOVERNANCE', path: '/sectors' },
+      { title: 'HUMAN CAPITAL DEVELOPMENT', path: '/sectors/education' },
+    ],
+  },
+  {
+    col: 3,
+    items: [
+      { title: 'TECHNOLOGY & IT SYSTEMS', path: '/sectors/technology-it' },
+      { title: 'LOGISTICS & SUPPLY CHAIN', path: '/sectors/logistics-supply-chain' },
+      { title: 'RETAIL & CONSUMER GOODS', path: '/sectors/retail-consumer' },
+      { title: 'CLOUD & DIGITAL INFRASTRUCTURE', path: '/sectors/technology-it' },
+      { title: 'GLOBAL DISTRIBUTION NETWORKS', path: '/sectors/logistics-supply-chain' },
+    ],
+  },
+  {
+    col: 4,
+    items: [
+      { title: 'INDUSTRIAL & HEAVY ENGINEERING', path: '/sectors/industrial-engineering' },
+      { title: 'FINANCIAL CAPITAL & INVESTMENTS', path: '/sectors/finance-investment' },
+      { title: 'MEDIA & ENTERTAINMENT', path: '/sectors/media-entertainment' },
+      { title: 'ASSET ALLOCATION & M&A', path: '/sectors/finance-investment' },
+      { title: 'STRATEGISCHE TRANSFORMATION', path: '/sectors' },
+    ],
+  },
+];
+
+const WWD_ITEMS_DE = [
+  {
+    col: 1,
+    items: [
+      { title: 'EV-LADE- & BATTERIESYSTEME', path: '/sectors/ev-charging-battery' },
+      { title: 'HALBLEITERFERTIGUNG', path: '/sectors/semiconductors' },
+      { title: 'AUTOMOBILBAU & FAHRZEUGE', path: '/sectors/car-manufacturing' },
+      { title: 'PRÄZISIONSTECHNIK', path: '/sectors/industrial-engineering' },
+      { title: 'SAUBERE ENERGIEINFRASTRUKTUR', path: '/sectors/ev-charging-battery' },
+    ],
+  },
+  {
+    col: 2,
+    items: [
+      { title: 'GESUNDHEITSWESEN & PHARMA', path: '/sectors/healthcare-pharma' },
+      { title: 'DIGITALE BILDUNGSPLATTFORMEN', path: '/sectors/education' },
+      { title: 'MEDIZINTECHNIK & LIFE SCIENCES', path: '/sectors/healthcare-pharma' },
+      { title: 'INSTITUTIONELLE GOVERNANCE', path: '/sectors' },
+      { title: 'HUMANKAPITAL-ENTWICKLUNG', path: '/sectors/education' },
+    ],
+  },
+  {
+    col: 3,
+    items: [
+      { title: 'IT- & TECHNOLOGIESYSTEME', path: '/sectors/technology-it' },
+      { title: 'LOGISTIK & LIEFERKETTE', path: '/sectors/logistics-supply-chain' },
+      { title: 'EINZELHANDEL & KONSUMGÜTER', path: '/sectors/retail-consumer' },
+      { title: 'CLOUD- & DIGITALINFRASTRUKTUR', path: '/sectors/technology-it' },
+      { title: 'GLOBALE VERTRIEBSNETZE', path: '/sectors/logistics-supply-chain' },
+    ],
+  },
+  {
+    col: 4,
+    items: [
+      { title: 'INDUSTRIE & MASCHINENBAU', path: '/sectors/industrial-engineering' },
+      { title: 'FINANZEN & INVESTITIONEN', path: '/sectors/finance-investment' },
+      { title: 'MEDIEN & UNTERHALTUNG', path: '/sectors/media-entertainment' },
+      { title: 'KAPITALALLOKATION & M&A', path: '/sectors/finance-investment' },
+      { title: 'STRATEGISCHE TRANSFORMATION', path: '/sectors' },
+    ],
+  },
+];
 const COMPANY_TICKER_ITEMS = [
   { name: 'Country Health', logo: countryHealthLogo, country: 'Düsseldorf, Deutschland', sector: 'Gesundheitswesen & Pharma' },
   { name: 'Instructis', logo: instructisLogo, country: 'Hyderabad, Indien', sector: 'Bildung & Karriere' },
@@ -602,73 +687,46 @@ export default function Home() {
         },
       });
 
-      /* ── 4. Expertise section reveals ── */
-      // Heading
-      gsap.fromTo('.expertise-section .heading-wrapper',
-        { opacity: 0, y: 60 },
+      /* ── 4. What We Do section reveals ── */
+      gsap.fromTo('.wwd-word-we',
+        { x: -50, opacity: 0 },
         {
-          opacity: 1, y: 0,
-          duration: 1,
-          ease: 'power3.out',
+          x: 0, opacity: 1, duration: 0.9, ease: 'power3.out',
           scrollTrigger: {
-            trigger: '.expertise-section .heading-wrapper',
+            trigger: '.what-we-do-section',
             start: 'top 80%',
             toggleActions: 'play none none none',
           },
         }
       );
-      /* ── 4b. Sticky Envelope Card Stacking Animation ── */
-      const expCards = gsap.utils.toArray('.exp-card-row');
-      expCards.forEach((card, i) => {
-        // Scale down & dim current card as next card comes up over it like an envelope layer
-        if (i < expCards.length - 1) {
-          gsap.to(card, {
-            scale: 0.92,
-            opacity: 0.45,
-            filter: 'blur(4px)',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: expCards[i + 1],
-              start: 'top 90%',
-              end: 'top 100px',
-              scrub: true,
-            },
-          });
-        }
-      });
-      /* ── 5. Case title & marquee ── */
-      const caseTitleTL = gsap.timeline({
-        scrollTrigger: {
-          trigger: '.case-title-section',
-          start: 'top 75%',
-          toggleActions: 'play none none none',
-        },
-      });
-      caseTitleTL
-        .fromTo('.case-title-section .caption',
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out' }
-        )
-        .fromTo('.case-title-section .heading-style-h2',
-          { y: 50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
-          0.1
-        )
-        .fromTo('.case-title-section .text-size-small',
-          { y: 30, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, ease: 'power2.out' },
-          0.3
-        );
-      /* ── 7. Domain words list stagger ── */
-      gsap.fromTo('.domain-word-item',
-        { y: 30, opacity: 0 },
+      gsap.fromTo('.wwd-word-what',
+        { scale: 0.8, opacity: 0 },
         {
-          y: 0, opacity: 1,
-          duration: 0.5,
-          stagger: 0.04,
-          ease: 'power3.out',
+          scale: 1, opacity: 1, duration: 1.1, ease: 'power3.out', delay: 0.1,
           scrollTrigger: {
-            trigger: '.domains-words-list',
+            trigger: '.what-we-do-section',
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      gsap.fromTo('.wwd-word-do',
+        { x: 50, opacity: 0 },
+        {
+          x: 0, opacity: 1, duration: 0.9, ease: 'power3.out', delay: 0.2,
+          scrollTrigger: {
+            trigger: '.what-we-do-section',
+            start: 'top 80%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+      gsap.fromTo('.wwd-item-row',
+        { y: 20, opacity: 0 },
+        {
+          y: 0, opacity: 1, duration: 0.5, stagger: 0.03, ease: 'power2.out', delay: 0.3,
+          scrollTrigger: {
+            trigger: '.wwd-grid',
             start: 'top 85%',
             toggleActions: 'play none none none',
           },
@@ -985,145 +1043,35 @@ export default function Home() {
 
 
 
-      {/* ═══════ SECTION 3: EXPERTISE (SINGLE LAYOUT, CARD GRID) ═══════ */}
-      <section className="expertise-section">
+      {/* ═══════ WHAT WE DO SECTION (REPLACES EXPERTISE & DOMAINS) ═══════ */}
+      <section className="what-we-do-section">
         <div className="padding-global padding-section-large">
           <div className="container-large">
-            <div className="heading-wrapper">
-              <div className="caption">{t('exp_caption')}</div>
-              <div className="heading-title-wrapper">
-                <div className="max-width-large">
-                  <h2 className="heading-style-h2">
-                    {t('exp_title')}
-                  </h2>
-                </div>
-              </div>
-              <div className="max-width-medium">
-                <p className="text-size-small">
-                  {t('exp_sub')}
-                </p>
+            {/* Giant Interlocking Typography "WE WHAT DO" */}
+            <div className="wwd-header">
+              <div className="wwd-title-wrap">
+                <span className="wwd-word-we">WE</span>
+                <span className="wwd-word-what">WHAT</span>
+                <span className="wwd-word-do">DO</span>
               </div>
             </div>
-            {/* All cards in one single layout */}
-            <div className="exp-cards-list">
-              {expertiseItems.map((item, idx) => (
-                <div
-                  key={item.id}
-                  id={item.id}
-                  className={`exp-card-row exp-card-reveal ${idx === 0 || idx === 2 ? 'exp-card-row--brown' : ''}`}
-                >
-                  {/* Left: text card */}
-                  <div className="exp-card-text-block">
-                    <span className="exp-card-pill">{item.caption}</span>
-                    <h3 className="exp-card-heading">{item.title}</h3>
-                    <p className="exp-card-body">{item.body}</p>
-                    <div className="exp-card-cta">
-                      <Link to={item.ctaPath} className="button">
-                        <span className="button-text">{item.cta}</span>
-                      </Link>
-                    </div>
-                  </div>
-                  {/* Right: image */}
-                  <div className="exp-card-image-block">
-                    {item.id === 'global-presence' ? (
-                      <div className="continent-list-container">
-                        <div className="continent-group-card">
-                          <div className="continent-card-header">
-                            <span className="continent-badge">Europa</span>
-                            <span className="continent-role">{lang === 'en' ? 'Global HQ & High-Tech Manufacturing' : 'Globaler Hauptsitz & High-Tech Fertigung'}</span>
-                          </div>
-                          <div className="continent-cities-footer">
-                            <h4 className="continent-cities">München & Dresden</h4>
-                            <p className="continent-countries">{lang === 'en' ? 'Germany' : 'Deutschland'}</p>
-                          </div>
-                        </div>
-                        <div className="continent-group-card">
-                          <div className="continent-card-header">
-                            <span className="continent-badge">APAC (Asia-Pacific)</span>
-                            <span className="continent-role">{lang === 'en' ? 'APAC Operational Hub & Engineering' : 'APAC-Betriebszentrale & Engineering'}</span>
-                          </div>
-                          <div className="continent-cities-footer">
-                            <h4 className="continent-cities">Sydney & Bangalore</h4>
-                            <p className="continent-countries">{lang === 'en' ? 'Australia / India' : 'Australien / Indien'}</p>
-                          </div>
-                        </div>
-                        <div className="continent-group-card">
-                          <div className="continent-card-header">
-                            <span className="continent-badge">Americas</span>
-                            <span className="continent-role">{lang === 'en' ? 'Americas Hub & Capital Allocation' : 'Americas Hub & Capital Allocation'}</span>
-                          </div>
-                          <div className="continent-cities-footer">
-                            <h4 className="continent-cities">New York</h4>
-                            <p className="continent-countries">USA</p>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="exp-card-img-wrap">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="exp-card-img"
-                          loading="lazy"
-                        />
-                        <div className="exp-card-img-overlay" />
-                      </div>
-                    )}
-                  </div>
+
+            {/* 4-Column Grid with Hairline Rows */}
+            <div className="wwd-grid">
+              {(lang === 'de' ? WWD_ITEMS_DE : WWD_ITEMS_EN).map((colGroup, colIdx) => (
+                <div key={colIdx} className="wwd-column">
+                  {colGroup.items.map((item, itemIdx) => (
+                    <Link
+                      key={itemIdx}
+                      to={item.path}
+                      className="wwd-item-row"
+                    >
+                      <span className="wwd-item-text">{item.title}</span>
+                      <span className="wwd-item-arrow">→</span>
+                    </Link>
+                  ))}
                 </div>
               ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ SECTION 4: DOMAINS SHOWCASE ═══════ */}
-      <section className="domains-showcase-section">
-        <div className="padding-global padding-section-large">
-          <div className="container-large">
-            <div className="heading-wrapper is-center">
-              <div className="heading-title-wrapper is-center">
-                <div className="caption">{t('kat_caption')}</div>
-                <div className="max-width-large">
-                  <h2 className="heading-style-h2">
-                    {t('kat_title')}
-                  </h2>
-                </div>
-              </div>
-              <div className="max-width-medium">
-                <p className="text-size-small">
-                  {t('kat_desc')}
-                </p>
-              </div>
-            </div>
-
-            {/* Sector Detail Card (Reference Screenshot Layout) */}
-            <div className="sector-detail-card-container">
-              <div className="sector-detail-header">
-                <span>SECTOR DETAIL</span>
-              </div>
-              <div className="sector-detail-list">
-                {getDomains().map((domain) => {
-                  const sectorName = lang === 'en' ? (domain.subtitle || domain.title) : domain.title;
-                  const slug = sectorName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                  return (
-                    <Link
-                      key={domain.id}
-                      to={`/sectors/${slug}`}
-                      className="sector-detail-row-item"
-                    >
-                      <span className="sector-detail-row-title">{sectorName}</span>
-                      <span className="sector-detail-row-arrow">→</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="domains-cta-bar">
-              <Link to="/sectors" className="button button-large">
-                <span className="button-text">{t('kat_explore_all')}</span>
-              </Link>
             </div>
           </div>
         </div>
@@ -1285,6 +1233,9 @@ export default function Home() {
 
             <div className="about-split-overlay">
               <div className="about-split-content">
+                <span className="about-split-badge">
+                  {lang === 'en' ? 'OUR PHILOSOPHY & STRATEGY' : 'UNSERE PHILOSOPHIE & STRATEGIE'}
+                </span>
                 <p>
                   {lang === 'en'
                     ? "We observe, listen, and build strategies that align with your reality. No templated models, no artificial layers: authentic, precise, and sustainable."
@@ -1310,13 +1261,115 @@ export default function Home() {
                     ? "We understand your stakes, not just your requests."
                     : "Wir verstehen Ihre Herausforderungen, nicht nur Ihre Anfragen."}
                 </p>
-              </div>
-              <div className="about-bottom-cta">
-                <Link to="/contact" className="about-bottom-btn">
-                  {lang === 'en' ? "Ready to advance?" : "Bereit voranzukommen?"}
-                </Link>
+                <div className="about-split-pillars">
+                  <span>26 Subsidiaries</span>
+                  <span className="pillar-dot">•</span>
+                  <span>12 Sectors</span>
+                  <span className="pillar-dot">•</span>
+                  <span>German Engineering Rigour</span>
+                </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ SECTION 9B: CORPORATE GOVERNANCE / ABOUT US ═══════ */}
+      <section className="corporate-about-section" id="governance">
+        <div className="padding-global padding-section-large">
+          <div className="container-large">
+
+            {/* Section Header */}
+            <div className="corp-about-header">
+              <span className="corp-about-eyebrow">
+                {lang === 'en' ? 'ABOUT US' : 'ÜBER UNS'}
+              </span>
+              <h2 className="corp-about-title">
+                Zebrold International
+                <em> Holdings Limited</em>
+              </h2>
+              <p className="corp-about-desc">
+                {lang === 'en'
+                  ? 'A globally diversified holding company headquartered in Frankfurt am Main, Germany, operating across 12 strategic sectors through 26 market-leading subsidiaries on three continents.'
+                  : 'Ein global diversifiziertes Holdinggesellschaft mit Sitz in Frankfurt am Main, Deutschland, tätig in 12 strategischen Sektoren durch 26 marktführende Tochtergesellschaften auf drei Kontinenten.'}
+              </p>
+            </div>
+
+            {/* Board of Directors */}
+            <div className="corp-board-wrap">
+              <div className="corp-table-header-row">
+                <div className="corp-table-label">
+                  <div className="corp-table-label-line" />
+                  <span>{lang === 'en' ? 'Board of Directors' : 'Vorstand'}</span>
+                </div>
+              </div>
+              <div className="corp-board-grid">
+                {[
+                  { initials: 'HKS', role: lang === 'en' ? 'Chairman' : 'Vorsitzender', name: 'Hemendrah Kumar Sadamsetty', bio: lang === 'en' ? 'Founding Chairman and principal architect of the Zebrold Group, overseeing strategic direction across all global subsidiaries and institutional governance.' : 'Gründungsvorsitzender und Hauptarchitekt der Zebrold Group, verantwortlich für die strategische Ausrichtung aller globalen Tochtergesellschaften.', highlight: true },
+                  { initials: 'SH', role: lang === 'en' ? 'Chief Executive Officer' : 'Vorstandsvorsitzender', name: 'Stakwe Haplene', bio: lang === 'en' ? 'Group CEO responsible for operational leadership, portfolio performance, and cross-sector strategic execution across European and global markets.' : 'Gruppen-CEO verantwortlich für operative Führung, Portfolio-Performance und sektorübergreifende strategische Ausführung.' },
+                  { initials: 'IRM', role: lang === 'en' ? 'Managing Director' : 'Geschäftsführer', name: 'Indu Reddy Morthala', bio: lang === 'en' ? 'Group Managing Director overseeing day-to-day operations, compliance frameworks, and subsidiary coordination across the Zebrold Group portfolio.' : 'Geschäftsführer der Gruppe, zuständig für den täglichen Betrieb, Compliance-Frameworks und die Koordination der Tochtergesellschaften.' },
+                ].map((person, i) => (
+                  <div key={i} className={`corp-board-card${person.highlight ? ' corp-board-card--chairman' : ''}`}>
+                    <div className="corp-board-monogram">{person.initials}</div>
+                    <div className="corp-board-card-inner">
+                      <div className="corp-board-role-badge">{person.role}</div>
+                      <h3 className="corp-board-name">{person.name}</h3>
+                      <p className="corp-board-bio">{person.bio}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Subsidiary Leadership Table */}
+            <div className="corp-subsidiary-wrap">
+              <div className="corp-table-header-row">
+                <div className="corp-table-label">
+                  <div className="corp-table-label-line" />
+                  <span>{lang === 'en' ? 'Subsidiary Companies — CEOs & Managing Directors' : 'Tochtergesellschaften — CEOs & Geschäftsführer'}</span>
+                </div>
+                <span className="corp-table-count">18 {lang === 'en' ? 'Companies' : 'Unternehmen'}</span>
+              </div>
+              <div className="corp-subs-table">
+                <div className="corp-subs-thead">
+                  <div className="corp-subs-th corp-subs-th--company">{lang === 'en' ? 'Company' : 'Unternehmen'}</div>
+                  <div className="corp-subs-th">CEO</div>
+                  <div className="corp-subs-th">{lang === 'en' ? 'Managing Director' : 'Geschäftsführer'}</div>
+                </div>
+                <div className="corp-subs-tbody">
+                  {[
+                    { company: 'Everstone Energy', ceo: 'Dr. Klaus Mehringer', md: 'Ms. Priya Venkatesh' },
+                    { company: 'Northvolt Power', ceo: 'Mr. Lars Bergström', md: 'Mr. Rajiv Srinivasan' },
+                    { company: 'Meridian Microelectronics', ceo: 'Prof. Dr. Andrea Fischmann', md: 'Mr. Suresh Ramachandran' },
+                    { company: 'Silicon Crest Technologies', ceo: 'Dr. Maara Krishnamurthy', md: 'Mr. Thomas Kleinhans' },
+                    { company: 'Redford Automotive', ceo: 'Mr. Sebastian Wirth', md: 'Ms. Ananya Reddy' },
+                    { company: 'Westbridge Motors', ceo: 'Mr. Jonathan Hartley', md: 'Mr. Vikram Nair' },
+                    { company: 'PrimeMart Retail', ceo: 'Ms. Helena Brandt', md: 'Mr. Arun Pillai' },
+                    { company: 'UrbanBasket Stores', ceo: 'Mr. Felix Gruber', md: 'Ms. Deepa Iyer' },
+                    { company: 'Brighton Education Group', ceo: 'Dr. Sophie Lindqvist', md: 'Mr. Arjun Krishnan' },
+                    { company: 'Clearpath Learning', ceo: 'Ms. Nadia Schulz', md: 'Dr. Kiran Subramanian' },
+                    { company: 'Instructis Career', ceo: 'Ms. Priya Malhotra', md: 'Mr. Hemendrah Kumar Sadamsetty' },
+                    { company: 'Skybridge Technologies', ceo: 'Mr. Rahul Banerjee', md: 'Ms. Christine Hofer' },
+                    { company: 'Arden Digital Solutions', ceo: 'Ms. Preethi Nambiar', md: 'Mr. Markus Steiner' },
+                    { company: 'Sterling Financial Services', ceo: 'Mr. Aditya Mehta', md: 'Ms. Katarina Vogt' },
+                    { company: 'Harrington Capital Group', ceo: 'Mr. James Harrington IV', md: 'Dr. Anand Subramaniam' },
+                    { company: 'Oakwell Healthcare', ceo: 'Dr. Ramesh Padmanabhan', md: 'Dr. Ingrid Bauer' },
+                    { company: 'Greenford Pharmaceuticals', ceo: 'Dr. Sanjay Kulkarni', md: 'Dr. Petra Zimmermann' },
+                    { company: 'PrimeRoute Logistics', ceo: 'Mr. Sanjiv Kapoor', md: 'Ms. Birgit Hoffmann' },
+                  ].map((row, i) => (
+                    <div key={i} className="corp-subs-row">
+                      <div className="corp-subs-td corp-subs-td--company">
+                        <span className="corp-subs-num">{String(i + 1).padStart(2, '0')}</span>
+                        <span className="corp-subs-company-name">{row.company}</span>
+                      </div>
+                      <div className="corp-subs-td">{row.ceo}</div>
+                      <div className="corp-subs-td">{row.md}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

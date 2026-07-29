@@ -102,6 +102,8 @@ export const translations = {
     footer_privacy: "Datenschutz",
     footer_imprint: "Impressum",
     footer_terms: "Nutzungsbedingungen",
+    footer_hq: "Hauptsitz",
+    footer_address: "Bockenheimer Landstrasse 17-19, 60325 Frankfurt am Main, Germany",
   },
 
   en: {
@@ -205,5 +207,7 @@ export const translations = {
     footer_privacy: "Privacy Policy",
     footer_imprint: "Legal Notice",
     footer_terms: "Terms of Use",
+    footer_hq: "Global Headquarters",
+    footer_address: "Bockenheimer Landstrasse 17-19, 60325 Frankfurt am Main, Germany",
   }
 };

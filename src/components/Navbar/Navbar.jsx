@@ -15,7 +15,7 @@ export default function Navbar() {
   const navLinks = [
     { label: t('nav_business'), path: '/sectors', hasDropdown: true },
     { label: t('nav_portfolio'), path: '/subsidiaries', hasDropdown: true },
-    { label: t('nav_about'), path: '/#about', hasDropdown: false },
+    { label: t('nav_about'), path: '/about', hasDropdown: false },
     { label: t('nav_news'), path: '/news', hasDropdown: false },
     { label: t('nav_offices'), path: '/offices', hasDropdown: false },
     { label: t('nav_careers'), path: '/careers', hasDropdown: false },

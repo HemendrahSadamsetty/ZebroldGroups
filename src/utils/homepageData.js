@@ -297,9 +297,74 @@ export { SECTION_ORDER_DEFAULTS };
 /* ══════════════════════════════════════════════════════
    COMPANY TICKER / LOGOS SLIDER
    ══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   WHAT WE DO (WE WHAT DO 4-COLUMN GRID)
+   ══════════════════════════════════════════════════════ */
+const WHAT_WE_DO_DEFAULTS = [
+  {
+    col: 1,
+    title_en: 'INDUSTRIAL & MOBILITY',
+    title_de: 'INDUSTRIE & MOBILITÄT',
+    items: [
+      { title_en: 'EV CHARGING & BATTERIES', title_de: 'EV-LADE- & BATTERIESYSTEME', path: '/sectors/ev-charging-battery' },
+      { title_en: 'SEMICONDUCTOR MANUFACTURING', title_de: 'HALBLEITERFERTIGUNG', path: '/sectors/semiconductors' },
+      { title_en: 'AUTOMOTIVE MANUFACTURING', title_de: 'AUTOMOBILBAU & FAHRZEUGE', path: '/sectors/car-manufacturing' },
+      { title_en: 'PRECISION ENGINEERING', title_de: 'PRÄZISIONSTECHNIK', path: '/sectors/industrial-engineering' },
+      { title_en: 'CLEAN ENERGY GRIDS', title_de: 'SAUBERE ENERGIEINFRASTRUKTUR', path: '/sectors/ev-charging-battery' },
+    ],
+  },
+  {
+    col: 2,
+    title_en: 'HEALTHCARE & EDUCATION',
+    title_de: 'GESUNDHEIT & BILDUNG',
+    items: [
+      { title_en: 'HEALTHCARE & PHARMA', title_de: 'GESUNDHEITSWESEN & PHARMA', path: '/sectors/healthcare-pharma' },
+      { title_en: 'DIGITAL EDUCATION PLATFORMS', title_de: 'DIGITALE BILDUNGSPLATTFORMEN', path: '/sectors/education' },
+      { title_en: 'MEDICAL TECHNOLOGY', title_de: 'MEDIZINTECHNIK & LIFE SCIENCES', path: '/sectors/healthcare-pharma' },
+      { title_en: 'INSTITUTIONAL GOVERNANCE', title_de: 'INSTITUTIONELLE GOVERNANCE', path: '/sectors' },
+      { title_en: 'HUMAN CAPITAL DEVELOPMENT', title_de: 'HUMANKAPITAL-ENTWICKLUNG', path: '/sectors/education' },
+    ],
+  },
+  {
+    col: 3,
+    title_en: 'TECH, LOGISTICS & RETAIL',
+    title_de: 'TECH, LOGISTIK & HANDEL',
+    items: [
+      { title_en: 'TECHNOLOGY & IT SYSTEMS', title_de: 'IT- & TECHNOLOGIESYSTEME', path: '/sectors/technology-it' },
+      { title_en: 'LOGISTICS & SUPPLY CHAIN', title_de: 'LOGISTIK & LIEFERKETTE', path: '/sectors/logistics-supply-chain' },
+      { title_en: 'RETAIL & CONSUMER GOODS', title_de: 'EINZELHANDEL & KONSUMGÜTER', path: '/sectors/retail-consumer' },
+      { title_en: 'CLOUD & DIGITAL INFRASTRUCTURE', title_de: 'CLOUD- & DIGITALINFRASTRUKTUR', path: '/sectors/technology-it' },
+      { title_en: 'GLOBAL DISTRIBUTION NETWORKS', title_de: 'GLOBALE VERTRIEBSNETZE', path: '/sectors/logistics-supply-chain' },
+    ],
+  },
+  {
+    col: 4,
+    title_en: 'CAPITAL & STRATEGY',
+    title_de: 'KAPITAL & STRATEGIE',
+    items: [
+      { title_en: 'INDUSTRIAL & HEAVY ENGINEERING', title_de: 'INDUSTRIE & MASCHINENBAU', path: '/sectors/industrial-engineering' },
+      { title_en: 'FINANCIAL CAPITAL & INVESTMENTS', title_de: 'FINANZEN & INVESTITIONEN', path: '/sectors/finance-investment' },
+      { title_en: 'MEDIA & ENTERTAINMENT', title_de: 'MEDIEN & UNTERHALTUNG', path: '/sectors/media-entertainment' },
+      { title_en: 'ASSET ALLOCATION & M&A', title_de: 'KAPITALALLOKATION & M&A', path: '/sectors/finance-investment' },
+      { title_en: 'STRATEGIC TRANSFORMATION', title_de: 'STRATEGISCHE TRANSFORMATION', path: '/sectors' },
+    ],
+  },
+];
+
+export function getWhatWeDo() {
+  return load('zebrold_whatwedo', WHAT_WE_DO_DEFAULTS);
+}
+export function saveWhatWeDo(data) {
+  save('zebrold_whatwedo', data);
+}
+export { WHAT_WE_DO_DEFAULTS };
+
+/* ══════════════════════════════════════════════════════
+   COMPANY TICKER DEFAULTS
+   ══════════════════════════════════════════════════════ */
 const TICKER_DEFAULTS = [
-  { id: 'country-health', name: 'Country Health', logoKey: 'countryHealthLogo', customLogo: null },
-  { id: 'instructis', name: 'Instructis', logoKey: 'instructisLogo', customLogo: null },
+  { name: 'Country Health', country: 'Düsseldorf, Deutschland', sector: 'Gesundheitswesen & Pharma' },
+  { name: 'Instructis', country: 'Hyderabad, Indien', sector: 'Bildung & Karriere' },
 ];
 
 export function getTicker() {
@@ -309,4 +374,6 @@ export function saveTicker(data) {
   save('zebrold_ticker', data);
 }
 export { TICKER_DEFAULTS };
+
+
 

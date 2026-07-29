@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { offices } from '../../data/offices';
 import OfficeMap from '../../components/OfficeMap/OfficeMap';
@@ -13,11 +14,16 @@ export default function Offices() {
       {/* Hero */}
       <section className="page-hero offices-hero" aria-label="Offices hero">
         <div className="container page-hero-inner">
-          <nav className="breadcrumb" aria-label="Breadcrumb">
-            <a href="/" className="breadcrumb-link">Home</a>
-            <span> / </span>
-            <span aria-current="page">Global Offices</span>
-          </nav>
+          <div className="offices-hero-top-bar">
+            <nav className="breadcrumb" aria-label="Breadcrumb">
+              <a href="/" className="breadcrumb-link">Home</a>
+              <span> / </span>
+              <span aria-current="page">Global Offices</span>
+            </nav>
+            <Link to="/admin" className="offices-admin-hero-btn">
+              ⚙ Admin Console
+            </Link>
+          </div>
           <h1 className="page-hero-title reveal">26 Offices. 3 Continents.</h1>
           <p className="page-hero-sub reveal" data-delay="1">
             From Frankfurt to Hyderabad to Sydney — the Zebrold Group is where business happens.
@@ -74,6 +80,24 @@ export default function Offices() {
           </section>
         );
       })}
+
+      {/* Admin Console Callout */}
+      <section className="section offices-admin-section">
+        <div className="container">
+          <div className="offices-admin-card reveal">
+            <div className="offices-admin-text-wrap">
+              <span className="section-label">CORPORATE GOVERNANCE</span>
+              <h3 className="offices-admin-heading">Zebrold Group Admin Console</h3>
+              <p className="offices-admin-desc">
+                Access executive CMS controls, job postings, candidate CV applications, and homepage content management.
+              </p>
+            </div>
+            <Link to="/admin" className="button button-large offices-admin-cta-btn">
+              <span className="button-text">Open Admin Console →</span>
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

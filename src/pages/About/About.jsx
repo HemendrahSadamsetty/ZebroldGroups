@@ -1,19 +1,47 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import './About.css';
 
-const leadership = [
+const boardOfDirectors = [
   {
     name: 'Hemendrah Kumar Sadamsetty',
     title: 'Chairman',
     bio: 'A visionary entrepreneur and industrialist, Hemendrah Kumar Sadamsetty founded the Zebrold Group in 2013 with a singular mission: to build globally competitive enterprises anchored in German standards of precision, governance, and innovation.',
-    initials: 'HS',
+    initials: 'HKS',
+    isChairman: true,
+  },
+  {
+    name: 'Stakwe Haplene',
+    title: 'Chief Executive Officer',
+    bio: 'Group CEO responsible for operational leadership, portfolio performance, and cross-sector strategic execution across European and global markets. Drives the Group\'s expansion across 12 sectors and 3 continents.',
+    initials: 'SH',
   },
   {
     name: 'Indu Reddy Morthala',
     title: 'Managing Director',
     bio: 'Indu Reddy Morthala brings two decades of operational leadership across finance, technology, and industrial sectors. As Managing Director, she drives portfolio strategy, cross-subsidiary synergies, and the Group\'s global expansion agenda.',
-    initials: 'IM',
+    initials: 'IRM',
   },
+];
+
+const subsidiaries = [
+  { company: 'Everstone Energy', ceo: 'Dr. Klaus Mehringer', md: 'Ms. Priya Venkatesh' },
+  { company: 'Northvolt Power', ceo: 'Mr. Lars Bergström', md: 'Mr. Rajiv Srinivasan' },
+  { company: 'Meridian Microelectronics', ceo: 'Prof. Dr. Andrea Fischmann', md: 'Mr. Suresh Ramachandran' },
+  { company: 'Silicon Crest Technologies', ceo: 'Dr. Maara Krishnamurthy', md: 'Mr. Thomas Kleinhans' },
+  { company: 'Redford Automotive', ceo: 'Mr. Sebastian Wirth', md: 'Ms. Ananya Reddy' },
+  { company: 'Westbridge Motors', ceo: 'Mr. Jonathan Hartley', md: 'Mr. Vikram Nair' },
+  { company: 'PrimeMart Retail', ceo: 'Ms. Helena Brandt', md: 'Mr. Arun Pillai' },
+  { company: 'UrbanBasket Stores', ceo: 'Mr. Felix Gruber', md: 'Ms. Deepa Iyer' },
+  { company: 'Brighton Education Group', ceo: 'Dr. Sophie Lindqvist', md: 'Mr. Arjun Krishnan' },
+  { company: 'Clearpath Learning', ceo: 'Ms. Nadia Schulz', md: 'Dr. Kiran Subramanian' },
+  { company: 'Instructis Career', ceo: 'Ms. Priya Malhotra', md: 'Mr. Hemendrah Kumar Sadamsetty' },
+  { company: 'Skybridge Technologies', ceo: 'Mr. Rahul Banerjee', md: 'Ms. Christine Hofer' },
+  { company: 'Arden Digital Solutions', ceo: 'Ms. Preethi Nambiar', md: 'Mr. Markus Steiner' },
+  { company: 'Sterling Financial Services', ceo: 'Mr. Aditya Mehta', md: 'Ms. Katarina Vogt' },
+  { company: 'Harrington Capital Group', ceo: 'Mr. James Harrington IV', md: 'Dr. Anand Subramaniam' },
+  { company: 'Oakwell Healthcare', ceo: 'Dr. Ramesh Padmanabhan', md: 'Dr. Ingrid Bauer' },
+  { company: 'Greenford Pharmaceuticals', ceo: 'Dr. Sanjay Kulkarni', md: 'Dr. Petra Zimmermann' },
+  { company: 'PrimeRoute Logistics', ceo: 'Mr. Sanjiv Kapoor', md: 'Ms. Birgit Hoffmann' },
 ];
 
 const values = [
@@ -22,18 +50,6 @@ const values = [
   { title: 'Trust', desc: 'Governance, transparency, and accountability are non-negotiable at every level of the Group.', icon: '◈' },
   { title: 'Innovation', desc: 'We invest ahead of the curve — in semiconductors, EV, AI, and next-generation healthcare.', icon: '◇' },
 ];
-
-const timeline = [
-  { year: 2013, event: 'Zebrold Group founded in Frankfurt. Sterling Financial Services established as the anchor company.' },
-  { year: 2014, event: 'Redford Automotive, Ironclad Engineering, and Harrington Capital Group incorporated.' },
-  { year: 2015, event: 'Entry into healthcare and logistics. Oakwell Healthcare and PrimeRoute Logistics launched.' },
-  { year: 2016, event: 'Technology expansion: Skybridge Technologies, Brighton Education Group, and Greenfield Agri established.' },
-  { year: 2017, event: 'EV & Battery entry with Everstone Energy. Stonecraft Interiors and PrimeMart Retail added.' },
-  { year: 2018, event: 'Instructis Career, UrbanBasket Stores, and Silverline Studios mark expansion into consumer and media verticals.' },
-  { year: 2019, event: 'Nordics battery division launched via Northvolt Power. Total subsidiaries reach 26.' },
-  { year: 2025, event: 'Group achieves EUR 2.1B revenue milestone. INR 13,705 Cr working capital. 26 offices worldwide.' },
-];
-
 const stats = [
   { value: 'EUR 2.1B', label: 'Revenue FY25' },
   { value: 'INR 13,705 Cr', label: 'Working Capital' },
@@ -74,7 +90,7 @@ export default function About() {
               </h2>
               <div className="divider" />
               <p className="about-overview-body reveal" data-delay="1">
-                Zebrold Group of Companies was established in 2013 in Frankfurt am Main with a vision to build a globally diversified, institutionally governed enterprise capable of competing across industries and continents. Today, the Group comprises 26 subsidiaries operating in 12 strategic sectors — from EV charging infrastructure and semiconductor design to finance, education, healthcare, and industrial engineering.
+                Zebrold International Holdings Limited was established in 2013 in Frankfurt am Main with a vision to build a globally diversified, institutionally governed enterprise capable of competing across industries and continents. Today, the Group comprises 26 subsidiaries operating in 12 strategic sectors — from EV charging infrastructure and semiconductor design to finance, education, healthcare, and industrial engineering.
               </p>
               <p className="about-overview-body reveal" data-delay="2">
                 With EUR 2.1 billion in annual revenue and INR 13,705 crore in working capital, Zebrold operates with the financial discipline of a public company and the strategic agility of a founder-led enterprise. Our 26 offices span Europe, India, and Australia, making us a truly multi-regional group with local depth in every market we serve.
@@ -92,45 +108,52 @@ export default function About() {
         </div>
       </section>
 
-      {/* Leadership */}
-      <section className="section about-leadership" aria-labelledby="leadership-heading">
+      {/* Board of Directors */}
+      <section className="section about-leadership about-board-section" aria-labelledby="board-heading">
         <div className="container">
-          <h2 id="leadership-heading" className="section-title reveal" style={{ color: 'var(--color-white)' }}>
-            The Minds Behind the Group.
+          <span className="section-label" style={{ color: 'rgba(200,160,100,0.8)' }}>Corporate Governance</span>
+          <h2 id="board-heading" className="section-title reveal" style={{ color: 'var(--color-white)' }}>
+            Board of Directors
           </h2>
           <div className="divider" />
-          <div className="leaders-grid">
-            {leadership.map((leader, i) => (
-              <div key={leader.name} className="leader-card reveal" data-delay={i + 1}>
-                <div className="leader-avatar" aria-hidden="true">{leader.initials}</div>
-                <div className="leader-info">
-                  <p className="leader-title label">{leader.title}</p>
-                  <h3 className="leader-name">{leader.name}</h3>
-                  <p className="leader-bio">{leader.bio}</p>
-                  <div className="leader-sig" aria-hidden="true">— {leader.name.split(' ')[0]} {leader.name.split(' ').pop()}</div>
+          <div className="about-board-grid">
+            {boardOfDirectors.map((leader, i) => (
+              <div key={leader.name} className={`about-board-card reveal${leader.isChairman ? ' about-board-card--chairman' : ''}`} data-delay={i + 1}>
+                <div className="about-board-monogram" aria-hidden="true">{leader.initials}</div>
+                <div className="about-board-info">
+                  <p className="about-board-role">{leader.title}</p>
+                  <h3 className="about-board-name">{leader.name}</h3>
+                  <p className="about-board-bio">{leader.bio}</p>
                 </div>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Timeline */}
-      <section className="section about-timeline" aria-labelledby="timeline-heading">
-        <div className="container">
-          <h2 id="timeline-heading" className="section-title reveal">From Founding to EUR 2.1B.</h2>
-          <div className="divider" />
-          <div className="timeline">
-            {timeline.map((item, i) => (
-              <div key={item.year} className="timeline-item reveal" data-delay={(i % 4) + 1}>
-                <div className="timeline-year">{item.year}</div>
-                <div className="timeline-connector" aria-hidden="true">
-                  <div className="timeline-dot" />
-                  {i < timeline.length - 1 && <div className="timeline-line" />}
-                </div>
-                <p className="timeline-event">{item.event}</p>
+          {/* Subsidiary Table */}
+          <div className="about-subs-section">
+            <div className="about-subs-header">
+              <span className="section-label" style={{ color: 'rgba(200,160,100,0.8)', marginBottom: 0 }}>Subsidiary Leadership</span>
+              <span className="about-subs-count">18 Companies</span>
+            </div>
+            <div className="about-subs-table">
+              <div className="about-subs-thead">
+                <div className="about-subs-th about-subs-th--company">Company</div>
+                <div className="about-subs-th">CEO</div>
+                <div className="about-subs-th">Managing Director</div>
               </div>
-            ))}
+              <div className="about-subs-tbody">
+                {subsidiaries.map((row, i) => (
+                  <div key={i} className="about-subs-row">
+                    <div className="about-subs-td about-subs-td--company">
+                      <span className="about-subs-num">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="about-subs-company-name">{row.company}</span>
+                    </div>
+                    <div className="about-subs-td">{row.ceo}</div>
+                    <div className="about-subs-td">{row.md}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -160,9 +183,9 @@ export default function About() {
             <div className="hq-card-left">
               <h2 id="hq-heading" className="hq-title">Frankfurt am Main</h2>
               <address className="hq-address">
-                <p>Zebrold Group of Companies GmbH</p>
-                <p>Neue Mainzer Straße 28</p>
-                <p>60311 Frankfurt am Main</p>
+                <p>Zebrold International Holdings Limited</p>
+                <p>Bockenheimer Landstrasse 17-19</p>
+                <p>60325 Frankfurt am Main</p>
                 <p>Federal Republic of Germany</p>
               </address>
               <div className="hq-contact">

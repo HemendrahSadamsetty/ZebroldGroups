@@ -359,3 +359,188 @@
   .leader-card { flex-direction: column; }
   .hq-card { padding: 2rem; }
 }
+
+/* ── Board of Directors (new) ── */
+.about-board-section {
+  background-color: #0d1117;
+}
+
+.about-board-section .section-title {
+  color: var(--color-white);
+}
+
+.about-board-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.about-board-card {
+  background: rgba(255,255,255,0.035);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: border-color 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.about-board-card:hover {
+  border-color: rgba(200,160,100,0.25);
+  background: rgba(255,255,255,0.05);
+  transform: translateY(-3px);
+}
+
+.about-board-card--chairman {
+  background: linear-gradient(135deg, rgba(74,21,21,0.35), rgba(50,20,20,0.2));
+  border-color: rgba(200,100,80,0.2);
+}
+
+.about-board-monogram {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(200,160,100,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(200,160,100,0.7);
+  background: rgba(200,160,100,0.06);
+  flex-shrink: 0;
+}
+
+.about-board-card--chairman .about-board-monogram {
+  color: rgba(220,120,90,0.85);
+  border-color: rgba(220,120,90,0.3);
+  background: rgba(220,120,90,0.08);
+}
+
+.about-board-role {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(200,160,100,0.8);
+  margin-bottom: 0.35rem;
+}
+
+.about-board-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-white);
+  line-height: 1.3;
+  margin-bottom: 0.5rem;
+}
+
+.about-board-bio {
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ── Subsidiary Table ── */
+.about-subs-section {
+  margin-top: 4rem;
+}
+
+.about-subs-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 0;
+}
+
+.about-subs-count {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(200,160,100,0.7);
+  letter-spacing: 0.05em;
+}
+
+.about-subs-table {
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.about-subs-thead {
+  display: grid;
+  grid-template-columns: 2fr 1.8fr 1.8fr;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 0.85rem 1.5rem;
+}
+
+.about-subs-th {
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.3);
+}
+
+.about-subs-tbody { display: flex; flex-direction: column; }
+
+.about-subs-row {
+  display: grid;
+  grid-template-columns: 2fr 1.8fr 1.8fr;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  align-items: center;
+  transition: background 0.2s ease;
+}
+
+.about-subs-row:last-child { border-bottom: none; }
+.about-subs-row:hover { background: rgba(255,255,255,0.03); }
+
+.about-subs-td {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.65);
+}
+
+.about-subs-td--company {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.about-subs-num {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: rgba(200,160,100,0.35);
+  min-width: 1.5rem;
+}
+
+.about-subs-company-name {
+  font-weight: 600;
+  color: rgba(255,255,255,0.88);
+}
+
+@media (max-width: 1024px) {
+  .about-board-grid { grid-template-columns: 1fr 1fr; }
+  .about-subs-thead { grid-template-columns: 1fr 1fr; }
+  .about-subs-thead .about-subs-th:last-child { display: none; }
+  .about-subs-row { grid-template-columns: 1fr 1fr; }
+  .about-subs-row .about-subs-td:last-child { display: none; }
+}
+
+@media (max-width: 600px) {
+  .about-board-grid { grid-template-columns: 1fr; }
+  .about-subs-thead { display: none; }
+  .about-subs-row { grid-template-columns: 1fr; gap: 0.25rem; padding: 0.85rem 1rem; }
+  .about-subs-row .about-subs-td:last-child { display: block; font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+}
+

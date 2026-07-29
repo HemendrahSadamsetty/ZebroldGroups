@@ -3,6 +3,7 @@ import Toast from '../../components/Toast/Toast';
 import { subsidiaries } from '../../data/subsidiaries';
 import zebroldLogoMark from '../../assets/zebrold_logo_mark.png';
 import { getStoredJobs, saveJobs, getStoredApplications, saveApplications } from '../../data/careersData';
+import { sendCandidateStatusEmail, generateCandidateStatusEmailHtml } from '../../services/emailService';
 import {
   getExpertise, saveExpertise, EXPERTISE_DEFAULTS,
   getDomains, saveDomains, DOMAINS_DEFAULTS,
@@ -388,13 +389,20 @@ function CareersModule({ onSave }) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   APPLICATIONS MODULE  (unchanged from original)
+   APPLICATIONS MODULE  (With Branded Email Notification System)
    ═══════════════════════════════════════════════════════════ */
 function ApplicationsModule({ onSave }) {
   const [apps, setApps] = useState(getStoredApplications);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedApp, setSelectedApp] = useState(null);
+
+  // Email Notification Modal State
+  const [emailModalApp, setEmailModalApp] = useState(null);
+  const [emailStatus, setEmailStatus] = useState('Hired');
+  const [customMessage, setCustomMessage] = useState('');
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [copiedHtml, setCopiedHtml] = useState(false);
 
   const filtered = apps.filter(a => {
     const matchSearch =
@@ -405,6 +413,26 @@ function ApplicationsModule({ onSave }) {
     return matchSearch && matchStatus;
   });
 
+  const handleOpenEmailModal = (app, statusOverride) => {
+    const targetStatus = statusOverride || app.status || 'Hired';
+    setEmailModalApp(app);
+    setEmailStatus(targetStatus);
+    setCopiedHtml(false);
+    
+    // Set default status message based on selection
+    if (targetStatus === 'Hired') {
+      setCustomMessage(`Congratulations! We are thrilled to offer you the position of ${app.jobTitle} at Zebrold. We will be sending over the formal offer letter shortly.`);
+    } else if (targetStatus === 'Interview') {
+      setCustomMessage(`Great news! We would like to invite you for an interview for the ${app.jobTitle} role at Zebrold. Our hiring team will contact you shortly to schedule a convenient time.`);
+    } else if (targetStatus === 'Under Review') {
+      setCustomMessage(`Your application for ${app.jobTitle} is currently under active review by our leadership team. We will keep you updated on progress.`);
+    } else if (targetStatus === 'Rejected') {
+      setCustomMessage(`Thank you for applying for the ${app.jobTitle} position at Zebrold Group. While we were impressed with your qualifications, we have decided to proceed with another candidate at this time.`);
+    } else {
+      setCustomMessage(`Thank you for your application for the ${app.jobTitle} position at Zebrold Group. We have received your documents.`);
+    }
+  };
+
   const handleStatusChange = (appId, newStatus) => {
     const updated = apps.map(a => a.id === appId ? { ...a, status: newStatus } : a);
     setApps(updated);
@@ -412,7 +440,41 @@ function ApplicationsModule({ onSave }) {
     if (selectedApp && selectedApp.id === appId) {
       setSelectedApp(p => ({ ...p, status: newStatus }));
     }
+    const targetApp = apps.find(a => a.id === appId);
+    if (targetApp) {
+      handleOpenEmailModal(targetApp, newStatus);
+    }
     onSave(`Application status updated to ${newStatus}.`);
+  };
+
+  const handleSendEmailNotification = async () => {
+    if (!emailModalApp) return;
+    setSendingEmail(true);
+
+    const res = await sendCandidateStatusEmail({
+      candidateName: emailModalApp.candidateName,
+      email: emailModalApp.email,
+      jobTitle: emailModalApp.jobTitle,
+      status: emailStatus,
+      customMessage: customMessage,
+    });
+
+    setSendingEmail(false);
+    setEmailModalApp(null);
+    onSave(`Branded email notification dispatched to ${emailModalApp.candidateName} (${emailModalApp.email}).`);
+  };
+
+  const handleCopyEmailHtml = () => {
+    if (!emailModalApp) return;
+    const htmlContent = generateCandidateStatusEmailHtml({
+      candidateName: emailModalApp.candidateName,
+      jobTitle: emailModalApp.jobTitle,
+      status: emailStatus,
+      customMessage: customMessage,
+    });
+    navigator.clipboard.writeText(htmlContent);
+    setCopiedHtml(true);
+    setTimeout(() => setCopiedHtml(false), 2500);
   };
 
   const handleDeleteApp = (appId) => {
@@ -440,11 +502,11 @@ function ApplicationsModule({ onSave }) {
   };
 
   return (
-    <div className="admin-module">
+    <div className="admin-module admin-module--wide">
       <div className="admin-module-header">
         <div>
           <h2 className="admin-section-title">CV & Candidate Applications</h2>
-          <p className="admin-section-sub">Review job applications, view candidate profiles, and download submitted CV documents.</p>
+          <p className="admin-section-sub">Review job applications, view candidate profiles, and dispatch branded website-themed email notifications.</p>
         </div>
       </div>
 
@@ -533,8 +595,15 @@ function ApplicationsModule({ onSave }) {
                   </td>
                   <td>
                     <div className="table-actions">
+                      <button
+                        className="btn-table-action btn-table-action--email"
+                        onClick={() => handleOpenEmailModal(app)}
+                        title="Send Branded Email Notification"
+                      >
+                        📧 Send Email
+                      </button>
                       <button className="btn-table-action" onClick={() => setSelectedApp(app)}>
-                        👁 View Details
+                        👁 View
                       </button>
                       <button className="btn-table-action btn-table-action--danger" onClick={() => handleDeleteApp(app.id)}>
                         🗑
@@ -548,7 +617,7 @@ function ApplicationsModule({ onSave }) {
         </div>
       )}
 
-      {/* Detail Modal */}
+      {/* Candidate Profile Detail Modal */}
       {selectedApp && (
         <div className="admin-modal-backdrop" onClick={() => setSelectedApp(null)}>
           <div className="admin-modal-card" onClick={e => e.stopPropagation()}>
@@ -614,7 +683,120 @@ function ApplicationsModule({ onSave }) {
             </div>
 
             <div className="admin-modal-footer">
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  const appToEmail = selectedApp;
+                  setSelectedApp(null);
+                  handleOpenEmailModal(appToEmail);
+                }}
+              >
+                📧 Compose Branded Email Update
+              </button>
               <button className="btn btn-secondary" onClick={() => setSelectedApp(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* BRANDED EMAIL NOTIFICATION & PREVIEW MODAL */}
+      {emailModalApp && (
+        <div className="admin-modal-backdrop" onClick={() => setEmailModalApp(null)}>
+          <div className="admin-modal-card admin-modal-card--email" onClick={e => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <div>
+                <span className="app-modal-tag">BRANDED EMAIL NOTIFICATION</span>
+                <h3 className="admin-modal-title">Email to {emailModalApp.candidateName}</h3>
+                <p className="admin-modal-sub">Candidate: <strong>{emailModalApp.email}</strong> &bull; Position: <strong>{emailModalApp.jobTitle}</strong></p>
+              </div>
+              <button className="modal-close-btn" onClick={() => setEmailModalApp(null)}>✕</button>
+            </div>
+
+            <div className="admin-modal-body admin-email-modal-body">
+              {/* Controls */}
+              <div className="email-modal-controls">
+                <div className="form-group">
+                  <label className="form-label">Notification Status Template</label>
+                  <select
+                    className="form-select"
+                    value={emailStatus}
+                    onChange={(e) => {
+                      const st = e.target.value;
+                      setEmailStatus(st);
+                      if (st === 'Hired') {
+                        setCustomMessage(`Congratulations! We are thrilled to offer you the position of ${emailModalApp.jobTitle} at Zebrold. We will be sending over the formal offer letter shortly.`);
+                      } else if (st === 'Interview') {
+                        setCustomMessage(`Great news! We would like to invite you for an interview for the ${emailModalApp.jobTitle} position at Zebrold. Our hiring team will contact you shortly to schedule a convenient time.`);
+                      } else if (st === 'Under Review') {
+                        setCustomMessage(`Your application for ${emailModalApp.jobTitle} is currently under active review by our leadership team. We will keep you updated on progress.`);
+                      } else if (st === 'Rejected') {
+                        setCustomMessage(`Thank you for applying for the ${emailModalApp.jobTitle} position at Zebrold Group. While we were impressed with your qualifications, we have decided to proceed with another candidate at this time.`);
+                      } else {
+                        setCustomMessage(`Thank you for your application for the ${emailModalApp.jobTitle} position at Zebrold Group. We have received your documents and your profile is being reviewed.`);
+                      }
+                    }}
+                  >
+                    <option value="Hired">HIRED (Offer Letter / Welcome)</option>
+                    <option value="Interview">INTERVIEW (Invitation)</option>
+                    <option value="Under Review">UNDER REVIEW (Status Update)</option>
+                    <option value="Application Received">APPLICATION RECEIVED (Confirmation)</option>
+                    <option value="Rejected">REJECTED (Outcome Notice)</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Custom Message Content</label>
+                  <textarea
+                    className="form-textarea"
+                    rows={4}
+                    value={customMessage}
+                    onChange={(e) => setCustomMessage(e.target.value)}
+                    placeholder="Enter candidate notification body..."
+                  />
+                </div>
+              </div>
+
+              {/* LIVE EMAIL PREVIEW */}
+              <div className="email-preview-container">
+                <div className="email-preview-header-bar">
+                  <span>LIVE BRANDED EMAIL PREVIEW</span>
+                  <span className="email-preview-badge">Zebrold Theme Enabled</span>
+                </div>
+
+                {/* Rendered HTML inside preview frame */}
+                <div className="email-preview-frame">
+                  <div
+                    className="email-rendered-wrapper"
+                    dangerouslySetInnerHTML={{
+                      __html: generateCandidateStatusEmailHtml({
+                        candidateName: emailModalApp.candidateName,
+                        jobTitle: emailModalApp.jobTitle,
+                        status: emailStatus,
+                        customMessage: customMessage,
+                      })
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCopyEmailHtml}
+              >
+                {copiedHtml ? '✓ HTML Copied!' : '📋 Copy Email HTML'}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-primary"
+                disabled={sendingEmail}
+                onClick={handleSendEmailNotification}
+              >
+                {sendingEmail ? 'Sending Email...' : '✉️ Send Branded Email to Candidate'}
+              </button>
             </div>
           </div>
         </div>

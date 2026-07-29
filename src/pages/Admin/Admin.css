@@ -1294,6 +1294,20 @@
   color: #dc2626;
 }
 
+.btn-table-action--email {
+  background: rgba(34, 37, 35, 0.04);
+  border-color: rgba(110, 42, 42, 0.25);
+  color: var(--color-wine, #6E2A2A);
+  font-weight: 600;
+}
+
+.btn-table-action--email:hover {
+  background: rgba(110, 42, 42, 0.08);
+  border-color: var(--color-wine, #6E2A2A);
+  color: var(--color-wine, #6E2A2A);
+}
+
+
 .admin-empty-box {
   background: #ffffff;
   padding: 2.5rem;
@@ -1450,13 +1464,100 @@
 .admin-modal-footer {
   display: flex;
   justify-content: flex-end;
+  gap: 0.75rem;
   border-top: 1px solid #f0f0f0;
   padding-top: 0.85rem;
 }
 
 /* ═══════════════════════════════════════════════════════════
+   BRANDED EMAIL NOTIFICATION MODAL
+   ═══════════════════════════════════════════════════════════ */
+
+/* Wide modal variant for email composer + preview */
+.admin-modal-card--email {
+  max-width: 880px;
+  overflow: hidden;
+}
+
+/* Two-column layout: controls left, preview right */
+.admin-email-modal-body {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  align-items: flex-start;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+/* Left: form controls panel */
+.email-modal-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-right: 1rem;
+  border-right: 1px solid #f0f0f0;
+}
+
+/* Right: live preview panel */
+.email-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+}
+
+/* Preview header label bar */
+.email-preview-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1a1a1a;
+  padding: 0.55rem 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+
+/* "Zebrold Theme Enabled" pill */
+.email-preview-badge {
+  background: rgba(110, 42, 42, 0.7);
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+/* Scrollable email preview frame */
+.email-preview-frame {
+  background: #161817;
+  overflow-y: auto;
+  max-height: 55vh;
+  padding: 0;
+}
+
+/* Wrapper that renders the HTML template */
+.email-rendered-wrapper {
+  /* Reset body-level styles that inline HTML email uses */
+  font-family: 'Open Sans', Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Force all inline table styles to render correctly inside the frame */
+.email-rendered-wrapper table {
+  border-collapse: collapse;
+}
+
+/* ═══════════════════════════════════════════════════════════
    SIDEBAR OVERLAY (mobile)
    ═══════════════════════════════════════════════════════════ */
+
 .admin-sidebar-overlay {
   display: none;
   position: fixed;
@@ -1558,3 +1659,27 @@
     width: 100%;
   }
 }
+
+/* Responsive: email modal stacks vertically on narrow screens */
+@media (max-width: 860px) {
+  .admin-modal-card--email {
+    max-width: 98vw;
+  }
+
+  .admin-email-modal-body {
+    grid-template-columns: 1fr;
+    max-height: 80vh;
+  }
+
+  .email-modal-controls {
+    border-right: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding-right: 0;
+    padding-bottom: 1rem;
+  }
+
+  .email-preview-frame {
+    max-height: 40vh;
+  }
+}
+

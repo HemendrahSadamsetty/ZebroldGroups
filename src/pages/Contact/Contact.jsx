@@ -168,7 +168,7 @@ export default function Contact() {
         <div className="contact-map-placeholder">
           <div className="contact-map-overlay">
             <p className="contact-map-label">
-              📍 Neue Mainzer Straße 28, 60311 Frankfurt am Main, Germany
+              📍 Bockenheimer Landstrasse 17-19, 60325 Frankfurt am Main, Germany
             </p>
           </div>
         </div>

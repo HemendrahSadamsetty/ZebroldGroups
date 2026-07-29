@@ -64,7 +64,7 @@ export default function About() {
   return (
     <div ref={pageRef} className="about-page">
       <SEO
-        title="Aman Us | Zebrold Group"
+        title="About Us | Zebrold Group"
         description="Zebrold International Holdings Limited is a global conglomerate headquartered in Frankfurt, Germany."
       />
       {/* Hero */}

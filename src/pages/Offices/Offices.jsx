@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { offices } from '../../data/offices';
 import OfficeMap from '../../components/OfficeMap/OfficeMap';
+import SEO from '../../components/SEO/SEO';
 import './Offices.css';
 
 const regions = ['Europe', 'India', 'Australia'];
@@ -11,6 +12,10 @@ export default function Offices() {
 
   return (
     <div ref={pageRef} className="offices-page">
+      <SEO 
+        title="Global Offices | Zebrold Group"
+        description="From Frankfurt to Hyderabad to Sydney — the Zebrold Group is where business happens."
+      />
       {/* Hero */}
       <section className="page-hero offices-hero" aria-label="Offices hero">
         <div className="container page-hero-inner">

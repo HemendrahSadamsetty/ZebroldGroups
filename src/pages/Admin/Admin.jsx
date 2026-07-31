@@ -2065,7 +2065,7 @@ export default function Admin() {
       <aside className={`admin-sidebar ${sidebarOpen ? 'admin-sidebar--open' : ''}`} aria-label="Admin navigation">
         <div className="admin-sidebar-header">
           <div className="admin-logo">
-            <img src={zebroldLogoMark} alt="Zebrold Group Logo" className="admin-logo-img" />
+            <img src={zebroldLogoMark} alt="Zebrold Group Logo" className="admin-logo-img" loading="eager" width="120" height="40" />
             <div className="admin-logo-text-wrap">
               <span className="admin-logo-word">ZEBROLD</span>
               <span className="admin-logo-sub">ADMIN CONSOLE</span>

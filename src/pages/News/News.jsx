@@ -2,6 +2,7 @@ import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { news } from '../../data/news';
 import NewsCard from '../../components/NewsCard/NewsCard';
 import AnnouncementBanner from '../../components/AnnouncementBanner/AnnouncementBanner';
+import SEO from '../../components/SEO/SEO';
 import './News.css';
 
 function formatDate(d) {
@@ -15,6 +16,10 @@ export default function News() {
 
   return (
     <div ref={pageRef} className="news-page">
+      <SEO 
+        title="News & Announcements | Zebrold Group"
+        description="Latest news, announcements, and milestones from Zebrold Group and its 26 subsidiaries."
+      />
       <AnnouncementBanner />
 
       {/* Hero */}

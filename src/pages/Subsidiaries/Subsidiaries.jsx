@@ -4,6 +4,7 @@ import { subsidiaries } from '../../data/subsidiaries';
 import { sectors } from '../../data/sectors';
 import SubsidiaryCard from '../../components/SubsidiaryCard/SubsidiaryCard';
 import SideDrawer from '../../components/SideDrawer/SideDrawer';
+import SEO from '../../components/SEO/SEO';
 import './Subsidiaries.css';
 
 export default function Subsidiaries() {
@@ -24,6 +25,10 @@ export default function Subsidiaries() {
 
   return (
     <div ref={pageRef} className="subs-page">
+      <SEO 
+        title="Our Portfolio & Subsidiaries | Zebrold Group"
+        description="A portfolio built for scale across 12 industries and 3 continents."
+      />
       {/* Hero */}
       <section className="page-hero subs-hero" aria-label="Subsidiaries hero">
         <div className="container page-hero-inner">

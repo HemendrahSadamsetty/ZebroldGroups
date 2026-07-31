@@ -4,6 +4,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getStoredJobs, addApplication } from '../../data/careersData';
 import { sendApplicationEmail } from '../../services/emailService';
 import Toast from '../../components/Toast/Toast';
+import SEO from '../../components/SEO/SEO';
 import './JobDetails.css';
 
 export default function JobDetails() {
@@ -131,6 +132,10 @@ export default function JobDetails() {
 
   return (
     <div className="job-details-page">
+      <SEO 
+        title={`${job.title} | Careers at Zebrold Group`}
+        description={`We are hiring for ${job.title} in ${job.location}. Apply now at Zebrold Group.`}
+      />
       <section className="job-details-header">
         <div className="padding-global">
           <div className="container-large">

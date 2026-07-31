@@ -40,7 +40,7 @@ export default function Navbar() {
       <div className="arrodz-nav-container container-large">
         {/* Left: Brand Logo */}
         <Link to="/" className="arrodz-logo-link" aria-label="Zebrold Group — Home">
-          <img src={zebroldLogoMark} alt="Zebrold Group" className="arrodz-logo-img" />
+          <img src={zebroldLogoMark} alt="Zebrold Group" className="arrodz-logo-img" loading="eager" width="120" height="40" />
         </Link>
 
         {/* Center: Nav Links */}
@@ -53,7 +53,7 @@ export default function Navbar() {
                   className={`arrodz-nav-link ${isActive(link.path) ? 'is-active' : ''}`}
                 >
                   <span>{link.label}</span>
-                  {link.hasDropdown && <span className="nav-chevron">▾</span>}
+                  {link.hasDropdown && <span className="nav-chevron" aria-hidden="true">▾</span>}
                 </Link>
               </li>
             ))}
@@ -73,9 +73,10 @@ export default function Navbar() {
           className="arrodz-hamburger"
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={mobileOpen}
+          aria-controls="mobile-menu"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <span /><span /><span />
+          <span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" />
         </button>
       </div>
 
@@ -83,6 +84,7 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="mobile-menu"
             className="arrodz-mobile-drawer"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}

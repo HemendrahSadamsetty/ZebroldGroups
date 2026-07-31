@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLanguage } from '../../context/LanguageContext';
 import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker, getWhatWeDo } from '../../utils/homepageData';
 import { sendContactEmail } from '../../services/emailService';
+import SEO from '../../components/SEO/SEO';
 import './Home.css';
 import heroBg1 from '../../assets/hero_bg_meridian.png';
 import heroBg2 from '../../assets/hero_bg_northvolt.png';
@@ -877,8 +878,25 @@ export default function Home() {
     return <HomeLoader onComplete={handleLoaderComplete} />;
   }
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Zebrold Group",
+    "url": "https://www.zebrold.de",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+49-69-1234-5670",
+      "contactType": "Customer Service"
+    }
+  };
+
   return (
     <div className="home-page" ref={homeRef}>
+      <SEO 
+        title="Zebrold Group | We Build What Defines You"
+        description="A globally diversified holding company headquartered in Frankfurt am Main, Germany, operating across 12 strategic sectors."
+        schemaData={schemaData}
+      />
       {/* Floating Contact Chatbot Widget */}
       {isChatOpen && (
         <div className="home-chat-widget">
@@ -985,7 +1003,7 @@ export default function Home() {
       {/* ═══════ SECTION 1: HERO ═══════ */}
       <section className="hero-section">
         <div className="hero-bg">
-          <img src={heroBg1} alt="" className="hero-bg-img" />
+          <img src={heroBg1} alt="Zebrold Hero" className="hero-bg-img" loading="eager" width="1920" height="1080" />
           <div className="hero-overlay" />
         </div>
         <div className="hero-content">
@@ -1222,7 +1240,7 @@ export default function Home() {
       {/* ═══════ SECTION 9: ABOUT HORIZONTAL SCROLL + SPLIT OVERLAY ═══════ */}
       <section className="about-home-section">
         <div className="about-bg-image">
-          <img src={leadershipTeamImg} alt="Leadership" className="about-bg-img-inner" />
+          <img src={leadershipTeamImg} alt="Zebrold Leadership Team" className="about-bg-img-inner" loading="lazy" width="1920" height="1080" />
           <div className="about-image-overlay"></div>
         </div>
         <div className="about-scroll-section">

@@ -4,6 +4,7 @@ import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { sectors } from '../../data/sectors';
 import { subsidiaries } from '../../data/subsidiaries';
 import SectorCard from '../../components/SectorCard/SectorCard';
+import SEO from '../../components/SEO/SEO';
 import './Sectors.css';
 
 export default function Sectors() {
@@ -27,6 +28,10 @@ export default function Sectors() {
 
   return (
     <div ref={pageRef} className="sectors-page">
+      <SEO 
+        title="Our Sectors | Zebrold Group"
+        description="A diversified portfolio engineered for resilience and growth across the world's most strategic industries."
+      />
       {/* Hero */}
       <section className="page-hero sectors-hero" aria-label="Sectors hero">
         <div className="container page-hero-inner">

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import { getStoredJobs, addApplication } from '../../data/careersData';
 import Toast from '../../components/Toast/Toast';
+import SEO from '../../components/SEO/SEO';
 import './Careers.css';
 
 export default function Careers() {
@@ -133,6 +134,10 @@ export default function Careers() {
 
   return (
     <div className="careers-page">
+      <SEO 
+        title="Careers | Zebrold Group"
+        description="Join our global team. We're looking for visionary talent across 12 sectors."
+      />
       {/* Hero Banner — Home Theme */}
       <section className="careers-hero">
         <div className="padding-global">

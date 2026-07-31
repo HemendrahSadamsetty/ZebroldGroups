@@ -3,6 +3,7 @@ import { sectors } from '../../data/sectors';
 import { subsidiaries } from '../../data/subsidiaries';
 import { sectorDetailsData } from '../../data/sectorDetailsData';
 import { useLanguage } from '../../context/LanguageContext';
+import SEO from '../../components/SEO/SEO';
 import './SectorDetail.css';
 
 export default function SectorDetail() {
@@ -22,10 +23,14 @@ export default function SectorDetail() {
 
   return (
     <div className="sector-detail-page">
+      <SEO 
+        title={`${sector.name} | Zebrold Group Sectors`}
+        description={richData.overview}
+      />
       {/* Hero with Domain Background Image */}
       <section className="sector-detail-hero-section">
         <div className="sector-hero-bg-wrapper">
-          <img src={richData.image} alt={sector.name} className="sector-hero-bg-img" />
+          <img src={richData.image} alt={sector.name} className="sector-hero-bg-img" loading="eager" width="1920" height="1080" />
           <div className="sector-hero-bg-overlay" />
         </div>
 

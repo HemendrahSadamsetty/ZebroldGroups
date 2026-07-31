@@ -1,4 +1,5 @@
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import SEO from '../../components/SEO/SEO';
 import './About.css';
 
 const boardOfDirectors = [
@@ -62,6 +63,10 @@ export default function About() {
 
   return (
     <div ref={pageRef} className="about-page">
+      <SEO 
+        title="About Us | Zebrold Group"
+        description="Zebrold International Holdings Limited is a global conglomerate headquartered in Frankfurt, Germany."
+      />
       {/* Hero */}
       <section className="page-hero about-hero" aria-label="About hero">
         <div className="container page-hero-inner">

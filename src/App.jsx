@@ -30,6 +30,7 @@ function ScrollToTop() {
 function SiteLayout({ children }) {
   return (
     <>
+      <TopBar />
       <Navbar />
       <main>
         {children}

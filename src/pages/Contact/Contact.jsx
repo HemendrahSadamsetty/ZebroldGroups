@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import Toast from '../../components/Toast/Toast';
 import { sendContactEmail } from '../../services/emailService';
+import SEO from '../../components/SEO/SEO';
 import './Contact.css';
 
 const subjects = [
@@ -34,8 +35,27 @@ export default function Contact() {
 
   const handleChange = (e) => setForm(p => ({ ...p, [e.target.name]: e.target.value }));
 
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Zebrold Group Headquarters",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Bockenheimer Landstrasse 17-19",
+      "addressLocality": "Frankfurt am Main",
+      "postalCode": "60325",
+      "addressCountry": "DE"
+    },
+    "telephone": "+49 69 2100 4800"
+  };
+
   return (
     <div ref={pageRef} className="contact-page">
+      <SEO 
+        title="Contact Us | Zebrold Group"
+        description="Get in touch with Zebrold Group. Global Headquarters in Frankfurt, with 26 offices worldwide."
+        schemaData={schemaData}
+      />
       {/* Hero */}
       <section className="page-hero contact-hero" aria-label="Contact hero">
         <div className="container page-hero-inner">

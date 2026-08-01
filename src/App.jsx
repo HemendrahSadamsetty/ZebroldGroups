@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { LanguageProvider } from './context/LanguageContext';
-import TopBar from './components/TopBar/TopBar';
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
 import Home from './pages/Home/Home';
@@ -26,11 +25,10 @@ function ScrollToTop() {
   return null;
 }
 
-/* Layout wrapper — TopBar + Navbar + content + Footer */
+/* Layout wrapper — Navbar + content + Footer */
 function SiteLayout({ children }) {
   return (
     <>
-      <TopBar />
       <Navbar />
       <main>
         {children}

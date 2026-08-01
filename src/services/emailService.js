@@ -275,3 +275,87 @@ export async function sendCandidateStatusEmail({ candidateName, email, jobTitle,
     'Branded Email HTML': brandedHtml
   });
 }
+
+/**
+ * Generate Zebrold Brand-Themed Admin Password Reset Email HTML
+ */
+export function generatePasswordResetEmailHtml({ recipientEmail, accountName, resetCode }) {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Admin Password Reset Code - Zebrold Group</title>
+</head>
+<body style="margin:0; padding:0; background-color:#161817; font-family:'Open Sans', Arial, sans-serif;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color:#161817; padding:40px 10px;">
+    <tr>
+      <td align="center">
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:520px; background-color:#222523; border:1px solid rgba(245, 242, 232, 0.12); border-radius:8px; overflow:hidden;">
+          <tr>
+            <td align="center" style="background-color:#F5F2E8; padding:24px 20px; border-bottom:3px solid #6E2A2A;">
+              <div style="background-color:#222523; width:54px; height:54px; border-radius:6px; display:inline-block; text-align:center; line-height:54px;">
+                <span style="color:#F9F9F7; font-size:32px; font-weight:900;">Z</span>
+              </div>
+              <div style="margin-top:6px; font-size:11px; font-weight:700; letter-spacing:2px; color:#222523;">ZEBROLD ADMIN SECURITY</div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:32px 28px;">
+              <h2 style="color:#F9F9F7; font-size:22px; margin:0 0 14px 0;">Admin Password Reset Code</h2>
+              <p style="color:#E0E0E0; font-size:14px; line-height:1.6; margin:0 0 20px 0;">
+                Hello <strong>${accountName || 'Administrator'}</strong> (${recipientEmail}),<br/>
+                We received a request to reset the password for your Zebrold Group Admin Console account.
+              </p>
+              
+              <div style="background:rgba(212, 175, 55, 0.1); border:1px solid #D4AF37; border-radius:6px; padding:20px; text-align:center; margin-bottom:24px;">
+                <span style="color:#888888; font-size:12px; letter-spacing:1px; text-transform:uppercase; display:block; margin-bottom:6px;">Your 6-Digit Security Verification Code</span>
+                <span style="color:#D4AF37; font-size:32px; font-weight:800; letter-spacing:6px; font-family:monospace;">${resetCode}</span>
+              </div>
+
+              <p style="color:#AAAAAA; font-size:13px; line-height:1.5;">
+                Enter this code in the password reset panel. This code expires in 15 minutes. If you did not request this, please secure your account immediately.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="background-color:#1B1D1C; padding:16px; font-size:11px; color:#777777;">
+              © 2026 Zebrold International Holdings Limited &bull; Security Operations
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+  `.trim();
+}
+
+/**
+ * Send Admin Password Reset Email
+ */
+export async function sendPasswordResetEmail({ recipientEmail, accountName, resetCode }) {
+  const brandedHtml = generatePasswordResetEmailHtml({ recipientEmail, accountName, resetCode });
+
+  if (EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_CAREER && EMAILJS_PUBLIC_KEY) {
+    return await sendEmailJS(EMAILJS_TEMPLATE_CAREER, {
+      to_name: accountName,
+      user_email: recipientEmail,
+      subject: 'Zebrold Admin Console Password Reset Code',
+      email_html: brandedHtml,
+      reply_to: 'security@zebrold.com'
+    });
+  }
+
+  return await sendFormSubmit(`Admin Console Password Reset Request (${recipientEmail})`, {
+    'Account Name': accountName,
+    'Recipient Email': recipientEmail,
+    'Verification Code': resetCode,
+    'Request Timestamp': new Date().toISOString(),
+    'Security Note': 'Password reset OTP generated for Zebrold Admin Console',
+    '_replyto': recipientEmail,
+    'Branded Email HTML': brandedHtml
+  });
+}
+

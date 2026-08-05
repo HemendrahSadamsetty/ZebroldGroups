@@ -18,7 +18,7 @@
 
 /* ─── STATE 1: Transparent (floating glass pill at top) ─── */
 .arrodz-navbar.is-transparent {
-  padding-top: calc(var(--topbar-h, 32px) + 0.65rem);
+  padding-top: clamp(1rem, 2vw, 1.5rem);
   padding-inline: clamp(1rem, 3vw, 3rem);
 }
 

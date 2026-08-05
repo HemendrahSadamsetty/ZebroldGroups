@@ -926,111 +926,6 @@ export default function Home() {
         description="A globally diversified holding company headquartered in Frankfurt am Main, Germany, operating across 12 strategic sectors."
         schemaData={schemaData}
       />
-      {/* Floating Contact Chatbot Widget */}
-      {isChatOpen && (
-        <div className="home-chat-widget">
-          <div className="chat-widget-header">
-            <div className="chat-widget-title-wrap">
-              <span className="chat-online-dot" />
-              <div>
-                <h4 className="chat-widget-title">Zebrold Executive Desk</h4>
-                <span className="chat-widget-subtitle">Usually replies in &lt; 5 mins</span>
-              </div>
-            </div>
-            <button
-              type="button"
-              className="chat-widget-close"
-              onClick={() => setIsChatOpen(false)}
-              aria-label="Close widget"
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="chat-widget-body">
-            {chatSent ? (
-              <div className="chat-success-msg">
-                <span className="success-icon">✓</span>
-                <h4>Vielen Dank / Thank you!</h4>
-                <p>Your inquiry has been logged. An executive will reach out shortly.</p>
-              </div>
-            ) : (
-              <>
-                <div className="chat-welcome-msg">
-                  <p>👋 Hallo! How can our industrial management team assist you today?</p>
-                </div>
-
-                <div className="chat-options">
-                  <a href="tel:+496912345670" className="chat-channel-btn">
-                    <span className="channel-icon">📞</span>
-                    <div>
-                      <strong>Direct Call</strong>
-                      <small>+49 (0) 69 1234 5670</small>
-                    </div>
-                  </a>
-
-                  <a href="mailto:contact@zebrold.de" className="chat-channel-btn">
-                    <span className="channel-icon">✉️</span>
-                    <div>
-                      <strong>Official Email</strong>
-                      <small>contact@zebrold.de</small>
-                    </div>
-                  </a>
-                </div>
-
-                <form onSubmit={handleQuickSubmit} className="chat-quick-form">
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    required
-                    className="chat-input"
-                    value={chatName}
-                    onChange={(e) => setChatName(e.target.value)}
-                  />
-                  <input
-                    type="email"
-                    placeholder="Business Email"
-                    required
-                    className="chat-input"
-                    value={chatEmail}
-                    onChange={(e) => setChatEmail(e.target.value)}
-                  />
-                  <textarea
-                    placeholder="How can we assist your business?"
-                    rows={2}
-                    required
-                    className="chat-input chat-textarea"
-                    value={chatMsg}
-                    onChange={(e) => setChatMsg(e.target.value)}
-                  />
-                  <button type="submit" className="chat-submit-btn">
-                    Send Inquiry →
-                  </button>
-                </form>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* Floating Contact Button */}
-      <Magnetic strength={0.35} className="home-floating-phone-wrap">
-        <button
-          type="button"
-          onClick={() => setIsChatOpen(!isChatOpen)}
-          className={`home-floating-phone ${isChatOpen ? 'active' : ''}`}
-          aria-label="Toggle Contact Chat Widget"
-        >
-          {isChatOpen ? (
-            <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>✕</span>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
-          )}
-        </button>
-      </Magnetic>
-
       {/* ═══════ SECTION 1: HERO ═══════ */}
       <section
         ref={heroRef}
@@ -1499,6 +1394,111 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Floating Contact Chatbot Widget */}
+      {isChatOpen && (
+        <div className="home-chat-widget">
+          <div className="chat-widget-header">
+            <div className="chat-widget-title-wrap">
+              <span className="chat-online-dot" />
+              <div>
+                <h4 className="chat-widget-title">Zebrold Executive Desk</h4>
+                <span className="chat-widget-subtitle">Usually replies in &lt; 5 mins</span>
+              </div>
+            </div>
+            <button
+              type="button"
+              className="chat-widget-close"
+              onClick={() => setIsChatOpen(false)}
+              aria-label="Close widget"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="chat-widget-body">
+            {chatSent ? (
+              <div className="chat-success-msg">
+                <span className="success-icon">✓</span>
+                <h4>Vielen Dank / Thank you!</h4>
+                <p>Your inquiry has been logged. An executive will reach out shortly.</p>
+              </div>
+            ) : (
+              <>
+                <div className="chat-welcome-msg">
+                  <p>👋 Hallo! How can our industrial management team assist you today?</p>
+                </div>
+
+                <div className="chat-options">
+                  <a href="tel:+496912345670" className="chat-channel-btn">
+                    <span className="channel-icon">📞</span>
+                    <div>
+                      <strong>Direct Call</strong>
+                      <small>+49 (0) 69 1234 5670</small>
+                    </div>
+                  </a>
+
+                  <a href="mailto:contact@zebrold.de" className="chat-channel-btn">
+                    <span className="channel-icon">✉️</span>
+                    <div>
+                      <strong>Official Email</strong>
+                      <small>contact@zebrold.de</small>
+                    </div>
+                  </a>
+                </div>
+
+                <form onSubmit={handleQuickSubmit} className="chat-quick-form">
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    required
+                    className="chat-input"
+                    value={chatName}
+                    onChange={(e) => setChatName(e.target.value)}
+                  />
+                  <input
+                    type="email"
+                    placeholder="Business Email"
+                    required
+                    className="chat-input"
+                    value={chatEmail}
+                    onChange={(e) => setChatEmail(e.target.value)}
+                  />
+                  <textarea
+                    placeholder="How can we assist your business?"
+                    rows={2}
+                    required
+                    className="chat-input chat-textarea"
+                    value={chatMsg}
+                    onChange={(e) => setChatMsg(e.target.value)}
+                  />
+                  <button type="submit" className="chat-submit-btn">
+                    Send Inquiry →
+                  </button>
+                </form>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Floating Contact Button */}
+      <Magnetic strength={0.35} className="home-floating-phone-wrap">
+        <button
+          type="button"
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className={`home-floating-phone ${isChatOpen ? 'active' : ''}`}
+          aria-label="Toggle Contact Chat Widget"
+        >
+          {isChatOpen ? (
+            <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>✕</span>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          )}
+        </button>
+      </Magnetic>
     </div>
   );
 }

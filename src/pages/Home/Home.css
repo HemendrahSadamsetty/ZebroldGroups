@@ -1322,10 +1322,14 @@
   border-color: rgba(255, 255, 255, 0.6);
 }
 
-.home-floating-phone {
-  position: fixed;
+.home-floating-phone-wrap {
+  position: fixed !important;
   bottom: 2.5rem;
   right: 2.5rem;
+  z-index: 999;
+}
+
+.home-floating-phone {
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -1336,7 +1340,6 @@
   color: var(--color-white);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   transition: transform 0.3s var(--ease-out), background-color 0.3s var(--ease-out);
-  z-index: 999;
   text-decoration: none;
 }
 

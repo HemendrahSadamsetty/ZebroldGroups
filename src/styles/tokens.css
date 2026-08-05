@@ -75,5 +75,6 @@
   --container-max: 1400px;
   --container-md: 1100px;
   /* ── Navbar ── */
+  --topbar-h: 32px;
   --navbar-h: 72px;
 }

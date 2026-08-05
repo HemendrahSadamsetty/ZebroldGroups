@@ -1,4 +1,3 @@
-import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
 import { useLanguage } from '../../context/LanguageContext';
 import './TopBar.css';
 
@@ -19,33 +18,27 @@ export default function TopBar() {
   return (
     <div className="topbar" role="banner" aria-label="Utility information bar">
       <div className="topbar-inner">
-        {/* Logo spacer — exact same width/offset as the navbar logo */}
-        <div className="topbar-logo-spacer" />
-
-        {/* Stock data starts immediately after spacer */}
-        <div className="topbar-stocks">
+        {/* Stock data with live pulse indicators */}
+        <div className="topbar-stocks" aria-live="polite">
           {stockData.map((stock, i) => (
             <span key={i} className="topbar-stock-item">
+              <span className={`topbar-pulse-dot ${stock.up ? 'up' : 'down'}`} aria-hidden="true" />
               <span className="topbar-stock-label">{stock.label}</span>
-              <span className={`topbar-stock-arrow ${stock.up ? 'up' : 'down'}`}>
-                {stock.up ? '▲' : '▼'}
-              </span>
               <span className="topbar-stock-value">{stock.value}</span>
               <span className={`topbar-stock-change ${stock.up ? 'up' : 'down'}`}>
-                ({stock.change})
+                {stock.change}
               </span>
             </span>
           ))}
         </div>
 
-        {/* Right: utility links & Language switcher */}
+        {/* Right: utility links */}
         <div className="topbar-right">
           {utilityLinks.map((link, i) => (
             <a key={i} href={link.href} className="topbar-util-link">
               {link.label}
             </a>
           ))}
-          <LanguageSwitcher />
         </div>
       </div>
     </div>

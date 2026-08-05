@@ -3,9 +3,10 @@
   padding: 0.625rem 0;
 }
 
-.announcement--blue { background-color: var(--color-blue-600); }
-.announcement--black { background-color: var(--color-gray-900); }
-.announcement--gold  { background-color: var(--color-gold); }
+.announcement--wine,
+.announcement--blue { background-color: var(--color-wine, #6E2A2A); }
+.announcement--black { background-color: var(--color-gray-900, #222523); }
+.announcement--gold  { background: linear-gradient(135deg, var(--color-wine-dark, #4A1C1C), var(--color-wine, #6E2A2A)); }
 
 .announcement-inner {
   display: flex;

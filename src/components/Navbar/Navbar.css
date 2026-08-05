@@ -1,6 +1,8 @@
 /* ════════════════════════════════════════
-   TRANSPARENT / FLOATING WHITE CARD NAVBAR
-   Reference Screenshot Design for Scrolled State
+   NAVBAR — PREMIUM FLOATING ISLAND
+   Two visual states:
+   1. is-transparent → glass pill over dark hero
+   2. is-scrolled    → warm cream floating card
    ════════════════════════════════════════ */
 
 .arrodz-navbar {
@@ -9,79 +11,184 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  transition: padding 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: padding 0.5s cubic-bezier(0.32, 0.72, 0, 1);
   width: 100%;
   pointer-events: none;
 }
 
-/* First layout: Completely Transparent at top */
+/* ─── STATE 1: Transparent (floating glass pill at top) ─── */
 .arrodz-navbar.is-transparent {
-  padding-top: 1rem;
+  padding-top: calc(var(--topbar-h, 32px) + 0.65rem);
+  padding-inline: clamp(1rem, 3vw, 3rem);
 }
 
 .arrodz-navbar.is-transparent .arrodz-nav-container {
-  background: transparent;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid transparent;
-  box-shadow: none;
-  min-height: 72px;
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  min-height: 60px;
+  padding: 0.5rem clamp(1rem, 2.5vw, 2rem);
 }
 
-/* Scrolled layout: Floating White Card Container (Reference Design) */
+/* White text on glass */
+.arrodz-navbar.is-transparent .arrodz-nav-link {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.arrodz-navbar.is-transparent .arrodz-nav-link:hover,
+.arrodz-navbar.is-transparent .arrodz-nav-link.is-active {
+  color: #ffffff;
+}
+
+.arrodz-navbar.is-transparent .nav-chevron {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* White hamburger lines */
+.arrodz-navbar.is-transparent .hamburger-line {
+  background-color: #ffffff;
+}
+
+/* Language switcher glass variant */
+.arrodz-navbar.is-transparent .nav-lang-switcher {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.arrodz-navbar.is-transparent .nav-lang-switcher .lang-btn {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.arrodz-navbar.is-transparent .nav-lang-switcher .lang-btn.is-active {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.arrodz-navbar.is-transparent .nav-lang-switcher .lang-divider {
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* Contact button — glass ghost variant */
+.arrodz-navbar.is-transparent .arrodz-contact-btn {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.arrodz-navbar.is-transparent .arrodz-contact-btn:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+
+/* ─── STATE 2: Scrolled (warm cream floating island) ─── */
 .arrodz-navbar.is-scrolled {
-  padding-top: 0.85rem;
+  padding-top: calc(var(--topbar-h, 32px) + 0.5rem);
+  padding-inline: clamp(1rem, 3vw, 3rem);
 }
 
 .arrodz-navbar.is-scrolled .arrodz-nav-container {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  padding: 0.6rem 1.75rem;
-  min-height: 64px;
+  background: #FDFBF7;
+  border-radius: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06),
+    0 1px 3px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  padding: 0.45rem clamp(1rem, 2.5vw, 2rem);
+  min-height: 56px;
 }
+
+/* Dark text on cream */
+.arrodz-navbar.is-scrolled .arrodz-nav-link {
+  color: var(--color-gray-700, #444444);
+}
+
+.arrodz-navbar.is-scrolled .arrodz-nav-link:hover,
+.arrodz-navbar.is-scrolled .arrodz-nav-link.is-active {
+  color: var(--color-gray-950, #111111);
+}
+
+.arrodz-navbar.is-scrolled .nav-chevron {
+  color: var(--color-gray-400, #888888);
+}
+
+/* Dark hamburger lines */
+.arrodz-navbar.is-scrolled .hamburger-line {
+  background-color: var(--color-gray-950, #111111);
+}
+
+/* Language switcher on cream */
+.arrodz-navbar.is-scrolled .nav-lang-switcher {
+  background-color: rgba(34, 37, 35, 0.05);
+  border-color: rgba(34, 37, 35, 0.12);
+}
+
+.arrodz-navbar.is-scrolled .nav-lang-switcher .lang-btn {
+  color: rgba(34, 37, 35, 0.55);
+}
+
+.arrodz-navbar.is-scrolled .nav-lang-switcher .lang-btn.is-active {
+  color: #ffffff;
+  background-color: var(--color-gray-950, #111111);
+}
+
+.arrodz-navbar.is-scrolled .nav-lang-switcher .lang-divider {
+  color: rgba(34, 37, 35, 0.2);
+}
+
+/* Contact button — solid wine on cream */
+.arrodz-navbar.is-scrolled .arrodz-contact-btn {
+  background-color: var(--color-wine, #6E2A2A);
+  border: 1px solid var(--color-wine, #6E2A2A);
+  color: #ffffff;
+  box-shadow: 0 2px 12px rgba(110, 42, 42, 0.2);
+}
+
+.arrodz-navbar.is-scrolled .arrodz-contact-btn:hover {
+  background-color: var(--color-wine-dark, #4A1C1C);
+  border-color: var(--color-wine-dark, #4A1C1C);
+  box-shadow: 0 4px 18px rgba(110, 42, 42, 0.3);
+}
+
+
+/* ═══════════════════════════════════════
+   SHARED LAYOUT
+   ═══════════════════════════════════════ */
 
 .arrodz-nav-container {
   pointer-events: auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.5s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-/* Left: Brand Logo */
+/* ─── Left: Brand Logo ─── */
 .arrodz-logo-link {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   text-decoration: none;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .arrodz-logo-img {
-  height: 38px;
+  height: 34px;
   width: auto;
   object-fit: contain;
-  transition: transform 0.3s ease;
-}
-
-.arrodz-logo-text {
-  font-family: var(--font-display);
-  font-size: 1.65rem;
-  font-weight: 800;
-  color: #111111;
-  letter-spacing: -0.01em;
-  line-height: 1;
+  transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .arrodz-logo-link:hover .arrodz-logo-img {
-  transform: scale(1.06);
+  transform: scale(1.05);
 }
 
-/* Center: Nav menu */
+/* ─── Center: Nav menu ─── */
 .arrodz-nav-menu {
   display: flex;
   align-items: center;
@@ -96,7 +203,7 @@
 .arrodz-nav-list {
   display: flex;
   align-items: center;
-  gap: 2.25rem;
+  gap: 1.75rem;
   list-style: none;
   margin: 0;
   padding: 0;
@@ -109,55 +216,59 @@
 .arrodz-nav-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
+  gap: 0.25rem;
   font-family: var(--font-body);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #222222;
   text-decoration: none;
-  transition: color 0.25s ease, transform 0.25s ease;
-  padding: 0.35rem 0;
+  letter-spacing: 0.02em;
+  padding: 0.4rem 0;
+  position: relative;
+  transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.arrodz-nav-link:hover,
-.arrodz-nav-link.is-active {
-  color: #000000;
-  font-weight: 600;
+/* Active link dot indicator */
+.arrodz-nav-link.is-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--color-wine, #6E2A2A);
+  animation: nav-dot-in 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+@keyframes nav-dot-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1);
+  }
 }
 
 .nav-chevron {
-  font-size: 0.75rem;
-  opacity: 0.7;
-  transition: transform 0.2s ease;
+  font-size: 0.65rem;
+  opacity: 0.6;
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .arrodz-nav-link:hover .nav-chevron {
   transform: translateY(2px);
 }
 
-/* Right: Dark Wine Contact Button & Language Switcher */
+/* ─── Right: Actions area ─── */
 .arrodz-nav-actions {
   display: flex;
   align-items: center;
-  gap: 1rem;
-}
-
-.nav-lang-switcher {
-  background-color: rgba(34, 37, 35, 0.06);
-  border-color: rgba(34, 37, 35, 0.15);
-}
-
-.nav-lang-switcher .lang-btn {
-  color: rgba(34, 37, 35, 0.65);
-}
-
-.nav-lang-switcher .lang-btn.is-active {
-  color: #ffffff;
-  background-color: #111111;
-}
-
-.nav-lang-switcher .lang-divider {
-  color: rgba(34, 37, 35, 0.25);
+  gap: 0.75rem;
+  flex-shrink: 0;
 }
 
 @media screen and (max-width: 899px) {
@@ -166,47 +277,96 @@
   }
 }
 
+/* ─── Contact Button (shared structure) ─── */
 .arrodz-contact-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-wine);
-  color: #ffffff;
+  gap: 0.5rem;
   font-family: var(--font-body);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  padding: 0.65rem 1.4rem;
-  border-radius: 8px;
+  padding: 0.55rem 1.25rem;
+  border-radius: 100px;
   text-decoration: none;
-  transition: transform 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 4px 14px rgba(92, 30, 30, 0.2);
+  letter-spacing: 0.02em;
+  transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .arrodz-contact-btn:hover {
-  background-color: var(--color-wine-dark);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(92, 30, 30, 0.3);
+  transform: scale(0.97);
 }
 
-/* Mobile Hamburger */
+.arrodz-contact-btn:active {
+  transform: scale(0.95);
+}
+
+.contact-btn-arrow {
+  font-size: 0.75rem;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.arrodz-contact-btn:hover .contact-btn-arrow {
+  transform: translateX(3px);
+}
+
+
+/* ═══════════════════════════════════════
+   HAMBURGER → X MORPH
+   ═══════════════════════════════════════ */
+
 .arrodz-hamburger {
   display: none;
   flex-direction: column;
-  justify-content: space-between;
-  width: 26px;
-  height: 20px;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
   background: none;
   border: none;
   cursor: pointer;
-  z-index: 1001;
+  z-index: 1101;
+  position: relative;
+  pointer-events: auto;
 }
 
-.arrodz-hamburger span {
-  width: 100%;
-  height: 2px;
-  background-color: #111111;
+.hamburger-line {
+  width: 22px;
+  height: 1.5px;
   border-radius: 2px;
-  transition: all 0.3s ease;
+  position: absolute;
+  transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.hamburger-line.line-1 {
+  transform: translateY(-6px);
+}
+
+.hamburger-line.line-2 {
+  transform: translateY(0);
+}
+
+.hamburger-line.line-3 {
+  transform: translateY(6px);
+}
+
+/* X morph state */
+.arrodz-hamburger.is-open .hamburger-line.line-1 {
+  transform: translateY(0) rotate(45deg);
+}
+
+.arrodz-hamburger.is-open .hamburger-line.line-2 {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.arrodz-hamburger.is-open .hamburger-line.line-3 {
+  transform: translateY(0) rotate(-45deg);
+}
+
+/* Hamburger always white when overlay is open */
+.arrodz-hamburger.is-open .hamburger-line {
+  background-color: #ffffff !important;
 }
 
 @media screen and (max-width: 899px) {
@@ -215,43 +375,138 @@
   }
 }
 
-/* Mobile Drawer */
-.arrodz-mobile-drawer {
-  overflow: hidden;
-  background-color: #ffffff;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+
+/* ═══════════════════════════════════════
+   MOBILE FULL-SCREEN OVERLAY
+   ═══════════════════════════════════════ */
+
+.arrodz-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  pointer-events: auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.arrodz-mobile-inner {
-  padding-top: 1.5rem;
-  padding-bottom: 2rem;
-}
-
-.mobile-nav-list {
+.mobile-overlay-content {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  justify-content: center;
+  min-height: 100%;
+  padding: 7rem 2rem 3rem;
+  max-width: 480px;
+  margin-inline: auto;
 }
 
-.mobile-nav-link {
+.mobile-overlay-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.mobile-overlay-link {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
   font-family: var(--font-body);
-  font-size: 1.15rem;
+  font-size: 1.6rem;
   font-weight: 600;
-  color: #111111;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: none;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    padding-left 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-overlay-link:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mobile-overlay-link.is-active {
+  color: #ffffff;
+}
+
+.mobile-overlay-link.is-active .mobile-link-index {
+  color: var(--color-wine-light, #8B3A3A);
+}
+
+.mobile-overlay-link:hover {
+  color: #ffffff;
+  padding-left: 0.5rem;
+}
+
+.mobile-link-index {
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: 0.08em;
+  min-width: 1.5rem;
+  transition: color 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-link-text {
+  letter-spacing: -0.01em;
+}
+
+/* ─── Mobile overlay footer ─── */
+.mobile-overlay-footer {
+  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .mobile-contact-pill {
-  display: inline-block;
-  background-color: var(--color-wine);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background-color: var(--color-wine, #6E2A2A);
   color: #ffffff;
+  font-family: var(--font-body);
   font-weight: 600;
-  padding: 0.75rem 2rem;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.8rem;
   border-radius: 100px;
   text-decoration: none;
-  margin-top: 0.5rem;
+  transition: all 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-contact-pill:hover {
+  background-color: var(--color-wine-dark, #4A1C1C);
+  transform: scale(0.97);
+}
+
+.mobile-contact-arrow {
+  font-size: 0.85rem;
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.mobile-contact-pill:hover .mobile-contact-arrow {
+  transform: translateX(3px);
+}
+
+/* Mobile language switcher override */
+.mobile-lang {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.mobile-lang .lang-btn {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.mobile-lang .lang-btn.is-active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.mobile-lang .lang-divider {
+  color: rgba(255, 255, 255, 0.2) !important;
 }

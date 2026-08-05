@@ -7,6 +7,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { getExpertise, getStats, getDomains, getFaq, getNewsSection, getAboutScroll, getCta, getSectionOrder, getTicker, getWhatWeDo } from '../../utils/homepageData';
 import { sendContactEmail } from '../../services/emailService';
 import SEO from '../../components/SEO/SEO';
+import Magnetic from '../../components/Magnetic/Magnetic';
 import './Home.css';
 import heroBg1 from '../../assets/hero_bg_meridian.png';
 import heroBg2 from '../../assets/hero_bg_northvolt.png';
@@ -583,6 +584,34 @@ export default function Home() {
   const [chatMsg, setChatMsg] = useState('');
   const [chatSent, setChatSent] = useState(false);
 
+  /* Hero Mouse Movement Parallax */
+  const heroRef = useRef(null);
+  const badgeCreamRef = useRef(null);
+  const badgeBrownRef = useRef(null);
+
+  const handleHeroMouseMove = useCallback((e) => {
+    if (!heroRef.current) return;
+    const rect = heroRef.current.getBoundingClientRect();
+    const nx = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 to 0.5
+    const ny = (e.clientY - rect.top) / rect.height - 0.5;
+
+    if (badgeCreamRef.current) {
+      badgeCreamRef.current.style.transform = `translate3d(${(-nx * 24).toFixed(2)}px, ${(-ny * 18).toFixed(2)}px, 0) rotate(-3.5deg)`;
+    }
+    if (badgeBrownRef.current) {
+      badgeBrownRef.current.style.transform = `translate3d(${(-nx * 36).toFixed(2)}px, ${(-ny * 26).toFixed(2)}px, 0) rotate(2.5deg) translateX(0.8rem)`;
+    }
+  }, []);
+
+  const handleHeroMouseLeave = useCallback(() => {
+    if (badgeCreamRef.current) {
+      badgeCreamRef.current.style.transform = 'translate3d(0, 0, 0) rotate(-3.5deg)';
+    }
+    if (badgeBrownRef.current) {
+      badgeBrownRef.current.style.transform = 'translate3d(0, 0, 0) rotate(2.5deg) translateX(0.8rem)';
+    }
+  }, []);
+
   const handleQuickSubmit = (e) => {
     e.preventDefault();
     setChatSent(true);
@@ -985,23 +1014,30 @@ export default function Home() {
       )}
 
       {/* Floating Contact Button */}
-      <button
-        type="button"
-        onClick={() => setIsChatOpen(!isChatOpen)}
-        className={`home-floating-phone ${isChatOpen ? 'active' : ''}`}
-        aria-label="Toggle Contact Chat Widget"
-      >
-        {isChatOpen ? (
-          <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>✕</span>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-          </svg>
-        )}
-      </button>
+      <Magnetic strength={0.35} className="home-floating-phone-wrap">
+        <button
+          type="button"
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className={`home-floating-phone ${isChatOpen ? 'active' : ''}`}
+          aria-label="Toggle Contact Chat Widget"
+        >
+          {isChatOpen ? (
+            <span style={{ fontSize: '1.2rem', fontWeight: 800 }}>✕</span>
+          ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          )}
+        </button>
+      </Magnetic>
 
       {/* ═══════ SECTION 1: HERO ═══════ */}
-      <section className="hero-section">
+      <section
+        ref={heroRef}
+        className="hero-section"
+        onMouseMove={handleHeroMouseMove}
+        onMouseLeave={handleHeroMouseLeave}
+      >
         <div className="hero-bg">
           <img src={heroBg1} alt="Zebrold Hero" className="hero-bg-img" loading="eager" width="1920" height="1080" />
           <div className="hero-overlay" />
@@ -1023,10 +1059,10 @@ export default function Home() {
               <div className="hero-brand-letters">
                 {/* Floating Badges */}
                 <div className="hero-badges-wrapper">
-                  <div className="hero-badge hero-badge-cream">
+                  <div ref={badgeCreamRef} className="hero-badge hero-badge-cream">
                     {t('hero_badge_1')}
                   </div>
-                  <div className="hero-badge hero-badge-brown">
+                  <div ref={badgeBrownRef} className="hero-badge hero-badge-brown">
                     {t('hero_badge_2')}
                   </div>
                 </div>
@@ -1039,14 +1075,16 @@ export default function Home() {
                       className={`hero-letter ${isBrown ? 'is-brown' : ''} ${isO ? 'is-o' : ''}`}
                     >
                       {isO ? (
-                        <Link to="/contact" className="hero-o-pill">
-                          <span className="hero-o-pill-text">{t('hero_cta')}</span>
-                          <span className="hero-o-pill-arrow">
-                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                              <path d="M2.15 10c0 .46.37.83.83.83h8.91c.89 0 1.34 1.08.71 1.71l-2.11 2.11a.83.83 0 001.18 1.18l5.12-5.13a1 1 0 000-1.41L11.67 4.17a.83.83 0 00-1.18 1.18l2.11 2.11c.63.63.19 1.71-.71 1.71H2.99A.83.83 0 002.15 10z" fill="currentColor" />
-                            </svg>
-                          </span>
-                        </Link>
+                        <Magnetic strength={0.3}>
+                          <Link to="/contact" className="hero-o-pill">
+                            <span className="hero-o-pill-text">{t('hero_cta')}</span>
+                            <span className="hero-o-pill-arrow">
+                              <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                                <path d="M2.15 10c0 .46.37.83.83.83h8.91c.89 0 1.34 1.08.71 1.71l-2.11 2.11a.83.83 0 001.18 1.18l5.12-5.13a1 1 0 000-1.41L11.67 4.17a.83.83 0 00-1.18 1.18l2.11 2.11c.63.63.19 1.71-.71 1.71H2.99A.83.83 0 002.15 10z" fill="currentColor" />
+                              </svg>
+                            </span>
+                          </Link>
+                        </Magnetic>
                       ) : (
                         letter
                       )}

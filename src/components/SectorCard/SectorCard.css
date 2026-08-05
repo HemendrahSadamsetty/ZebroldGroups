@@ -1,4 +1,5 @@
 .mobbin-sector-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   text-decoration: none;
@@ -8,12 +9,22 @@
   border-radius: 1.5rem; /* Large pill-like corners on the card itself */
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s var(--ease-out-expo);
+  transform-style: preserve-3d;
+  transition: box-shadow 0.4s var(--ease-out-expo);
 }
 
 .mobbin-sector-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
+}
+
+/* Specular glare sheen */
+.card-glare-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
 }
 
 .mobbin-sector-visual {

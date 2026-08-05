@@ -1,0 +1,137 @@
+/* ═══════════════════════════════════════════════════════════
+   SMOOTH CURSOR & AMBIENT MOUSE SPOTLIGHT
+   Agency-grade, hardware-accelerated fluid motion
+   ═══════════════════════════════════════════════════════════ */
+
+/* 1. Ambient Background Spotlight */
+.ambient-mouse-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 540px;
+  height: 540px;
+  margin-top: -270px;
+  margin-left: -270px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    circle,
+    rgba(110, 42, 42, 0.15) 0%,
+    rgba(74, 28, 28, 0.08) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+
+.ambient-mouse-glow.is-visible {
+  opacity: 1;
+}
+
+/* 2. Fluid Trailing Ring */
+.smooth-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  margin-top: -16px;
+  margin-left: -16px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: transparent;
+  mix-blend-mode: difference;
+  opacity: 0;
+  transition: width 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    height 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    margin 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    background-color 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    border-color 0.35s cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 0.4s ease;
+  will-change: transform;
+}
+
+.smooth-cursor-ring.is-visible {
+  opacity: 1;
+}
+
+/* Hover state on buttons & links */
+.smooth-cursor-ring.is-hovered {
+  width: 48px;
+  height: 48px;
+  margin-top: -24px;
+  margin-left: -24px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
+/* Hover state on cards */
+.smooth-cursor-ring.is-card {
+  width: 60px;
+  height: 60px;
+  margin-top: -30px;
+  margin-left: -30px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+/* Text input hover */
+.smooth-cursor-ring.is-text {
+  width: 4px;
+  height: 24px;
+  margin-top: -12px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background-color: #ffffff;
+  border-color: transparent;
+}
+
+/* Click state */
+.smooth-cursor-ring.is-clicked {
+  transform: scale(0.8) !important;
+}
+
+/* 3. Precision Central Dot */
+.smooth-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  margin-left: -3px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  background-color: #ffffff;
+  mix-blend-mode: difference;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+
+.smooth-cursor-dot.is-visible {
+  opacity: 1;
+}
+
+.smooth-cursor-dot.is-hovered {
+  transform: scale(0.5);
+  opacity: 0.6;
+}
+
+.smooth-cursor-dot.is-text {
+  opacity: 0;
+}
+
+/* Touch & Mobile Guardrails — Never show custom cursor on touch devices */
+@media (pointer: coarse), (hover: none) {
+  .ambient-mouse-glow,
+  .smooth-cursor-ring,
+  .smooth-cursor-dot {
+    display: none !important;
+  }
+}

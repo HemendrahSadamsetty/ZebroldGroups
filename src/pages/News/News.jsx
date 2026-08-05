@@ -20,8 +20,6 @@ export default function News() {
         title="News & Announcements | Zebrold Group"
         description="Latest news, announcements, and milestones from Zebrold Group and its 26 subsidiaries."
       />
-      <AnnouncementBanner />
-
       {/* Hero */}
       <section className="page-hero news-hero" aria-label="News hero">
         <div className="container page-hero-inner">
@@ -36,6 +34,8 @@ export default function News() {
           </p>
         </div>
       </section>
+
+      <AnnouncementBanner />
 
       {/* Featured */}
       {featured && (

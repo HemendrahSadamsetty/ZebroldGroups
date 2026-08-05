@@ -3,8 +3,38 @@ import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../../context/LanguageContext';
 import LanguageSwitcher from '../LanguageSwitcher/LanguageSwitcher';
+import Magnetic from '../Magnetic/Magnetic';
 import zebroldLogoMark from '../../assets/zebrold_logo_mark.png';
 import './Navbar.css';
+
+/* ── Framer Motion variants for staggered mobile menu ── */
+const overlayVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.4, ease: [0.32, 0.72, 0, 1], staggerChildren: 0.06, delayChildren: 0.15 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.3, ease: [0.32, 0.72, 0, 1], staggerChildren: 0.03, staggerDirection: -1 },
+  },
+};
+
+const linkVariants = {
+  hidden: { opacity: 0, y: 30, filter: 'blur(6px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.5, ease: [0.32, 0.72, 0, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: -15,
+    filter: 'blur(4px)',
+    transition: { duration: 0.25, ease: [0.32, 0.72, 0, 1] },
+  },
+};
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,6 +62,16 @@ export default function Navbar() {
   useEffect(() => {
     setMobileOpen(false);
   }, [location]);
+
+  /* Lock body scroll when mobile overlay is open */
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   const isActive = (path) => location.pathname === path;
 
@@ -63,52 +103,66 @@ export default function Navbar() {
         {/* Right: Language Switcher & Contact Pill */}
         <div className="arrodz-nav-actions">
           <LanguageSwitcher className="nav-lang-switcher" />
-          <Link to="/contact" className="arrodz-contact-btn">
-            {t('nav_contact')}
-          </Link>
+          <Magnetic strength={0.32}>
+            <Link to="/contact" className="arrodz-contact-btn">
+              <span>{t('nav_contact')}</span>
+              <span className="contact-btn-arrow" aria-hidden="true">→</span>
+            </Link>
+          </Magnetic>
         </div>
 
-        {/* Mobile Hamburger */}
+        {/* Mobile Hamburger → X Morph */}
         <button
-          className="arrodz-hamburger"
+          className={`arrodz-hamburger ${mobileOpen ? 'is-open' : ''}`}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           aria-expanded={mobileOpen}
           aria-controls="mobile-menu"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <span aria-hidden="true" /><span aria-hidden="true" /><span aria-hidden="true" />
+          <span className="hamburger-line line-1" aria-hidden="true" />
+          <span className="hamburger-line line-2" aria-hidden="true" />
+          <span className="hamburger-line line-3" aria-hidden="true" />
         </button>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Full-Screen Overlay */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
             id="mobile-menu"
-            className="arrodz-mobile-drawer"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="arrodz-mobile-overlay"
+            variants={overlayVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           >
-            <div className="arrodz-mobile-inner container">
-              <ul className="mobile-nav-list">
+            <div className="mobile-overlay-content">
+              <nav className="mobile-overlay-nav" aria-label="Mobile Navigation">
                 {navLinks.map((link, i) => (
-                  <li key={i}>
-                    <Link to={link.path} className="mobile-nav-link">
-                      {link.label}
+                  <motion.div key={i} variants={linkVariants}>
+                    <Link
+                      to={link.path}
+                      className={`mobile-overlay-link ${isActive(link.path) ? 'is-active' : ''}`}
+                      onClick={() => setMobileOpen(false)}
+                    >
+                      <span className="mobile-link-index">{String(i + 1).padStart(2, '0')}</span>
+                      <span className="mobile-link-text">{link.label}</span>
                     </Link>
-                  </li>
+                  </motion.div>
                 ))}
-                <li className="mobile-lang-row">
-                  <LanguageSwitcher className="is-light" />
-                </li>
-                <li>
-                  <Link to="/contact" className="mobile-contact-pill">
-                    {t('nav_contact')}
-                  </Link>
-                </li>
-              </ul>
+              </nav>
+
+              <motion.div className="mobile-overlay-footer" variants={linkVariants}>
+                <LanguageSwitcher className="mobile-lang" />
+                <Link
+                  to="/contact"
+                  className="mobile-contact-pill"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {t('nav_contact')}
+                  <span className="mobile-contact-arrow" aria-hidden="true">→</span>
+                </Link>
+              </motion.div>
             </div>
           </motion.div>
         )}

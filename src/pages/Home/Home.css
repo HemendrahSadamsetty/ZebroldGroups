@@ -196,18 +196,18 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   line-height: 1.25;
   letter-spacing: -0.01em;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  will-change: transform;
 }
 
 .hero-badge-cream {
   background-color: var(--color-cream);
   color: var(--color-wine);
-  transform: rotate(-3.5deg);
 }
 
 .hero-badge-brown {
   background-color: var(--color-wine);
   color: var(--color-white);
-  transform: rotate(2.5deg) translateX(0.8rem);
   margin-top: -0.3rem;
 }
 

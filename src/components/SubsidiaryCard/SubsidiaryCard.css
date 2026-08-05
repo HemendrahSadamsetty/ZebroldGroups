@@ -6,14 +6,21 @@
   cursor: pointer;
   background-image: linear-gradient(to bottom right, rgba(255,255,255,0.15), rgba(255,255,255,0.02));
   box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-  transition: transform 0.6s var(--ease-out-expo), box-shadow 0.6s var(--ease-out-expo);
-  will-change: transform;
-  transform-style: preserve-3d; /* Required for the React 3D mouse tracking tilt */
+  transition: box-shadow 0.6s var(--ease-out-expo);
+  transform-style: preserve-3d;
 }
 
 .sub-card:hover {
-  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(201, 168, 76, 0.12);
-  /* Note: The physical tilt transform is handled via React JS inline styles on hover */
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 40px rgba(110, 42, 42, 0.2);
+}
+
+.sub-card .card-glare-sheen {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: inherit;
+  transition: opacity 0.3s ease;
 }
 
 .sub-card-glass-core {

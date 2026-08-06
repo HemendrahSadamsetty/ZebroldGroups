@@ -15,25 +15,35 @@ import {
   getSectionOrder, saveSectionOrder, SECTION_ORDER_DEFAULTS,
   getTicker, saveTicker, TICKER_DEFAULTS,
 } from '../../utils/homepageData';
+import {
+  getAdminAccounts,
+  getActiveSession,
+  validateAdminLogin,
+  requestPasswordResetCode,
+  updatePasswordWithResetCode,
+  logoutAdminSession,
+  changeAdminPassword
+} from '../../utils/adminAuth';
 import './Admin.css';
 
 const SIDEBAR_ITEMS = [
-  { id: 'dashboard',    label: 'Dashboard' },
-  { id: 'careers',      label: 'Job Openings' },
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'careers', label: 'Job Openings' },
   { id: 'applications', label: 'CV Applications' },
   { id: 'announcement', label: 'Announcements' },
-  { id: 'hero',         label: 'Hero Banner' },
+  { id: 'hero', label: 'Hero Banner' },
 
-  { id: 'expertise',    label: 'Expertise Cards' },
-  { id: 'domains',      label: 'Domains / Sectors' },
-  { id: 'stats',        label: 'Stats / Data' },
-  { id: 'news',         label: 'News Section' },
-  { id: 'aboutscroll',  label: 'About Section' },
-  { id: 'cta',          label: 'CTA Section' },
-  { id: 'faq',          label: 'FAQ Section' },
-  { id: 'spotlight',    label: 'Subsidiary Spotlight' },
+  { id: 'expertise', label: 'Expertise Cards' },
+  { id: 'domains', label: 'Domains / Sectors' },
+  { id: 'stats', label: 'Stats / Data' },
+  { id: 'news', label: 'News Section' },
+  { id: 'aboutscroll', label: 'About Section' },
+  { id: 'cta', label: 'CTA Section' },
+  { id: 'faq', label: 'FAQ Section' },
+  { id: 'spotlight', label: 'Subsidiary Spotlight' },
   { id: 'sectionorder', label: 'Section Ordering' },
-  { id: 'settings',     label: 'Settings' },
+  { id: 'security', label: 'Security & Logins' },
+  { id: 'settings', label: 'Settings' },
 ];
 
 
@@ -160,7 +170,7 @@ function CareersModule({ onSave }) {
       requiredSkills: parseArray(currentJob.requiredSkillsText),
       positionExpectations: parseArray(currentJob.positionExpectationsText)
     };
-    
+
     delete updatedJob.requirementsText;
     delete updatedJob.keyResponsibilitiesText;
     delete updatedJob.requiredSkillsText;
@@ -215,7 +225,7 @@ function CareersModule({ onSave }) {
       {isEditing && currentJob ? (
         <form onSubmit={handleSaveJob} className="admin-form admin-job-form">
           <h3 className="admin-sub-title">{currentJob.id.startsWith('job-1') ? 'Edit Position' : 'Create New Position'}</h3>
-          
+
           <div className="form-group">
             <label htmlFor="job-title-input" className="form-label">Position Title *</label>
             <input
@@ -418,7 +428,7 @@ function ApplicationsModule({ onSave }) {
     setEmailModalApp(app);
     setEmailStatus(targetStatus);
     setCopiedHtml(false);
-    
+
     // Set default status message based on selection
     if (targetStatus === 'Hired') {
       setCustomMessage(`Congratulations! We are thrilled to offer you the position of ${app.jobTitle} at Zebrold. We will be sending over the formal offer letter shortly.`);
@@ -2016,10 +2026,496 @@ function SettingsModule({ onSave }) {
   );
 }
 
+
+/* ═══════════════════════════════════════════════════════════
+   SECURITY & LOGINS MODULE
+   ═══════════════════════════════════════════════════════════ */
+function SecurityModule({ onSave, session }) {
+  const accounts = getAdminAccounts();
+  const [selectedAcc, setSelectedAcc] = useState(accounts[0]);
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [sendingReset, setSendingReset] = useState(false);
+  const [resetModalInfo, setResetModalInfo] = useState(null);
+
+  const handleChangePassword = (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert('New password and confirmation do not match.');
+      return;
+    }
+
+    const res = changeAdminPassword(selectedAcc.email, oldPassword, newPassword);
+    if (res.success) {
+      onSave(res.message);
+      setOldPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    } else {
+      alert(res.error);
+    }
+  };
+
+  const handleTriggerEmailReset = async (email) => {
+    setSendingReset(true);
+    const res = await requestPasswordResetCode(email);
+    setSendingReset(false);
+
+    if (res.success) {
+      setResetModalInfo(res);
+      onSave(`Password reset verification code dispatched via email to ${email}.`);
+    } else {
+      alert(res.error);
+    }
+  };
+
+  return (
+    <div className="admin-module admin-module--wide">
+      <div className="admin-module-header">
+        <div>
+          <h2 className="admin-section-title">Security & Admin Logins</h2>
+          <p className="admin-section-sub">Manage Dual Admin Accounts, credentials, and email password reset access.</p>
+        </div>
+      </div>
+
+      {/* Account Cards */}
+      <h3 className="admin-sub-title">Admin Accounts (Dual Login Configuration)</h3>
+      <div className="admin-accounts-grid">
+        {accounts.map(acc => {
+          const isActive = session && session.email.toLowerCase() === acc.email.toLowerCase();
+          return (
+            <div key={acc.id} className={`admin-account-card-box ${isActive ? 'admin-account-card-box--active' : ''}`}>
+              {isActive && <span className="admin-active-badge">Active Session</span>}
+              <div className="admin-acc-box-header">
+                <div>
+                  <h4 className="admin-acc-box-title">{acc.role}</h4>
+                  <p className="admin-acc-box-sub">{acc.email}</p>
+                </div>
+              </div>
+
+              <div className="admin-acc-details-list">
+                <div><strong>Department:</strong> {acc.department}</div>
+                <div><strong>Permissions:</strong> {acc.permissions}</div>
+                <div><strong>Current Password:</strong> <code style={{ background: '#f5f2e8', padding: '2px 6px', borderRadius: '4px' }}>{acc.password}</code></div>
+                {acc.lastLogin && <div><strong>Last Login:</strong> {new Date(acc.lastLogin).toLocaleString()}</div>}
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  style={{ flex: 1, fontSize: '0.78rem' }}
+                  onClick={() => setSelectedAcc(acc)}
+                >
+                  ✏ Change Password
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{ flex: 1, fontSize: '0.78rem' }}
+                  disabled={sendingReset}
+                  onClick={() => handleTriggerEmailReset(acc.email)}
+                >
+                  ✉️ Send Email Reset
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Change Password Form */}
+      <div style={{ marginTop: '2.5rem', background: '#fff', padding: '1.75rem', borderRadius: '8px', border: '1px solid #eee' }}>
+        <h3 className="admin-sub-title">Change Password for {selectedAcc.role}</h3>
+        <form onSubmit={handleChangePassword} className="admin-form">
+          <div className="form-group">
+            <label className="form-label">Target Account Email</label>
+            <input type="text" disabled className="form-input" value={selectedAcc.email} />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Current Password *</label>
+              <input
+                type="password"
+                required
+                className="form-input"
+                value={oldPassword}
+                onChange={e => setOldPassword(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">New Password (Min 6 chars) *</label>
+              <input
+                type="password"
+                required
+                className="form-input"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Confirm New Password *</label>
+            <input
+              type="password"
+              required
+              className="form-input"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+            />
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary">
+              🔒 Save Updated Password
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Reset Email Code Preview Modal */}
+      {resetModalInfo && (
+        <div className="admin-modal-backdrop" onClick={() => setResetModalInfo(null)}>
+          <div className="admin-modal-card admin-modal-card--email" onClick={e => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <div>
+                <span className="app-modal-tag">BRANDED EMAIL SENT</span>
+                <h3 className="admin-modal-title">Reset Code Dispatched</h3>
+                <p className="admin-modal-sub">Sent to <strong>{resetModalInfo.email}</strong></p>
+              </div>
+              <button className="modal-close-btn" onClick={() => setResetModalInfo(null)}>✕</button>
+            </div>
+
+            <div className="admin-modal-body" style={{ padding: '1rem' }}>
+              <div className="admin-otp-callout" style={{ background: '#222523', margin: '0 0 1rem 0' }}>
+                <div className="admin-otp-title">GENERATED VERIFICATION CODE</div>
+                <div className="admin-otp-code">{resetModalInfo.resetCode}</div>
+                <div className="admin-otp-note">Code valid for 15 minutes. Delivered via email notification.</div>
+              </div>
+
+              <div className="email-preview-frame" style={{ border: '1px solid #ddd', borderRadius: '6px', overflow: 'hidden' }}>
+                <div dangerouslySetInnerHTML={{ __html: resetModalInfo.htmlPreview }} />
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button className="btn btn-secondary" onClick={() => setResetModalInfo(null)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ADMIN LOGIN PORTAL COMPONENT
+   ═══════════════════════════════════════════════════════════ */
+function AdminLogin({ onLoginSuccess, showToast }) {
+  const accounts = getAdminAccounts();
+  const [selectedAccountId, setSelectedAccountId] = useState('admin-master');
+  const [email, setEmail] = useState('admin@zebrold.com');
+  const [password, setPassword] = useState('');
+  const [viewMode, setViewMode] = useState('login'); // 'login' | 'forgot-password' | 'enter-code'
+
+  // Reset state
+  const [resetEmail, setResetEmail] = useState('admin@zebrold.com');
+  const [resetCode, setResetCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [activeResetInfo, setActiveResetInfo] = useState(null);
+  const [sendingReset, setSendingReset] = useState(false);
+  const [showEmailPreviewModal, setShowEmailPreviewModal] = useState(false);
+
+  const handleAccountSelect = (acc) => {
+    setSelectedAccountId(acc.id);
+    setEmail(acc.email);
+  };
+
+  const handleLoginSubmit = (e) => {
+    e.preventDefault();
+    const result = validateAdminLogin(email, password);
+    if (result.success) {
+      onLoginSuccess(result.session);
+      showToast(`Welcome back, ${result.account.role}!`);
+    } else {
+      alert(result.error);
+    }
+  };
+
+  const handleRequestResetCode = async (e) => {
+    e.preventDefault();
+    setSendingReset(true);
+    const res = await requestPasswordResetCode(resetEmail);
+    setSendingReset(false);
+
+    if (res.success) {
+      setActiveResetInfo(res);
+      setViewMode('enter-code');
+      showToast(`Security verification code dispatched to ${res.email}.`);
+    } else {
+      alert(res.error);
+    }
+  };
+
+  const handleVerifyAndReset = (e) => {
+    e.preventDefault();
+    if (newPassword !== confirmPassword) {
+      alert('New password and confirm password do not match.');
+      return;
+    }
+    const res = updatePasswordWithResetCode(resetEmail, resetCode, newPassword);
+    if (res.success) {
+      showToast(res.message);
+      onLoginSuccess(res.session);
+    } else {
+      alert(res.error);
+    }
+  };
+
+  return (
+    <div className="admin-login-screen">
+      <div className="admin-login-card">
+        <div className="admin-login-header">
+          <div className="admin-login-logo-mark">
+            <img src={zebroldLogoMark} alt="Zebrold Logo" className="admin-login-logo-img" />
+          </div>
+          <h2 className="admin-login-brand-title">ZEBROLD GROUP</h2>
+          <span className="admin-login-brand-sub">ADMIN CONSOLE PORTAL</span>
+        </div>
+
+        <div className="admin-login-body">
+          {viewMode === 'login' && (
+            <form onSubmit={handleLoginSubmit}>
+              <div className="admin-account-selector-label">
+                <span>Select Admin Login Account</span>
+                <span style={{ color: 'var(--color-gold, #d4af37)' }}>Dual Access Enabled</span>
+              </div>
+
+              <div className="admin-account-selector-grid">
+                {accounts.map(acc => (
+                  <button
+                    key={acc.id}
+                    type="button"
+                    className={`admin-account-btn ${selectedAccountId === acc.id ? 'admin-account-btn--selected' : ''}`}
+                    onClick={() => handleAccountSelect(acc)}
+                  >
+                    <span className="admin-account-role">{acc.role}</span>
+                    <span className="admin-account-email">{acc.email}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">Admin Email Address</label>
+                <input
+                  type="email"
+                  required
+                  className="form-input"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">Account Password</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter account password..."
+                  className="form-input"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="admin-login-actions">
+                <button type="submit" className="btn-login-submit">
+                  Log In to Console →
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-forgot-password"
+                  onClick={() => {
+                    setResetEmail(email);
+                    setViewMode('forgot-password');
+                  }}
+                >
+                  🔑 Forgot Password? Reset Access via Email
+                </button>
+              </div>
+            </form>
+          )}
+
+          {viewMode === 'forgot-password' && (
+            <form onSubmit={handleRequestResetCode}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.4rem', color: '#fff' }}>
+                Reset Admin Password
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                Enter your registered Zebrold admin email address below. We will send a 6-digit security verification code to your inbox.
+              </p>
+
+              <div className="admin-account-selector-grid" style={{ marginBottom: '1rem' }}>
+                {accounts.map(acc => (
+                  <button
+                    key={acc.id}
+                    type="button"
+                    className={`admin-account-btn ${resetEmail === acc.email ? 'admin-account-btn--selected' : ''}`}
+                    onClick={() => setResetEmail(acc.email)}
+                  >
+                    <span className="admin-account-role">{acc.role}</span>
+                    <span className="admin-account-email">{acc.email}</span>
+                  </button>
+                ))}
+              </div>
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">Target Admin Email</label>
+                <input
+                  type="email"
+                  required
+                  className="form-input"
+                  value={resetEmail}
+                  onChange={e => setResetEmail(e.target.value)}
+                />
+              </div>
+
+              <div className="admin-login-actions">
+                <button type="submit" className="btn-login-submit" disabled={sendingReset}>
+                  {sendingReset ? 'Generating & Sending Code...' : '✉️ Send Verification Code via Email'}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-forgot-password"
+                  onClick={() => setViewMode('login')}
+                >
+                  ← Back to Login
+                </button>
+              </div>
+            </form>
+          )}
+
+          {viewMode === 'enter-code' && (
+            <form onSubmit={handleVerifyAndReset}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.4rem', color: '#fff' }}>
+                Verify Code & Change Password
+              </h3>
+              <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
+                A 6-digit verification code has been dispatched to <strong>{resetEmail}</strong>.
+              </p>
+
+              {activeResetInfo && activeResetInfo.resetCode && (
+                <div className="admin-otp-callout">
+                  <div className="admin-otp-title">⚡ SECURITY VERIFICATION CODE</div>
+                  <div className="admin-otp-code">{activeResetInfo.resetCode}</div>
+                  <div className="admin-otp-note">
+                    Email dispatched via notification service.<br />
+                    <button
+                      type="button"
+                      style={{ background: 'none', border: 'none', color: '#d4af37', textDecoration: 'underline', cursor: 'pointer', marginTop: '4px', fontSize: '0.75rem' }}
+                      onClick={() => setShowEmailPreviewModal(true)}
+                    >
+                      👁 View Sent Branded Email HTML
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">6-Digit Verification Code</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 584920"
+                  maxLength={6}
+                  className="form-input"
+                  style={{ letterSpacing: '0.2em', fontWeight: 700, textAlign: 'center', fontSize: '1.1rem' }}
+                  value={resetCode}
+                  onChange={e => setResetCode(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">New Password (Min 6 characters)</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Enter new strong password..."
+                  className="form-input"
+                  value={newPassword}
+                  onChange={e => setNewPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group admin-login-field">
+                <label className="form-label">Confirm New Password</label>
+                <input
+                  type="password"
+                  required
+                  placeholder="Re-enter new password..."
+                  className="form-input"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                />
+              </div>
+
+              <div className="admin-login-actions">
+                <button type="submit" className="btn-login-submit">
+                  🔒 Update Password & Log In →
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-forgot-password"
+                  onClick={() => setViewMode('login')}
+                >
+                  Cancel / Return to Login
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+
+      {/* Email Preview Modal */}
+      {showEmailPreviewModal && activeResetInfo && (
+        <div className="admin-modal-backdrop" onClick={() => setShowEmailPreviewModal(false)}>
+          <div className="admin-modal-card admin-modal-card--email" onClick={e => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <div>
+                <span className="app-modal-tag">BRANDED EMAIL DISPATCH PREVIEW</span>
+                <h3 className="admin-modal-title">Password Reset Code Email</h3>
+                <p className="admin-modal-sub">Sent to <strong>{activeResetInfo.email}</strong></p>
+              </div>
+              <button className="modal-close-btn" onClick={() => setShowEmailPreviewModal(false)}>✕</button>
+            </div>
+            <div className="admin-modal-body" style={{ padding: '1rem' }}>
+              <div className="email-preview-frame" style={{ border: '1px solid #ddd', borderRadius: '6px', overflow: 'hidden' }}>
+                <div dangerouslySetInnerHTML={{ __html: activeResetInfo.htmlPreview }} />
+              </div>
+            </div>
+            <div className="admin-modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowEmailPreviewModal(false)}>Close Preview</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════
    ADMIN (main)
    ═══════════════════════════════════════════════════════════ */
 export default function Admin() {
+  const [session, setSession] = useState(getActiveSession);
   const [activeModule, setActiveModule] = useState('dashboard');
   const [toast, setToast] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -2027,6 +2523,12 @@ export default function Admin() {
   const showToast = useCallback((msg) => {
     setToast({ message: msg, type: 'success' });
   }, []);
+
+  const handleLogout = () => {
+    logoutAdminSession();
+    setSession(null);
+    showToast('Logged out of Admin Console.');
+  };
 
   const renderModule = () => {
     switch (activeModule) {
@@ -2045,10 +2547,25 @@ export default function Admin() {
       case 'faq': return <FaqModule onSave={showToast} />;
       case 'spotlight': return <SpotlightModule onSave={showToast} />;
       case 'sectionorder': return <SectionOrderModule onSave={showToast} />;
+      case 'security': return <SecurityModule onSave={showToast} session={session} />;
       case 'settings': return <SettingsModule onSave={showToast} />;
       default: return <Dashboard />;
     }
   };
+
+  if (!session) {
+    return (
+      <>
+        <AdminLogin
+          onLoginSuccess={(newSession) => setSession(newSession)}
+          showToast={showToast}
+        />
+        {toast && (
+          <Toast message={toast.message} type={toast.type} onDismiss={() => setToast(null)} />
+        )}
+      </>
+    );
+  }
 
   return (
     <div className="admin-layout">
@@ -2093,7 +2610,7 @@ export default function Admin() {
         </nav>
         <div className="admin-sidebar-footer">
           <a href="/" className="admin-view-site">← View Site</a>
-          <p className="admin-sidebar-note">Frontend CMS — persistent localStorage</p>
+          <p className="admin-sidebar-note">Frontend CMS — Dual Login Enabled</p>
         </div>
       </aside>
 
@@ -2107,10 +2624,31 @@ export default function Admin() {
             {SIDEBAR_ITEMS.find(i => i.id === activeModule)?.label || 'Dashboard'}
           </h1>
           <div className="admin-topbar-right">
+            <div className="admin-topbar-profile">
+              <div className="admin-user-pill">
+                <div className="admin-user-info">
+                  <span className="admin-user-role">{session.role}</span>
+                  <span className="admin-user-email">{session.email}</span>
+                </div>
+              </div>
+              <button
+                className="btn-topbar-sec"
+                onClick={() => setActiveModule('security')}
+                title="Security & Account Management"
+              >
+                🔑 Password
+              </button>
+              <button
+                className="btn-topbar-sec btn-logout"
+                onClick={handleLogout}
+                title="Logout"
+              >
+                🚪 Logout
+              </button>
+            </div>
             <a href="/" className="admin-topbar-site-link" target="_blank" rel="noopener noreferrer">
               View Live Site ↗
             </a>
-            <span className="admin-topbar-user">Administrator</span>
           </div>
         </div>
 

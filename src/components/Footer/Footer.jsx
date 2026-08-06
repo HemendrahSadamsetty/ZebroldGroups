@@ -32,7 +32,6 @@ export default function Footer() {
                     <Link to="/about" className="footer-nav-item">{t('nav_about')}</Link>
                     <Link to="/news" className="footer-nav-item">{t('nav_news')}</Link>
                     <Link to="/careers" className="footer-nav-item">{t('nav_careers')}</Link>
-                    <Link to="/admin" className="footer-nav-item" style={{ color: 'var(--color-gold, #d4af37)' }}>⚙ Admin Console</Link>
                   </nav>
 
                   <div className="footer-cta-wrapper">
@@ -89,7 +88,6 @@ export default function Footer() {
               <span>© {new Date().getFullYear()} ZEBROLD INTERNATIONAL HOLDINGS LIMITED — {t('footer_rights')}</span>
               <Link to="/terms" className="footer-legal-link">{t('footer_imprint')}</Link>
               <Link to="/privacy" className="footer-legal-link">{t('footer_privacy')}</Link>
-              <Link to="/admin" className="footer-legal-link">⚙ Admin Console</Link>
             </div>
             <div className="footer-cream-right">
               <span>{lang === 'en' ? 'An excellence initiative of' : 'Eine Exzellenz-Initiative der'} <strong>Zebrold International Holdings Limited</strong></span>

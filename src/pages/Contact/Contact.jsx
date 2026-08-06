@@ -37,23 +37,32 @@ export default function Contact() {
 
   const schemaData = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "name": "Zebrold Group Headquarters",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Bockenheimer Landstrasse 17-19",
-      "addressLocality": "Frankfurt am Main",
-      "postalCode": "60325",
-      "addressCountry": "DE"
-    },
-    "telephone": "+49 69 2100 4800"
+    "@type": "ContactPage",
+    "name": "Contact Zebrold International Holdings Limited (Zebrold IHL)",
+    "url": "https://www.zebrold.de/contact",
+    "mainEntity": {
+      "@type": "Corporation",
+      "name": "Zebrold International Holdings Limited",
+      "alternateName": ["Zebrold IHL", "Zebrold Group"],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Bockenheimer Landstrasse 17-19",
+        "addressLocality": "Frankfurt am Main",
+        "postalCode": "60325",
+        "addressCountry": "DE"
+      },
+      "telephone": "+49 69 2100 4800",
+      "email": "info@zebrold.de"
+    }
   };
 
   return (
     <div ref={pageRef} className="contact-page">
       <SEO 
-        title="Contact Us | Zebrold Group"
-        description="Get in touch with Zebrold Group. Global Headquarters in Frankfurt, with 26 offices worldwide."
+        title="Contact Us | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Contact Zebrold International Holdings Limited (Zebrold IHL). Global Headquarters at Bockenheimer Landstrasse 17-19, Frankfurt am Main, Germany."
+        keywords="Contact Zebrold, Zebrold IHL contact, Zebrold International Holdings Limited phone, Frankfurt headquarters email, investor relations"
+        url="/contact"
         schemaData={schemaData}
       />
       {/* Hero */}

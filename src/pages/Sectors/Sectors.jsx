@@ -26,11 +26,30 @@ export default function Sectors() {
 
   const filtered = categoryMap[activeFilter] || sectors;
 
+  const sectorsSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Strategic Sectors — Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "12 strategic industries and sectors operated by Zebrold International Holdings Limited (Zebrold IHL).",
+    "url": "https://www.zebrold.de/sectors",
+    "hasPart": sectors.map(s => ({
+      "@type": "Service",
+      "name": s.name,
+      "provider": {
+        "@type": "Corporation",
+        "name": "Zebrold International Holdings Limited"
+      }
+    }))
+  };
+
   return (
     <div ref={pageRef} className="sectors-page">
       <SEO 
-        title="Our Sectors | Zebrold Group"
-        description="A diversified portfolio engineered for resilience and growth across the world's most strategic industries."
+        title="Strategic Sectors & Industries | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Explore the 12 strategic sectors of Zebrold International Holdings Limited (Zebrold IHL) — from EV Charging and Semiconductors to Finance, Healthcare, and Engineering."
+        keywords="Zebrold sectors, Zebrold IHL industries, Zebrold International Holdings Limited business domains, EV charging, semiconductors, finance, healthcare, industrial engineering"
+        url="/sectors"
+        schemaData={sectorsSchema}
       />
       {/* Hero */}
       <section className="page-hero sectors-hero" aria-label="Sectors hero">

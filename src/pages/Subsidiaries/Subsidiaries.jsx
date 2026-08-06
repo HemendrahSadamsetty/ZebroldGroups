@@ -23,11 +23,40 @@ export default function Subsidiaries() {
     });
   }, [sectorFilter, search]);
 
+  const subsSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Portfolio & Subsidiaries — Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "26 subsidiaries operating across 12 strategic sectors under Zebrold International Holdings Limited (Zebrold IHL).",
+    "url": "https://www.zebrold.de/subsidiaries",
+    "mainEntity": {
+      "@type": "ItemList",
+      "numberOfItems": subsidiaries.length,
+      "itemListElement": subsidiaries.map((sub, idx) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "item": {
+          "@type": "Organization",
+          "name": sub.name,
+          "description": sub.description,
+          "parentOrganization": {
+            "@type": "Corporation",
+            "name": "Zebrold International Holdings Limited",
+            "alternateName": ["Zebrold IHL", "Zebrold Group"]
+          }
+        }
+      }))
+    }
+  };
+
   return (
     <div ref={pageRef} className="subs-page">
       <SEO 
-        title="Our Portfolio & Subsidiaries | Zebrold Group"
-        description="A portfolio built for scale across 12 industries and 3 continents."
+        title="Portfolio & Subsidiaries | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Discover the 26 market-leading portfolio companies and subsidiaries of Zebrold International Holdings Limited (Zebrold IHL) across 12 strategic sectors."
+        keywords="Zebrold subsidiaries, Zebrold portfolio companies, Zebrold IHL subsidiaries, Zebrold International Holdings Limited companies, Everstone Energy, Northvolt Power, Meridian Microelectronics, Redford Automotive"
+        url="/subsidiaries"
+        schemaData={subsSchema}
       />
       {/* Hero */}
       <section className="page-hero subs-hero" aria-label="Subsidiaries hero">

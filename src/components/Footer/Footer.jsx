@@ -85,12 +85,12 @@ export default function Footer() {
         <div className="padding-global">
           <div className="container-large footer-cream-inner">
             <div className="footer-cream-left">
-              <span>© {new Date().getFullYear()} ZEBROLD INTERNATIONAL HOLDINGS LIMITED — {t('footer_rights')}</span>
+              <span>© {new Date().getFullYear()} ZEBROLD INTERNATIONAL HOLDINGS LIMITED (ZEBROLD IHL) — {t('footer_rights')}</span>
               <Link to="/terms" className="footer-legal-link">{t('footer_imprint')}</Link>
               <Link to="/privacy" className="footer-legal-link">{t('footer_privacy')}</Link>
             </div>
             <div className="footer-cream-right">
-              <span>{lang === 'en' ? 'An excellence initiative of' : 'Eine Exzellenz-Initiative der'} <strong>Zebrold International Holdings Limited</strong></span>
+              <span>{lang === 'en' ? 'An excellence initiative of' : 'Eine Exzellenz-Initiative der'} <strong>Zebrold International Holdings Limited (Zebrold IHL)</strong></span>
             </div>
           </div>
         </div>

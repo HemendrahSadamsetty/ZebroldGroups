@@ -61,11 +61,36 @@ const stats = [
 export default function About() {
   const pageRef = useScrollReveal();
 
+  const aboutSchema = {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "Corporate overview, history, board of directors, and governance of Zebrold International Holdings Limited (Zebrold IHL).",
+    "url": "https://www.zebrold.de/about",
+    "mainEntity": {
+      "@type": "Corporation",
+      "name": "Zebrold International Holdings Limited",
+      "alternateName": ["Zebrold IHL", "Zebrold Group", "ZIHL"],
+      "foundingDate": "2013",
+      "url": "https://www.zebrold.de",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Bockenheimer Landstrasse 17-19",
+        "addressLocality": "Frankfurt am Main",
+        "postalCode": "60325",
+        "addressCountry": "DE"
+      }
+    }
+  };
+
   return (
     <div ref={pageRef} className="about-page">
       <SEO
-        title="About Us | Zebrold Group"
-        description="Zebrold International Holdings Limited is a global conglomerate headquartered in Frankfurt, Germany."
+        title="About Us | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Learn about Zebrold International Holdings Limited (Zebrold IHL) — Established in 2013 in Frankfurt am Main, Germany. Managing 26 subsidiaries across 12 strategic sectors with EUR 2.1B revenue."
+        keywords="About Zebrold, Zebrold IHL, Zebrold International Holdings Limited, Zebrold Group history, Frankfurt conglomerate governance, board of directors"
+        url="/about"
+        schemaData={aboutSchema}
       />
       {/* Hero */}
       <section className="page-hero about-hero" aria-label="About hero">
@@ -79,7 +104,7 @@ export default function About() {
             Built to Lead.<br />Built to Last.
           </h1>
           <p className="page-hero-sub reveal" data-delay="1">
-            The story of a Frankfurt conglomerate with global ambition.
+            The story of Zebrold International Holdings Limited (Zebrold IHL) — a Frankfurt conglomerate with global ambition.
           </p>
         </div>
       </section>
@@ -95,7 +120,7 @@ export default function About() {
               </h2>
               <div className="divider" />
               <p className="about-overview-body reveal" data-delay="1">
-                Zebrold International Holdings Limited was established in 2013 in Frankfurt am Main with a vision to build a globally diversified, institutionally governed enterprise capable of competing across industries and continents. Today, the Group comprises 26 subsidiaries operating in 12 strategic sectors — from EV charging infrastructure and semiconductor design to finance, education, healthcare, and industrial engineering.
+                <strong>Zebrold International Holdings Limited</strong> (widely known as <strong>Zebrold IHL</strong> or the Zebrold Group) was established in 2013 in Frankfurt am Main with a vision to build a globally diversified, institutionally governed enterprise capable of competing across industries and continents. Today, the Group comprises 26 subsidiaries operating in 12 strategic sectors — from EV charging infrastructure and semiconductor design to finance, education, healthcare, and industrial engineering.
               </p>
               <p className="about-overview-body reveal" data-delay="2">
                 With EUR 2.1 billion in annual revenue and INR 13,705 crore in working capital, Zebrold operates with the financial discipline of a public company and the strategic agility of a founder-led enterprise. Our 26 offices span Europe, India, and Australia, making us a truly multi-regional group with local depth in every market we serve.

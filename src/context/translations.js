@@ -15,7 +15,7 @@ export const translations = {
 
     // Hero
     hero_title: "WIR BAUEN INDUSTRIEN, DIE DIE ZUKUNFT DER GLOBALEN INFRASTRUKTUR DEFINIEREN.",
-    hero_desc: "Die Zebrold Group verbindet sechsundzwanzig marktführende Unternehmen in zwölf Sektoren und beschleunigt den industriellen Wandel durch deutsche Ingenieurspräzision und nachhaltige Innovation.",
+    hero_desc: "Zebrold International Holdings Limited (Zebrold IHL) verbindet sechsundzwanzig marktführende Unternehmen in zwölf Sektoren und beschleunigt den industriellen Wandel durch deutsche Ingenieurspräzision und nachhaltige Innovation.",
     hero_badge_1: "Deutsches Konglomerat",
     hero_badge_2: "für globale Infrastruktur",
     hero_cta: "Portfolio erkunden",
@@ -123,7 +123,7 @@ export const translations = {
 
     // Hero
     hero_title: "WE BUILD INDUSTRIES THAT DEFINE THE FUTURE OF GLOBAL INFRASTRUCTURE.",
-    hero_desc: "The Zebrold Group unites twenty-six market-leading companies across twelve strategic sectors, accelerating industrial transformation through precision engineering and sustainable innovation.",
+    hero_desc: "Zebrold International Holdings Limited (Zebrold IHL) unites twenty-six market-leading companies across twelve strategic sectors, accelerating industrial transformation through precision engineering and sustainable innovation.",
     hero_badge_1: "German Conglomerate",
     hero_badge_2: "for Global Infrastructure",
     hero_cta: "Explore Portfolio",

@@ -132,11 +132,47 @@ export default function Careers() {
     }, 600);
   };
 
+  const careersSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Careers at Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "Global career opportunities at Zebrold International Holdings Limited (Zebrold IHL).",
+    "url": "https://www.zebrold.de/careers",
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": jobs.map((job, idx) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "item": {
+          "@type": "JobPosting",
+          "title": job.title,
+          "description": job.description,
+          "jobLocation": {
+            "@type": "Place",
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": job.location
+            }
+          },
+          "hiringOrganization": {
+            "@type": "Corporation",
+            "name": "Zebrold International Holdings Limited",
+            "alternateName": ["Zebrold IHL", "Zebrold Group"]
+          },
+          "employmentType": job.type || "FULL_TIME"
+        }
+      }))
+    }
+  };
+
   return (
     <div className="careers-page">
       <SEO 
-        title="Careers | Zebrold Group"
-        description="Join our global team. We're looking for visionary talent across 12 sectors."
+        title="Careers & Opportunities | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Explore global career opportunities at Zebrold International Holdings Limited (Zebrold IHL). Join our team across Frankfurt, London, Sydney, Hyderabad, and 26 subsidiaries."
+        keywords="Zebrold careers, jobs at Zebrold, Zebrold IHL jobs, Zebrold International Holdings Limited careers, Frankfurt jobs, engineering careers"
+        url="/careers"
+        schemaData={careersSchema}
       />
       {/* Hero Banner — Home Theme */}
       <section className="careers-hero">

@@ -130,11 +130,36 @@ export default function JobDetails() {
     }, 600);
   };
 
+  const jobSchema = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    "title": job.title,
+    "description": job.description,
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": job.location
+      }
+    },
+    "hiringOrganization": {
+      "@type": "Corporation",
+      "name": "Zebrold International Holdings Limited",
+      "alternateName": ["Zebrold IHL", "Zebrold Group"],
+      "sameAs": "https://www.zebrold.de"
+    },
+    "employmentType": job.type || "FULL_TIME",
+    "datePosted": job.datePosted || "2026-08-01"
+  };
+
   return (
     <div className="job-details-page">
       <SEO 
-        title={`${job.title} | Careers at Zebrold Group`}
-        description={`We are hiring for ${job.title} in ${job.location}. Apply now at Zebrold Group.`}
+        title={`${job.title} | Zebrold International Holdings Limited (Zebrold IHL)`}
+        description={`Career Opportunity: ${job.title} in ${job.location} (${job.department}) at Zebrold International Holdings Limited (Zebrold IHL). Apply today.`}
+        keywords={`${job.title}, ${job.department}, ${job.location} jobs, Zebrold careers, Zebrold IHL jobs, Zebrold International Holdings Limited vacancies`}
+        url={`/careers/${job.id}`}
+        schemaData={jobSchema}
       />
       <section className="job-details-header">
         <div className="padding-global">

@@ -21,11 +21,32 @@ export default function SectorDetail() {
 
   const sectorCompanies = subsidiaries.filter(c => c.sector === sector.name);
 
+  const sectorDetailSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemPage",
+    "name": `${sector.name} — Zebrold International Holdings Limited (Zebrold IHL)`,
+    "description": richData.overview,
+    "url": `https://www.zebrold.de/sectors/${matchedSlug}`,
+    "mainEntity": {
+      "@type": "Service",
+      "name": sector.name,
+      "description": richData.overview,
+      "provider": {
+        "@type": "Corporation",
+        "name": "Zebrold International Holdings Limited",
+        "alternateName": ["Zebrold IHL", "Zebrold Group"]
+      }
+    }
+  };
+
   return (
     <div className="sector-detail-page">
       <SEO 
-        title={`${sector.name} | Zebrold Group Sectors`}
-        description={richData.overview}
+        title={`${sector.name} | Zebrold International Holdings Limited (Zebrold IHL)`}
+        description={`${richData.overview} Operated by Zebrold International Holdings Limited (Zebrold IHL).`}
+        keywords={`${sector.name}, Zebrold ${sector.name}, Zebrold IHL, Zebrold International Holdings Limited, ${sectorCompanies.map(c => c.name).join(', ')}`}
+        url={`/sectors/${matchedSlug}`}
+        schemaData={sectorDetailSchema}
       />
       {/* Hero with Domain Background Image */}
       <section className="sector-detail-hero-section">

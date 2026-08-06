@@ -10,11 +10,34 @@ const regions = ['Europe', 'India', 'Australia'];
 export default function Offices() {
   const pageRef = useScrollReveal();
 
+  const officesSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    "name": "Global Offices — Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "26 global offices across Europe, India, and Australia with Global Headquarters in Frankfurt am Main, Germany.",
+    "url": "https://www.zebrold.de/offices",
+    "mainEntity": {
+      "@type": "Corporation",
+      "name": "Zebrold International Holdings Limited",
+      "alternateName": ["Zebrold IHL", "Zebrold Group"],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Bockenheimer Landstrasse 17-19",
+        "addressLocality": "Frankfurt am Main",
+        "postalCode": "60325",
+        "addressCountry": "DE"
+      }
+    }
+  };
+
   return (
     <div ref={pageRef} className="offices-page">
       <SEO 
-        title="Global Offices | Zebrold Group"
-        description="From Frankfurt to Hyderabad to Sydney — the Zebrold Group is where business happens."
+        title="Global Offices & Locations | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="26 strategic locations across Europe, India, and Australia. Global Headquarters of Zebrold International Holdings Limited (Zebrold IHL) in Frankfurt am Main, Germany."
+        keywords="Zebrold offices, Zebrold global locations, Zebrold IHL headquarters, Zebrold International Holdings Limited Frankfurt, Munich, Dresden, London, Hyderabad, Sydney"
+        url="/offices"
+        schemaData={officesSchema}
       />
       {/* Hero */}
       <section className="page-hero offices-hero" aria-label="Offices hero">

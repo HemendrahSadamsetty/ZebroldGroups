@@ -214,10 +214,10 @@ export { CTA_DEFAULTS };
    ══════════════════════════════════════════════════════ */
 const FAQ_DEFAULTS = [
   {
-    q_de: 'In welchen Sektoren ist die Zebrold Group tätig?',
-    q_en: 'Which sectors does the Zebrold Group operate in?',
-    a_de: 'Die Zebrold Group ist in zwölf strategischen Sektoren tätig, darunter EV-Laden & Batterien, Halbleiter, Automobilbau, Gesundheitswesen & Pharma, Finanzen & Investitionen, Technologie & IT, Bildung, Einzelhandel & Konsumgüter, Logistik & Lieferkette, Landwirtschaft & Lebensmittel, Industrie & Maschinenbau sowie Medien & Unterhaltung.',
-    a_en: 'The Zebrold Group operates across twelve strategic sectors, including EV Charging & Battery, Semiconductors, Car Manufacturing, Healthcare & Pharma, Finance & Investment, Technology & IT, Education, Retail & Consumer, Logistics & Supply Chain, Agriculture & Food, Industrial & Engineering, and Media & Entertainment.',
+    q_de: 'In welchen Sektoren ist Zebrold International Holdings Limited (Zebrold IHL) tätig?',
+    q_en: 'Which sectors does Zebrold International Holdings Limited (Zebrold IHL) operate in?',
+    a_de: 'Zebrold International Holdings Limited (Zebrold IHL) ist in zwölf strategischen Sektoren tätig, darunter EV-Laden & Batterien, Halbleiter, Automobilbau, Gesundheitswesen & Pharma, Finanzen & Investitionen, Technologie & IT, Bildung, Einzelhandel & Konsumgüter, Logistik & Lieferkette, Landwirtschaft & Lebensmittel, Industrie & Maschinenbau sowie Medien & Unterhaltung.',
+    a_en: 'Zebrold International Holdings Limited (Zebrold IHL) operates across twelve strategic sectors, including EV Charging & Battery, Semiconductors, Car Manufacturing, Healthcare & Pharma, Finance & Investment, Technology & IT, Education, Retail & Consumer, Logistics & Supply Chain, Agriculture & Food, Industrial & Engineering, and Media & Entertainment.',
   },
   {
     q_de: 'Wie viele Tochtergesellschaften hat die Gruppe?',
@@ -226,10 +226,10 @@ const FAQ_DEFAULTS = [
     a_en: 'We manage twenty-six market-leading subsidiaries across three continents. Each subsidiary operates with full operational autonomy while benefiting from the group\'s unified capital framework.',
   },
   {
-    q_de: 'Wo befindet sich der Hauptsitz der Zebrold Group?',
-    q_en: 'Where is Zebrold Group headquartered?',
-    a_de: 'Der Hauptsitz der Zebrold Group ist in Frankfurt am Main, Deutschland. Wir unterhalten operative Niederlassungen in Europa, Indien und Australien sowie Produktionsstätten in München, Dresden, Stuttgart und an anderen strategischen Standorten.',
-    a_en: 'Zebrold Group is headquartered in Frankfurt am Main, Germany, with key operational facilities in Munich, Dresden, Sydney, Bangalore, and New York.',
+    q_de: 'Wo befindet sich der Hauptsitz von Zebrold International Holdings Limited (Zebrold IHL)?',
+    q_en: 'Where is Zebrold International Holdings Limited (Zebrold IHL) headquartered?',
+    a_de: 'Der Hauptsitz von Zebrold International Holdings Limited (Zebrold IHL) befindet sich an der Bockenheimer Landstrasse 17-19, 60325 Frankfurt am Main, Deutschland. Wir unterhalten operative Niederlassungen in Europa, Indien und Australien.',
+    a_en: 'Zebrold International Holdings Limited (Zebrold IHL) is headquartered at Bockenheimer Landstrasse 17-19, 60325 Frankfurt am Main, Germany, with 26 regional offices spanning Europe, India, and Australia.',
   },
   {
     q_de: 'Was unterscheidet Zebrold von anderen Konglomeraten?',

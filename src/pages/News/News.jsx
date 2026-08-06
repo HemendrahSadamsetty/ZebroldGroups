@@ -14,11 +14,40 @@ export default function News() {
   const featured = news.find(n => n.featured);
   const rest = news.filter(n => !n.featured);
 
+  const newsSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Newsroom — Zebrold International Holdings Limited (Zebrold IHL)",
+    "description": "Official press releases and announcements from Zebrold International Holdings Limited (Zebrold IHL).",
+    "url": "https://www.zebrold.de/news",
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": news.map((item, idx) => ({
+        "@type": "ListItem",
+        "position": idx + 1,
+        "item": {
+          "@type": "NewsArticle",
+          "headline": item.title,
+          "description": item.summary,
+          "datePublished": item.date,
+          "publisher": {
+            "@type": "Corporation",
+            "name": "Zebrold International Holdings Limited",
+            "alternateName": ["Zebrold IHL", "Zebrold Group"]
+          }
+        }
+      }))
+    }
+  };
+
   return (
     <div ref={pageRef} className="news-page">
       <SEO 
-        title="News & Announcements | Zebrold Group"
-        description="Latest news, announcements, and milestones from Zebrold Group and its 26 subsidiaries."
+        title="Newsroom & Press Releases | Zebrold International Holdings Limited (Zebrold IHL)"
+        description="Official press releases, quarterly updates, and strategic milestones from Zebrold International Holdings Limited (Zebrold IHL) and portfolio subsidiaries."
+        keywords="Zebrold news, Zebrold press release, Zebrold IHL announcements, Zebrold International Holdings Limited media updates"
+        url="/news"
+        schemaData={newsSchema}
       />
       {/* Hero */}
       <section className="page-hero news-hero" aria-label="News hero">

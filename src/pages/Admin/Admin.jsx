@@ -1,9 +1,22 @@
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Toast from '../../components/Toast/Toast';
 import { subsidiaries } from '../../data/subsidiaries';
 import zebroldLogoMark from '../../assets/zebrold_logo_mark.png';
 import { getStoredJobs, saveJobs, getStoredApplications, saveApplications } from '../../data/careersData';
-import { sendCandidateStatusEmail, generateCandidateStatusEmailHtml } from '../../services/emailService';
+import {
+  MAILBOX_CONFIG,
+  generateNoReplyEmailHtml,
+  generateTalentEmailHtml,
+  generateInfoEmailHtml,
+  sendNoReplyEmail,
+  sendTalentEmail,
+  sendInfoEmail,
+  sendCustomAdminEmail,
+  getSentEmailLogs,
+  clearSentEmailLogs,
+  sendCandidateStatusEmail,
+  generateCandidateStatusEmailHtml
+} from '../../services/emailService';
 import {
   getExpertise, saveExpertise, EXPERTISE_DEFAULTS,
   getDomains, saveDomains, DOMAINS_DEFAULTS,
@@ -28,6 +41,7 @@ import './Admin.css';
 
 const SIDEBAR_ITEMS = [
   { id: 'dashboard', label: 'Dashboard' },
+  { id: 'mailcenter', label: 'Mail Center' },
   { id: 'careers', label: 'Job Openings' },
   { id: 'applications', label: 'CV Applications' },
   { id: 'announcement', label: 'Announcements' },
@@ -59,20 +73,25 @@ function Dashboard() {
   const appsCount = getStoredApplications().length;
   const faqCount = getFaq().length;
   const domainsCount = getDomains().length;
+  const sentMailCount = getSentEmailLogs().length;
 
   const cards = [
     { label: 'Active Job Openings', value: String(jobsCount), accent: 'blue' },
     { label: 'CV Applications', value: String(appsCount), accent: 'blue' },
+    { label: 'Sent Dispatches Logged', value: String(sentMailCount), accent: 'gold' },
+    { label: 'Active Mailboxes', value: '3 (zebrold.de)', accent: 'gold' },
     { label: 'Total Subsidiaries', value: '26', accent: 'gold' },
     { label: 'Global Offices', value: '26', accent: 'gold' },
-    { label: 'FAQ Items', value: String(faqCount), accent: 'blue' },
-    { label: 'Active Sectors', value: String(domainsCount), accent: 'gold' },
   ];
 
   return (
     <div className="admin-dashboard">
-      <h2 className="admin-section-title">Admin Dashboard</h2>
-      <p className="admin-section-sub">Complete CMS for the Zebrold Group website — manage every section of the homepage from here.</p>
+      <div className="admin-dash-header-bar">
+        <div>
+          <h2 className="admin-section-title">Admin Dashboard</h2>
+          <p className="admin-section-sub">Complete CMS & Communications Center for Zebrold Group (zebrold.de) — manage content, careers, and emails in real-time.</p>
+        </div>
+      </div>
       <div className="admin-dash-cards">
         {cards.map(c => (
           <div key={c.label} className={`admin-dash-card admin-dash-card--${c.accent}`}>
@@ -85,18 +104,17 @@ function Dashboard() {
         <h3 className="admin-sub-title">Quick Actions</h3>
         <div className="admin-quick-grid">
           {[
-            { label: 'Edit Hero Banner', target: 'hero' },
-            { label: 'Edit Expertise Cards', target: 'expertise' },
-            { label: 'Update Statistics', target: 'stats' },
-            { label: 'Manage FAQ', target: 'faq' },
-            { label: 'Reorder Sections', target: 'sectionorder' },
-            { label: 'Manage Careers', target: 'careers' },
+            { label: '✉️ Open Mail Center', target: 'mailcenter' },
+            { label: '👥 Review Applications', target: 'applications' },
+            { label: '💼 Manage Job Openings', target: 'careers' },
+            { label: '✨ Edit Hero Banner', target: 'hero' },
+            { label: '📊 Update Statistics', target: 'stats' },
+            { label: '🔐 Security & Logins', target: 'security' },
           ].map(action => (
             <button
               key={action.target}
               className="admin-quick-action-card"
               onClick={() => {
-                /* Navigate by clicking sidebar programmatically */
                 const btn = document.getElementById(`admin-nav-${action.target}`);
                 if (btn) btn.click();
               }}
@@ -108,8 +126,1195 @@ function Dashboard() {
       </div>
       <div className="admin-dash-notice">
         <span>ℹ</span>
-        <p>Full CMS active. Every homepage section can be edited from the sidebar. Changes persist via localStorage and appear immediately on the live site.</p>
+        <p>Mailboxes active: <code>no-reply@zebrold.de</code>, <code>talent.acquisition@zebrold.de</code>, and <code>info@zebrold.de</code>. Full real-time HTML email dispatching and simulation available in the Mail Center.</p>
       </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAIL CENTER & DISPATCHER MODULE (no-reply@zebrold.de, talent.acquisition@zebrold.de, info@zebrold.de)
+   ═══════════════════════════════════════════════════════════ */
+function MailCenterModule({ onSave, session }) {
+  const [activeMailbox, setActiveMailbox] = useState('no-reply@zebrold.de');
+  const [previewMode, setPreviewMode] = useState('desktop'); // 'desktop' | 'mobile' | 'code'
+  const [isSending, setIsSending] = useState(false);
+  const [copiedHtml, setCopiedHtml] = useState(false);
+  const [sentLogs, setSentLogs] = useState(getSentEmailLogs);
+  const [viewModalLog, setViewModalLog] = useState(null);
+  const [logSearch, setLogSearch] = useState('');
+
+  // 1. no-reply@zebrold.de form state
+  const [noReplyForm, setNoReplyForm] = useState({
+    toName: 'Operations Manager',
+    toEmail: 'admin@zebrold.de',
+    title: 'Admin Password Reset Security Verification',
+    otpCode: '584920',
+    referenceId: 'SEC-OTP-98214',
+    alertType: 'PASSWORD RESET OTP',
+    message: 'A security verification request was initiated for your Zebrold Group Admin account. Enter the 6-digit verification code below to authorize the password change.',
+    expiresIn: '15 minutes',
+    actionUrl: '',
+    actionText: 'Open Security Console'
+  });
+
+  // 2. talent.acquisition@zebrold.de form state
+  const [talentForm, setTalentForm] = useState({
+    candidateName: 'Alex Morgan',
+    candidateEmail: 'alex.morgan@example.com',
+    jobTitle: 'Senior Full-Stack Software Engineer',
+    department: 'Engineering & Technology',
+    location: 'Frankfurt am Main / Hybrid',
+    status: 'INTERVIEW',
+    customMessage: 'We were highly impressed by your experience and portfolio. Our hiring committee would like to invite you for a 45-minute technical and architecture discussion with our engineering leads.',
+    hasInterviewDetails: true,
+    interviewDate: 'Thursday, August 14, 2026',
+    interviewTime: '14:30',
+    interviewTimezone: 'CET (Frankfurt)',
+    interviewFormat: 'Video Conference (Google Meet)',
+    interviewer: 'Dr. Marcus Vance (VP Engineering) & Sarah Lin (Lead Architect)',
+    interviewLink: 'https://meet.google.com/zbr-tech-eval',
+    hasOfferDetails: false,
+    offerRole: 'Senior Full-Stack Software Engineer',
+    offerStartDate: 'October 1, 2026',
+    offerDeadline: 'August 25, 2026',
+    actionUrl: 'https://meet.google.com/zbr-tech-eval',
+    actionText: 'Confirm Interview Slot'
+  });
+
+  // 3. info@zebrold.de form state
+  const [infoForm, setInfoForm] = useState({
+    recipientName: 'Herr Dietrich Weber',
+    recipientEmail: 'partner@meridian-capital.de',
+    company: 'Meridian Capital Partners',
+    subject: 'Response to Institutional Partnership Inquiry — Zebrold Group',
+    memoRef: 'ZBR-INQ-2026-4402',
+    department: 'Corporate Relations & Strategic Partnerships',
+    messageBody: 'Thank you for your correspondence regarding prospective strategic co-investment and syndicate opportunities with Zebrold Group. Our Executive Committee has reviewed your memorandum and welcomes the opportunity for an introductory executive discussion.',
+    highlightBox: 'An executive liaison from our Frankfurt Global HQ will coordinate the preliminary agenda and digital briefing room.',
+    signatoryName: 'Executive Secretariat',
+    signatoryTitle: 'Zebrold Group Corporate Relations',
+    actionUrl: 'https://www.zebrold.de',
+    actionText: 'Visit Executive Portal'
+  });
+
+  // Presets catalogue
+  const PRESETS = {
+    'no-reply@zebrold.de': [
+      {
+        id: 'otp',
+        name: '🔑 Security Reset OTP',
+        apply: () => {
+          setNoReplyForm(p => ({
+            ...p,
+            title: 'Admin Password Reset Security Verification',
+            otpCode: String(Math.floor(100000 + Math.random() * 900000)),
+            alertType: 'PASSWORD RESET OTP',
+            referenceId: `SEC-OTP-${Math.floor(10000 + Math.random() * 90000)}`,
+            message: 'A security verification request was initiated for your Zebrold Group Admin account. Enter the 6-digit verification code below to authorize the password change.',
+            expiresIn: '15 minutes',
+            actionUrl: '',
+            actionText: 'Open Security Console'
+          }));
+        }
+      },
+      {
+        id: 'maintenance',
+        name: '⚡ System Maintenance',
+        apply: () => {
+          setNoReplyForm(p => ({
+            ...p,
+            title: 'Scheduled Infrastructure Maintenance Notice',
+            otpCode: '',
+            alertType: 'SYSTEM UPGRADE',
+            referenceId: `MAINT-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`,
+            message: 'Please be advised that scheduled maintenance will occur on the Zebrold Central Infrastructure this Saturday from 02:00 to 02:30 UTC. Systems will resume normal operations immediately afterward.',
+            expiresIn: 'Notice Period: 48h',
+            actionUrl: 'https://www.zebrold.de',
+            actionText: 'Check System Status'
+          }));
+        }
+      },
+      {
+        id: 'receipt',
+        name: '🧾 Transaction Receipt',
+        apply: () => {
+          setNoReplyForm(p => ({
+            ...p,
+            title: 'Portal Submission & Transaction Receipt',
+            otpCode: '',
+            alertType: 'TRANSACTION RECEIPT',
+            referenceId: `TXN-${Math.floor(100000 + Math.random() * 900000)}`,
+            message: 'We have received your electronic filing and transaction payload. The submission has been cryptographically signed and queued for automated processing.',
+            expiresIn: '',
+            actionUrl: 'https://www.zebrold.de',
+            actionText: 'View Submission Portal'
+          }));
+        }
+      }
+    ],
+    'talent.acquisition@zebrold.de': [
+      {
+        id: 'interview',
+        name: '📅 Interview Invitation',
+        apply: () => {
+          setTalentForm(p => ({
+            ...p,
+            status: 'INTERVIEW',
+            hasInterviewDetails: true,
+            hasOfferDetails: false,
+            customMessage: 'We were highly impressed by your qualifications and would like to invite you for an interview with our technical leadership panel.',
+            interviewDate: 'Thursday, August 14, 2026',
+            interviewTime: '14:30',
+            interviewTimezone: 'CET (Frankfurt)',
+            interviewFormat: 'Video Conference (Google Meet)',
+            interviewer: 'Dr. Marcus Vance (VP Engineering) & Sarah Lin (Lead Architect)',
+            interviewLink: 'https://meet.google.com/zbr-tech-eval',
+            actionUrl: 'https://meet.google.com/zbr-tech-eval',
+            actionText: 'Confirm Interview Slot'
+          }));
+        }
+      },
+      {
+        id: 'offer',
+        name: '🎉 Formal Job Offer',
+        apply: () => {
+          setTalentForm(p => ({
+            ...p,
+            status: 'HIRED',
+            hasInterviewDetails: false,
+            hasOfferDetails: true,
+            customMessage: 'We are delighted to extend a formal offer of employment to join Zebrold Group. The executive hiring board was deeply impressed by your analytical vision and background.',
+            offerRole: p.jobTitle || 'Senior Full-Stack Software Engineer',
+            offerStartDate: 'October 1, 2026',
+            offerDeadline: 'August 25, 2026',
+            actionUrl: 'https://www.zebrold.de/careers',
+            actionText: 'Review & Sign Offer Packet'
+          }));
+        }
+      },
+      {
+        id: 'received',
+        name: '📥 Application Received',
+        apply: () => {
+          setTalentForm(p => ({
+            ...p,
+            status: 'APPLICATION RECEIVED',
+            hasInterviewDetails: false,
+            hasOfferDetails: false,
+            customMessage: 'Thank you for submitting your application to Zebrold Group. We have safely received your CV and portfolio. Our talent team is actively evaluating your profile.',
+            actionUrl: 'https://www.zebrold.de/careers',
+            actionText: 'View Careers Portal'
+          }));
+        }
+      },
+      {
+        id: 'rejected',
+        name: '🤝 Outcome Notice',
+        apply: () => {
+          setTalentForm(p => ({
+            ...p,
+            status: 'REJECTED',
+            hasInterviewDetails: false,
+            hasOfferDetails: false,
+            customMessage: 'Thank you for participating in our recruitment process. While your background is impressive, we have chosen to proceed with another candidate whose background aligns more closely with our immediate requirements.',
+            actionUrl: 'https://www.zebrold.de/careers',
+            actionText: 'Browse Open Opportunities'
+          }));
+        }
+      }
+    ],
+    'info@zebrold.de': [
+      {
+        id: 'inquiry',
+        name: '💬 Official Inquiry Reply',
+        apply: () => {
+          setInfoForm(p => ({
+            ...p,
+            subject: 'Response to Institutional Partnership Inquiry — Zebrold Group',
+            memoRef: `ZBR-INQ-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+            department: 'Corporate Relations & Strategic Partnerships',
+            messageBody: 'Thank you for your correspondence regarding prospective strategic partnership opportunities with Zebrold Group. Our Executive Committee has reviewed your memorandum and welcomes the opportunity for an introductory discussion.',
+            highlightBox: 'An executive liaison from our Frankfurt Global HQ will coordinate the preliminary agenda and digital briefing room.',
+            signatoryName: 'Executive Secretariat',
+            signatoryTitle: 'Zebrold Group Corporate Relations',
+            actionUrl: 'https://www.zebrold.de',
+            actionText: 'Visit Executive Portal'
+          }));
+        }
+      },
+      {
+        id: 'announcement',
+        name: '📢 Corporate Announcement',
+        apply: () => {
+          setInfoForm(p => ({
+            ...p,
+            subject: 'Corporate Communiqué: Expansion of Frankfurt Global Technology Center',
+            memoRef: `ZBR-PR-${new Date().getFullYear()}-${Math.floor(10 + Math.random() * 90)}`,
+            department: 'Office of the Chief Executive',
+            messageBody: 'Zebrold International Holdings Limited is pleased to announce the formal expansion of our European Technology & Quantitative Center in Frankfurt am Main, reinforcing our cross-border operational footprint across EMEA, APAC, and North America.',
+            highlightBox: 'Strategic focus includes deep-tech infrastructure, green-energy enterprise platforms, and institutional liquidity hubs.',
+            signatoryName: 'Office of the Executive Board',
+            signatoryTitle: 'Zebrold International Holdings Limited',
+            actionUrl: 'https://www.zebrold.de',
+            actionText: 'Read Full Press Release'
+          }));
+        }
+      }
+    ]
+  };
+
+  // Real-time generated HTML based on active mailbox & form
+  const renderedHtml = useMemo(() => {
+    if (activeMailbox === 'no-reply@zebrold.de') {
+      return generateNoReplyEmailHtml({
+        recipientName: noReplyForm.toName,
+        recipientEmail: noReplyForm.toEmail,
+        title: noReplyForm.title,
+        otpCode: noReplyForm.otpCode,
+        referenceId: noReplyForm.referenceId,
+        alertType: noReplyForm.alertType,
+        message: noReplyForm.message,
+        actionUrl: noReplyForm.actionUrl,
+        actionText: noReplyForm.actionText,
+        expiresIn: noReplyForm.expiresIn,
+      });
+    } else if (activeMailbox === 'talent.acquisition@zebrold.de') {
+      return generateTalentEmailHtml({
+        candidateName: talentForm.candidateName,
+        candidateEmail: talentForm.candidateEmail,
+        jobTitle: talentForm.jobTitle,
+        department: talentForm.department,
+        location: talentForm.location,
+        status: talentForm.status,
+        customMessage: talentForm.customMessage,
+        interviewDetails: talentForm.hasInterviewDetails ? {
+          date: talentForm.interviewDate,
+          time: talentForm.interviewTime,
+          timezone: talentForm.interviewTimezone,
+          format: talentForm.interviewFormat,
+          interviewer: talentForm.interviewer,
+          link: talentForm.interviewLink,
+        } : null,
+        offerDetails: talentForm.hasOfferDetails ? {
+          role: talentForm.offerRole,
+          startDate: talentForm.offerStartDate,
+          deadline: talentForm.offerDeadline,
+        } : null,
+        actionUrl: talentForm.actionUrl,
+        actionText: talentForm.actionText,
+      });
+    } else {
+      return generateInfoEmailHtml({
+        recipientName: infoForm.recipientName,
+        recipientEmail: infoForm.recipientEmail,
+        company: infoForm.company,
+        subject: infoForm.subject,
+        memoRef: infoForm.memoRef,
+        department: infoForm.department,
+        messageBody: infoForm.messageBody,
+        highlightBox: infoForm.highlightBox,
+        actionUrl: infoForm.actionUrl,
+        actionText: infoForm.actionText,
+        signatoryName: infoForm.signatoryName,
+        signatoryTitle: infoForm.signatoryTitle,
+      });
+    }
+  }, [activeMailbox, noReplyForm, talentForm, infoForm]);
+
+  // Dispatch Handlers
+  const handleSendEmail = async (isTest = false) => {
+    setIsSending(true);
+    let targetEmail = '';
+    let targetName = '';
+    let emailSubject = '';
+
+    if (activeMailbox === 'no-reply@zebrold.de') {
+      targetEmail = isTest ? (session?.email || 'admin@zebrold.de') : noReplyForm.toEmail;
+      targetName = isTest ? 'Admin Test' : noReplyForm.toName;
+      emailSubject = isTest ? `[TEST DISPATCH] ${noReplyForm.title}` : noReplyForm.title;
+    } else if (activeMailbox === 'talent.acquisition@zebrold.de') {
+      targetEmail = isTest ? (session?.email || 'admin@zebrold.de') : talentForm.candidateEmail;
+      targetName = isTest ? 'Candidate Test' : talentForm.candidateName;
+      emailSubject = isTest ? `[TEST DISPATCH] Application Update: ${talentForm.jobTitle}` : `Application Update: ${talentForm.jobTitle} (${talentForm.status})`;
+    } else {
+      targetEmail = isTest ? (session?.email || 'admin@zebrold.de') : infoForm.recipientEmail;
+      targetName = isTest ? 'Corporate Test' : infoForm.recipientName;
+      emailSubject = isTest ? `[TEST DISPATCH] ${infoForm.subject}` : infoForm.subject;
+    }
+
+    if (!targetEmail || !targetEmail.includes('@')) {
+      alert('Please provide a valid recipient email address.');
+      setIsSending(false);
+      return;
+    }
+
+    const res = await sendCustomAdminEmail({
+      fromMailbox: activeMailbox,
+      toEmail: targetEmail,
+      toName: targetName,
+      subject: emailSubject,
+      htmlContent: renderedHtml,
+    });
+
+    setIsSending(false);
+    setSentLogs(getSentEmailLogs());
+    onSave(`Dispatched from ${activeMailbox} to ${targetEmail} via ${res.provider}.`);
+  };
+
+  const handleCopyHtml = () => {
+    navigator.clipboard.writeText(renderedHtml);
+    setCopiedHtml(true);
+    setTimeout(() => setCopiedHtml(false), 2500);
+    onSave('Full HTML email template copied to clipboard!');
+  };
+
+  const handleDownloadHtml = () => {
+    const blob = new Blob([renderedHtml], { type: 'text/html;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const prefix = activeMailbox.split('@')[0];
+    link.download = `zebrold-${prefix}-${Date.now()}.html`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    onSave('HTML template file downloaded.');
+  };
+
+  const handleClearLogs = () => {
+    if (!window.confirm('Are you sure you want to clear the sent email logs?')) return;
+    clearSentEmailLogs();
+    setSentLogs([]);
+    onSave('Sent email logs cleared.');
+  };
+
+  const currentMailboxMeta = MAILBOX_CONFIG[activeMailbox] || MAILBOX_CONFIG['no-reply@zebrold.de'];
+  const filteredLogs = sentLogs.filter(log => {
+    if (!logSearch) return true;
+    const q = logSearch.toLowerCase();
+    return (
+      (log.toEmail && log.toEmail.toLowerCase().includes(q)) ||
+      (log.toName && log.toName.toLowerCase().includes(q)) ||
+      (log.subject && log.subject.toLowerCase().includes(q)) ||
+      (log.fromAddress && log.fromAddress.toLowerCase().includes(q))
+    );
+  });
+
+  return (
+    <div className="admin-module admin-mailcenter">
+      {/* Header */}
+      <div className="admin-module-header">
+        <div>
+          <h2 className="admin-section-title">Corporate Mail Center &amp; Dispatcher</h2>
+          <p className="admin-section-sub">Official communication gateway for <strong>zebrold.de</strong>. Compose, live-preview in real-time, test, and dispatch distinct branded HTML emails across all 3 dedicated mailboxes.</p>
+        </div>
+      </div>
+
+      {/* Mailbox Selector Tabs */}
+      <div className="mailcenter-tabs">
+        {[
+          { key: 'no-reply@zebrold.de', icon: '🔒', title: 'no-reply@zebrold.de', sub: 'System & Security OTPs', color: '#3B82F6' },
+          { key: 'talent.acquisition@zebrold.de', icon: '💼', title: 'talent.acquisition@zebrold.de', sub: 'Talent & Recruitment', color: '#8B3A3A' },
+          { key: 'info@zebrold.de', icon: '🌐', title: 'info@zebrold.de', sub: 'Corporate Inquiries & Press', color: '#D4AF37' }
+        ].map(mb => (
+          <button
+            key={mb.key}
+            type="button"
+            className={`mailcenter-tab-btn ${activeMailbox === mb.key ? 'mailcenter-tab-btn--active' : ''}`}
+            onClick={() => setActiveMailbox(mb.key)}
+            style={{
+              '--tab-color': mb.color,
+              borderColor: activeMailbox === mb.key ? mb.color : 'rgba(255,255,255,0.08)'
+            }}
+          >
+            <div className="mailcenter-tab-icon" style={{ background: `${mb.color}22`, color: mb.color }}>{mb.icon}</div>
+            <div className="mailcenter-tab-info">
+              <span className="mailcenter-tab-addr">{mb.title}</span>
+              <span className="mailcenter-tab-sub">{mb.sub}</span>
+            </div>
+            {activeMailbox === mb.key && <span className="mailcenter-tab-pill" style={{ background: mb.color }}>ACTIVE</span>}
+          </button>
+        ))}
+      </div>
+
+      {/* Active Mailbox Banner */}
+      <div className="mailcenter-banner" style={{ borderLeftColor: currentMailboxMeta.badgeColor }}>
+        <div className="mailcenter-banner-header">
+          <div>
+            <strong style={{ color: currentMailboxMeta.badgeColor }}>{currentMailboxMeta.name}</strong>
+            <span className="mailcenter-banner-tag">{currentMailboxMeta.headerTag}</span>
+          </div>
+          <span className="mailcenter-banner-domain">Domain: <code>zebrold.de</code> (Frankfurt Gateway)</span>
+        </div>
+        <p className="mailcenter-banner-desc">{currentMailboxMeta.purpose}</p>
+
+        {/* Quick Presets Bar */}
+        <div className="mailcenter-presets-row">
+          <span className="mailcenter-presets-label">⚡ Quick Presets:</span>
+          <div className="mailcenter-presets-list">
+            {(PRESETS[activeMailbox] || []).map(preset => (
+              <button
+                key={preset.id}
+                type="button"
+                className="mailcenter-preset-chip"
+                onClick={() => {
+                  preset.apply();
+                  onSave(`Loaded template preset: "${preset.name}".`);
+                }}
+              >
+                {preset.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Main Dual Workspace: Left Composer, Right Live Simulator */}
+      <div className="mailcenter-workspace">
+        
+        {/* LEFT COLUMN: Interactive Composer */}
+        <div className="mailcenter-composer-col">
+          <div className="mailcenter-panel-header">
+            <h3 className="mailcenter-panel-title">✉️ Email Composer &amp; Dispatch Payload</h3>
+            <span className="mailcenter-panel-tag">Sender: {activeMailbox}</span>
+          </div>
+
+          <div className="mailcenter-form">
+
+            {/* 1. NO-REPLY SPECIFIC FIELDS */}
+            {activeMailbox === 'no-reply@zebrold.de' && (
+              <>
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Recipient Email *</label>
+                    <input
+                      type="email"
+                      required
+                      className="form-input"
+                      value={noReplyForm.toEmail}
+                      onChange={e => setNoReplyForm(p => ({ ...p, toEmail: e.target.value }))}
+                      placeholder="admin@zebrold.de"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Recipient Name</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={noReplyForm.toName}
+                      onChange={e => setNoReplyForm(p => ({ ...p, toName: e.target.value }))}
+                      placeholder="e.g. Operations Manager"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">Notification Title / Subject *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={noReplyForm.title}
+                      onChange={e => setNoReplyForm(p => ({ ...p, title: e.target.value }))}
+                      placeholder="e.g. Admin Password Reset Security Verification"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Alert Tag</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={noReplyForm.alertType}
+                      onChange={e => setNoReplyForm(p => ({ ...p, alertType: e.target.value.toUpperCase() }))}
+                      placeholder="SECURITY VERIFICATION"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <label className="form-label">6-Digit Code / Monospace Highlight</label>
+                      <button
+                        type="button"
+                        className="btn-link-action"
+                        onClick={() => setNoReplyForm(p => ({ ...p, otpCode: String(Math.floor(100000 + Math.random() * 900000)) }))}
+                      >
+                        🎲 Generate Code
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      className="form-input"
+                      style={{ letterSpacing: '0.2em', fontWeight: 700, fontFamily: 'monospace' }}
+                      value={noReplyForm.otpCode}
+                      onChange={e => setNoReplyForm(p => ({ ...p, otpCode: e.target.value }))}
+                      placeholder="e.g. 584920 (optional)"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Reference ID / Expiry</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={noReplyForm.referenceId}
+                      onChange={e => setNoReplyForm(p => ({ ...p, referenceId: e.target.value }))}
+                      placeholder="e.g. SEC-OTP-98214"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Message Content / Details</label>
+                  <textarea
+                    rows={4}
+                    className="form-textarea"
+                    value={noReplyForm.message}
+                    onChange={e => setNoReplyForm(p => ({ ...p, message: e.target.value }))}
+                    placeholder="Enter message body..."
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">Action Button URL (Optional)</label>
+                    <input
+                      type="url"
+                      className="form-input"
+                      value={noReplyForm.actionUrl}
+                      onChange={e => setNoReplyForm(p => ({ ...p, actionUrl: e.target.value }))}
+                      placeholder="https://www.zebrold.de"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Button Label</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={noReplyForm.actionText}
+                      onChange={e => setNoReplyForm(p => ({ ...p, actionText: e.target.value }))}
+                      placeholder="Open Portal"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 2. TALENT SPECIFIC FIELDS */}
+            {activeMailbox === 'talent.acquisition@zebrold.de' && (
+              <>
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Candidate Email *</label>
+                    <input
+                      type="email"
+                      required
+                      className="form-input"
+                      value={talentForm.candidateEmail}
+                      onChange={e => setTalentForm(p => ({ ...p, candidateEmail: e.target.value }))}
+                      placeholder="candidate@example.com"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Candidate Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
+                      value={talentForm.candidateName}
+                      onChange={e => setTalentForm(p => ({ ...p, candidateName: e.target.value }))}
+                      placeholder="e.g. Alex Morgan"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">Job Position Title *</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={talentForm.jobTitle}
+                      onChange={e => setTalentForm(p => ({ ...p, jobTitle: e.target.value }))}
+                      placeholder="e.g. Senior Full-Stack Software Engineer"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Application Status</label>
+                    <select
+                      className="form-select"
+                      value={talentForm.status}
+                      onChange={e => setTalentForm(p => ({ ...p, status: e.target.value }))}
+                    >
+                      <option value="INTERVIEW">INTERVIEW (Invitation)</option>
+                      <option value="HIRED">HIRED (Offer Extended)</option>
+                      <option value="SHORTLISTED">SHORTLISTED (Recruiter Review)</option>
+                      <option value="UNDER REVIEW">UNDER REVIEW (In Evaluation)</option>
+                      <option value="APPLICATION RECEIVED">APPLICATION RECEIVED</option>
+                      <option value="REJECTED">REJECTED (Outcome Notice)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Department / Division</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={talentForm.department}
+                      onChange={e => setTalentForm(p => ({ ...p, department: e.target.value }))}
+                      placeholder="Engineering & Technology"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Location</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={talentForm.location}
+                      onChange={e => setTalentForm(p => ({ ...p, location: e.target.value }))}
+                      placeholder="Frankfurt am Main / Hybrid"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Recruiter Message / Letter Body</label>
+                  <textarea
+                    rows={3}
+                    className="form-textarea"
+                    value={talentForm.customMessage}
+                    onChange={e => setTalentForm(p => ({ ...p, customMessage: e.target.value }))}
+                    placeholder="Enter recruiter message..."
+                  />
+                </div>
+
+                {/* Optional Interview Details Card Toggle */}
+                <div className="mailcenter-subcard">
+                  <label className="mailcenter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={talentForm.hasInterviewDetails}
+                      onChange={e => setTalentForm(p => ({ ...p, hasInterviewDetails: e.target.checked }))}
+                    />
+                    <span>Include Structured Interview Schedule Card</span>
+                  </label>
+
+                  {talentForm.hasInterviewDetails && (
+                    <div className="mailcenter-subcard-body">
+                      <div className="form-row">
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Date</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.interviewDate}
+                            onChange={e => setTalentForm(p => ({ ...p, interviewDate: e.target.value }))}
+                            placeholder="Thursday, August 14, 2026"
+                          />
+                        </div>
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Time &amp; Timezone</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.interviewTime}
+                            onChange={e => setTalentForm(p => ({ ...p, interviewTime: e.target.value }))}
+                            placeholder="14:30 CET"
+                          />
+                        </div>
+                      </div>
+                      <div className="form-row">
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Panel / Interviewer</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.interviewer}
+                            onChange={e => setTalentForm(p => ({ ...p, interviewer: e.target.value }))}
+                            placeholder="Dr. Marcus Vance (VP Engineering)"
+                          />
+                        </div>
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Meeting URL</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.interviewLink}
+                            onChange={e => setTalentForm(p => ({ ...p, interviewLink: e.target.value }))}
+                            placeholder="https://meet.google.com/zbr-tech-eval"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Optional Offer Details Card Toggle */}
+                <div className="mailcenter-subcard">
+                  <label className="mailcenter-checkbox-label">
+                    <input
+                      type="checkbox"
+                      checked={talentForm.hasOfferDetails}
+                      onChange={e => setTalentForm(p => ({ ...p, hasOfferDetails: e.target.checked }))}
+                    />
+                    <span>Include Formal Offer Overview Box</span>
+                  </label>
+
+                  {talentForm.hasOfferDetails && (
+                    <div className="mailcenter-subcard-body">
+                      <div className="form-row">
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Expected Start Date</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.offerStartDate}
+                            onChange={e => setTalentForm(p => ({ ...p, offerStartDate: e.target.value }))}
+                            placeholder="October 1, 2026"
+                          />
+                        </div>
+                        <div className="form-group" style={{ flex: 1 }}>
+                          <label className="form-label">Offer Validity Deadline</label>
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={talentForm.offerDeadline}
+                            onChange={e => setTalentForm(p => ({ ...p, offerDeadline: e.target.value }))}
+                            placeholder="August 25, 2026"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">CTA Button URL</label>
+                    <input
+                      type="url"
+                      className="form-input"
+                      value={talentForm.actionUrl}
+                      onChange={e => setTalentForm(p => ({ ...p, actionUrl: e.target.value }))}
+                      placeholder="https://www.zebrold.de/careers"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Button Text</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={talentForm.actionText}
+                      onChange={e => setTalentForm(p => ({ ...p, actionText: e.target.value }))}
+                      placeholder="Confirm Slot"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* 3. INFO SPECIFIC FIELDS */}
+            {activeMailbox === 'info@zebrold.de' && (
+              <>
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Recipient Email *</label>
+                    <input
+                      type="email"
+                      required
+                      className="form-input"
+                      value={infoForm.recipientEmail}
+                      onChange={e => setInfoForm(p => ({ ...p, recipientEmail: e.target.value }))}
+                      placeholder="partner@meridian-capital.de"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Recipient Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
+                      value={infoForm.recipientName}
+                      onChange={e => setInfoForm(p => ({ ...p, recipientName: e.target.value }))}
+                      placeholder="Herr Dietrich Weber"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Recipient Company / Organization</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.company}
+                      onChange={e => setInfoForm(p => ({ ...p, company: e.target.value }))}
+                      placeholder="Meridian Capital Partners"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Reference Number (Memo Ref)</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.memoRef}
+                      onChange={e => setInfoForm(p => ({ ...p, memoRef: e.target.value }))}
+                      placeholder="ZBR-INQ-2026-4402"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">Subject Line *</label>
+                    <input
+                      type="text"
+                      required
+                      className="form-input"
+                      value={infoForm.subject}
+                      onChange={e => setInfoForm(p => ({ ...p, subject: e.target.value }))}
+                      placeholder="Response to Institutional Partnership Inquiry"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Dispatched From Division</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.department}
+                      onChange={e => setInfoForm(p => ({ ...p, department: e.target.value }))}
+                      placeholder="Corporate Relations"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Official Letterhead Message Body</label>
+                  <textarea
+                    rows={4}
+                    className="form-textarea"
+                    value={infoForm.messageBody}
+                    onChange={e => setInfoForm(p => ({ ...p, messageBody: e.target.value }))}
+                    placeholder="Enter formal correspondence text..."
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Executive Callout / Highlight Summary Box</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={infoForm.highlightBox}
+                    onChange={e => setInfoForm(p => ({ ...p, highlightBox: e.target.value }))}
+                    placeholder="e.g. An executive liaison from our Frankfurt Global HQ will coordinate the preliminary agenda."
+                  />
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Signatory Name</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.signatoryName}
+                      onChange={e => setInfoForm(p => ({ ...p, signatoryName: e.target.value }))}
+                      placeholder="Executive Secretariat"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Signatory Title</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.signatoryTitle}
+                      onChange={e => setInfoForm(p => ({ ...p, signatoryTitle: e.target.value }))}
+                      placeholder="Zebrold Group Corporate Relations"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group" style={{ flex: 2 }}>
+                    <label className="form-label">Action Portal URL</label>
+                    <input
+                      type="url"
+                      className="form-input"
+                      value={infoForm.actionUrl}
+                      onChange={e => setInfoForm(p => ({ ...p, actionUrl: e.target.value }))}
+                      placeholder="https://www.zebrold.de"
+                    />
+                  </div>
+                  <div className="form-group" style={{ flex: 1 }}>
+                    <label className="form-label">Action Text</label>
+                    <input
+                      type="text"
+                      className="form-input"
+                      value={infoForm.actionText}
+                      onChange={e => setInfoForm(p => ({ ...p, actionText: e.target.value }))}
+                      placeholder="Visit Executive Portal"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* Action Toolbar */}
+            <div className="mailcenter-actions-bar">
+              <button
+                type="button"
+                className="btn btn-primary mailcenter-send-btn"
+                disabled={isSending}
+                onClick={() => handleSendEmail(false)}
+              >
+                {isSending ? '⏳ Dispatching Email...' : `✉️ Dispatch via ${activeMailbox.split('@')[0]}`}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-secondary"
+                disabled={isSending}
+                onClick={() => handleSendEmail(true)}
+                title="Send test email directly to admin inbox"
+              >
+                🧪 Send Test to Admin
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleCopyHtml}
+              >
+                {copiedHtml ? '✓ Copied HTML!' : '📋 Copy HTML'}
+              </button>
+
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleDownloadHtml}
+              >
+                💾 Download .html
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: Live Responsive Simulator */}
+        <div className="mailcenter-preview-col">
+          <div className="mailcenter-panel-header">
+            <h3 className="mailcenter-panel-title">👁 Real-time Responsive HTML Simulator</h3>
+            <div className="mailcenter-view-modes">
+              <button
+                type="button"
+                className={`view-mode-btn ${previewMode === 'desktop' ? 'view-mode-btn--active' : ''}`}
+                onClick={() => setPreviewMode('desktop')}
+              >
+                🖥 Desktop
+              </button>
+              <button
+                type="button"
+                className={`view-mode-btn ${previewMode === 'mobile' ? 'view-mode-btn--active' : ''}`}
+                onClick={() => setPreviewMode('mobile')}
+              >
+                📱 Mobile (375px)
+              </button>
+              <button
+                type="button"
+                className={`view-mode-btn ${previewMode === 'code' ? 'view-mode-btn--active' : ''}`}
+                onClick={() => setPreviewMode('code')}
+              >
+                📄 HTML Code
+              </button>
+            </div>
+          </div>
+
+          <div className="mailcenter-preview-viewport">
+            {previewMode === 'code' ? (
+              <div className="mailcenter-code-view">
+                <div className="mailcenter-code-header">
+                  <span>Pure Standalone HTML (Inline CSS Styled)</span>
+                  <button type="button" className="btn-link-action" onClick={handleCopyHtml}>
+                    {copiedHtml ? '✓ Copied' : 'Copy All Code'}
+                  </button>
+                </div>
+                <pre className="mailcenter-code-content">
+                  <code>{renderedHtml}</code>
+                </pre>
+              </div>
+            ) : (
+              <div className={`mailcenter-simulator-frame mailcenter-simulator-frame--${previewMode}`}>
+                <div className="mailcenter-sim-topbar">
+                  <div className="mailcenter-sim-dots">
+                    <span className="dot dot--red"></span>
+                    <span className="dot dot--yellow"></span>
+                    <span className="dot dot--green"></span>
+                  </div>
+                  <div className="mailcenter-sim-url">
+                    mail.zebrold.de/preview &bull; {activeMailbox}
+                  </div>
+                </div>
+
+                <div className="mailcenter-sim-body">
+                  <div dangerouslySetInnerHTML={{ __html: renderedHtml }} />
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      {/* SENT EMAIL DISPATCH HISTORY & AUDIT LOGS */}
+      <div className="mailcenter-history-section">
+        <div className="mailcenter-history-header">
+          <div>
+            <h3 className="admin-sub-title" style={{ margin: 0 }}>📋 Sent Dispatches &amp; Audit Logs</h3>
+            <p className="admin-section-sub" style={{ margin: 0 }}>Persisted records of all emails dispatched from the Zebrold Admin Console.</p>
+          </div>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <input
+              type="text"
+              placeholder="Search sent emails..."
+              className="form-input admin-search-input"
+              style={{ width: '220px', padding: '0.4rem 0.75rem', fontSize: '0.8rem' }}
+              value={logSearch}
+              onChange={e => setLogSearch(e.target.value)}
+            />
+            {sentLogs.length > 0 && (
+              <button type="button" className="btn btn-secondary btn--danger-outline" onClick={handleClearLogs}>
+                Clear Logs
+              </button>
+            )}
+          </div>
+        </div>
+
+        {filteredLogs.length === 0 ? (
+          <div className="admin-empty-box" style={{ padding: '2rem 1rem' }}>
+            <p>No sent email dispatches recorded yet. Use the composer above to send your first branded email.</p>
+          </div>
+        ) : (
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Timestamp (UTC)</th>
+                  <th>Sender Mailbox</th>
+                  <th>Recipient</th>
+                  <th>Subject</th>
+                  <th>Gateway / Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredLogs.map(log => {
+                  const mbColor = MAILBOX_CONFIG[log.fromAddress]?.badgeColor || '#D4AF37';
+                  return (
+                    <tr key={log.id}>
+                      <td style={{ fontSize: '0.75rem', color: '#999', fontFamily: 'monospace' }}>
+                        {new Date(log.timestamp).toLocaleString()}
+                      </td>
+                      <td>
+                        <span
+                          className="status-badge"
+                          style={{
+                            background: `${mbColor}22`,
+                            color: mbColor,
+                            borderColor: `${mbColor}44`,
+                            borderWidth: '1px',
+                            borderStyle: 'solid'
+                          }}
+                        >
+                          {log.fromAddress}
+                        </span>
+                      </td>
+                      <td>
+                        <strong style={{ color: '#FFFFFF', display: 'block' }}>{log.toName || 'Recipient'}</strong>
+                        <span style={{ fontSize: '0.75rem', color: '#888' }}>{log.toEmail}</span>
+                      </td>
+                      <td style={{ maxWidth: '240px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {log.subject}
+                      </td>
+                      <td>
+                        <span className="status-badge status-badge--active" style={{ fontSize: '0.7rem' }}>
+                          ✓ {log.provider || 'Delivered'}
+                        </span>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <button
+                            type="button"
+                            className="btn-icon"
+                            title="View sent email preview"
+                            onClick={() => setViewModalLog(log)}
+                          >
+                            👁 View HTML
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-icon"
+                            title="Copy email HTML to clipboard"
+                            onClick={() => {
+                              navigator.clipboard.writeText(log.htmlContent);
+                              onSave('Sent email HTML copied to clipboard.');
+                            }}
+                          >
+                            📋 Copy
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Modal for viewing past sent email */}
+      {viewModalLog && (
+        <div className="admin-modal-backdrop" onClick={() => setViewModalLog(null)}>
+          <div className="admin-modal-card admin-modal-card--email" onClick={e => e.stopPropagation()}>
+            <div className="admin-modal-header">
+              <div>
+                <span className="app-modal-tag" style={{ background: '#3B82F6', color: '#FFFFFF' }}>SENT EMAIL RECORD</span>
+                <h3 className="admin-modal-title">{viewModalLog.subject}</h3>
+                <p className="admin-modal-sub">
+                  From: <strong>{viewModalLog.fromAddress}</strong> &bull; To: <strong>{viewModalLog.toName} ({viewModalLog.toEmail})</strong> &bull; {new Date(viewModalLog.timestamp).toLocaleString()}
+                </p>
+              </div>
+              <button className="modal-close-btn" onClick={() => setViewModalLog(null)}>✕</button>
+            </div>
+
+            <div className="admin-modal-body" style={{ padding: '1rem' }}>
+              <div className="email-preview-frame" style={{ border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', overflow: 'hidden' }}>
+                <div dangerouslySetInnerHTML={{ __html: viewModalLog.htmlContent }} />
+              </div>
+            </div>
+
+            <div className="admin-modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => {
+                  navigator.clipboard.writeText(viewModalLog.htmlContent);
+                  onSave('HTML copied to clipboard!');
+                }}
+              >
+                📋 Copy HTML
+              </button>
+              <button type="button" className="btn btn-primary" onClick={() => setViewModalLog(null)}>
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
@@ -2218,12 +3423,12 @@ function SecurityModule({ onSave, session }) {
 function AdminLogin({ onLoginSuccess, showToast }) {
   const accounts = getAdminAccounts();
   const [selectedAccountId, setSelectedAccountId] = useState('admin-master');
-  const [email, setEmail] = useState('admin@zebrold.com');
+  const [email, setEmail] = useState('admin@zebrold.de');
   const [password, setPassword] = useState('');
   const [viewMode, setViewMode] = useState('login'); // 'login' | 'forgot-password' | 'enter-code'
 
   // Reset state
-  const [resetEmail, setResetEmail] = useState('admin@zebrold.com');
+  const [resetEmail, setResetEmail] = useState('admin@zebrold.de');
   const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -2358,7 +3563,7 @@ function AdminLogin({ onLoginSuccess, showToast }) {
                 Reset Admin Password
               </h3>
               <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1.25rem', lineHeight: 1.5 }}>
-                Enter your registered Zebrold admin email address below. We will send a 6-digit security verification code to your inbox.
+                Enter your registered admin email address. We will dispatch a 6-digit cryptographic security code.
               </p>
 
               <div className="admin-account-selector-grid" style={{ marginBottom: '1rem' }}>
@@ -2376,7 +3581,7 @@ function AdminLogin({ onLoginSuccess, showToast }) {
               </div>
 
               <div className="form-group admin-login-field">
-                <label className="form-label">Target Admin Email</label>
+                <label className="form-label">Registered Admin Email</label>
                 <input
                   type="email"
                   required
@@ -2388,7 +3593,7 @@ function AdminLogin({ onLoginSuccess, showToast }) {
 
               <div className="admin-login-actions">
                 <button type="submit" className="btn-login-submit" disabled={sendingReset}>
-                  {sendingReset ? 'Generating & Sending Code...' : '✉️ Send Verification Code via Email'}
+                  {sendingReset ? 'Dispatching Verification Code...' : '✉️ Send 6-Digit Verification Code →'}
                 </button>
 
                 <button
@@ -2533,6 +3738,7 @@ export default function Admin() {
   const renderModule = () => {
     switch (activeModule) {
       case 'dashboard': return <Dashboard />;
+      case 'mailcenter': return <MailCenterModule onSave={showToast} session={session} />;
       case 'careers': return <CareersModule onSave={showToast} />;
       case 'applications': return <ApplicationsModule onSave={showToast} />;
       case 'announcement': return <AnnouncementModule onSave={showToast} />;

@@ -909,21 +909,60 @@ export default function Home() {
 
   const schemaData = {
     "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "Zebrold Group",
-    "url": "https://www.zebrold.de",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+49-69-1234-5670",
-      "contactType": "Customer Service"
-    }
+    "@graph": [
+      {
+        "@type": "Corporation",
+        "@id": "https://www.zebrold.de/#corporation",
+        "name": "Zebrold International Holdings Limited",
+        "alternateName": [
+          "Zebrold IHL",
+          "Zebrold Group",
+          "ZIHL",
+          "Zebrold Holdings"
+        ],
+        "legalName": "Zebrold International Holdings Limited",
+        "url": "https://www.zebrold.de",
+        "logo": "https://www.zebrold.de/favicon.png",
+        "image": "https://www.zebrold.de/favicon.png",
+        "description": "Zebrold International Holdings Limited (Zebrold IHL) is a globally diversified German conglomerate headquartered in Frankfurt am Main, operating across 12 strategic sectors with 26 subsidiaries.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Bockenheimer Landstrasse 17-19",
+          "addressLocality": "Frankfurt am Main",
+          "postalCode": "60325",
+          "addressCountry": "DE"
+        },
+        "telephone": "+49 69 2100 4800",
+        "email": "info@zebrold.de",
+        "foundingDate": "2013",
+        "numberOfEmployees": {
+          "@type": "QuantitativeValue",
+          "minValue": 10000
+        },
+        "sameAs": [
+          "https://www.linkedin.com/company/zebrold"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://www.zebrold.de/#website",
+        "url": "https://www.zebrold.de/",
+        "name": "Zebrold International Holdings Limited",
+        "alternateName": ["Zebrold IHL", "Zebrold Group"],
+        "publisher": {
+          "@id": "https://www.zebrold.de/#corporation"
+        }
+      }
+    ]
   };
 
   return (
     <div className="home-page" ref={homeRef}>
       <SEO 
-        title="Zebrold Group | We Build What Defines You"
-        description="A globally diversified holding company headquartered in Frankfurt am Main, Germany, operating across 12 strategic sectors."
+        title="Zebrold International Holdings Limited (Zebrold IHL) — Global Conglomerate"
+        description="Official portal of Zebrold International Holdings Limited (Zebrold IHL). A globally diversified German conglomerate headquartered in Frankfurt am Main with EUR 2.1B revenue and 26 subsidiaries across 12 sectors."
+        keywords="Zebrold, Zebrold IHL, Zebrold International Holdings Limited, Zebrold Group, Zebrold Holdings, ZIHL, Frankfurt conglomerate, German conglomerate, EV charging, semiconductors, finance, healthcare, industrial engineering"
+        url="/"
         schemaData={schemaData}
       />
       {/* ═══════ SECTION 1: HERO ═══════ */}
@@ -934,16 +973,16 @@ export default function Home() {
         onMouseLeave={handleHeroMouseLeave}
       >
         <div className="hero-bg">
-          <img src={heroBg1} alt="Zebrold Hero" className="hero-bg-img" loading="eager" width="1920" height="1080" />
+          <img src={heroBg1} alt="Zebrold International Holdings Limited Hero Background" className="hero-bg-img" loading="eager" width="1920" height="1080" />
           <div className="hero-overlay" />
         </div>
         <div className="hero-content">
           <div className="padding-global hero-padding-bottom-zero">
             <div className="container-large hero-layout">
               <div className="hero-copy">
-                <h2 className="hero-title">
+                <h1 className="hero-title">
                   {t('hero_title')}
-                </h2>
+                </h1>
                 <div className="hero-desc-wrap">
                   <p className="hero-desc">
                     {t('hero_desc')}

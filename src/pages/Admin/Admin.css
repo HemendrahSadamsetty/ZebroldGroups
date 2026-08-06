@@ -2052,4 +2052,481 @@
   padding-top: 0.75rem;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   MAIL CENTER & DISPATCHER MODULE (zebrold.de)
+   ═══════════════════════════════════════════════════════════ */
+.admin-mailcenter {
+  max-width: 1400px;
+}
+
+/* Mailbox Tabs */
+.mailcenter-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.mailcenter-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.mailcenter-tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.mailcenter-tab-btn--active {
+  background: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  border-width: 2px;
+}
+
+.mailcenter-tab-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.mailcenter-tab-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.mailcenter-tab-addr {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111827;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mailcenter-tab-sub {
+  font-size: 0.72rem;
+  color: #6B7280;
+}
+
+.mailcenter-tab-pill {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #ffffff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Mailbox Banner */
+.mailcenter-banner {
+  background: #FAFAFA;
+  border: 1px solid #E5E7EB;
+  border-left-width: 5px;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.mailcenter-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mailcenter-banner-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: #E5E7EB;
+  color: #374151;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-left: 0.6rem;
+  letter-spacing: 0.05em;
+}
+
+.mailcenter-banner-domain {
+  font-size: 0.78rem;
+  color: #4B5563;
+}
+
+.mailcenter-banner-domain code {
+  background: #E5E7EB;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.mailcenter-banner-desc {
+  font-size: 0.84rem;
+  color: #4B5563;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+
+/* Quick Presets Row */
+.mailcenter-presets-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #E5E7EB;
+}
+
+.mailcenter-presets-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mailcenter-presets-list {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.mailcenter-preset-chip {
+  background: #ffffff;
+  border: 1px solid #D1D5DB;
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mailcenter-preset-chip:hover {
+  background: #111827;
+  color: #ffffff;
+  border-color: #111827;
+  transform: translateY(-1px);
+}
+
+/* Dual Column Workspace */
+.mailcenter-workspace {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 1.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.mailcenter-composer-col,
+.mailcenter-preview-col {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+
+.mailcenter-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mailcenter-panel-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.mailcenter-panel-tag {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  background: #E5E7EB;
+  color: #374151;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.mailcenter-form {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Subcards (collapsible interview / offer options) */
+.mailcenter-subcard {
+  background: #F9FAFB;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+}
+
+.mailcenter-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #1F2937;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mailcenter-checkbox-label input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.mailcenter-subcard-body {
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed #D1D5DB;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Actions Toolbar */
+.mailcenter-actions-bar {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding-top: 1rem;
+  border-top: 1px solid #E5E7EB;
+  margin-top: 0.5rem;
+}
+
+.mailcenter-send-btn {
+  background: linear-gradient(135deg, #111827 0%, #1F2937 100%) !important;
+  color: #FFFFFF !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.mailcenter-send-btn:hover {
+  background: linear-gradient(135deg, #000000 0%, #111827 100%) !important;
+  transform: translateY(-1px);
+}
+
+/* Preview Switcher */
+.mailcenter-view-modes {
+  display: flex;
+  gap: 0.35rem;
+  background: #E5E7EB;
+  padding: 0.25rem;
+  border-radius: 6px;
+}
+
+.view-mode-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4B5563;
+  padding: 0.3rem 0.65rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-mode-btn--active {
+  background: #ffffff;
+  color: #111827;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Simulator Viewport */
+.mailcenter-preview-viewport {
+  padding: 1.25rem;
+  background: #F3F4F6;
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 520px;
+  max-height: 720px;
+  overflow-y: auto;
+}
+
+.mailcenter-simulator-frame {
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  width: 100%;
+}
+
+.mailcenter-simulator-frame--desktop {
+  max-width: 620px;
+}
+
+.mailcenter-simulator-frame--mobile {
+  max-width: 375px;
+}
+
+.mailcenter-sim-topbar {
+  background: #2D3748;
+  padding: 0.6rem 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mailcenter-sim-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.mailcenter-sim-dots .dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot--red { background: #FF5F56; }
+.dot--yellow { background: #FFBD2E; }
+.dot--green { background: #27C93F; }
+
+.mailcenter-sim-url {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  color: #A0AEC0;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mailcenter-sim-body {
+  max-height: 600px;
+  overflow-y: auto;
+  background: #EFEFEF;
+}
+
+/* Code View */
+.mailcenter-code-view {
+  width: 100%;
+  background: #0B0F17;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mailcenter-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.9rem;
+  background: #151C28;
+  color: #94A3B8;
+  font-size: 0.72rem;
+  font-family: var(--font-mono, monospace);
+}
+
+.mailcenter-code-content {
+  padding: 1rem;
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: #E2E8F0;
+  max-height: 540px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Sent History Section */
+.mailcenter-history-section {
+  background: #ffffff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 1.5rem;
+}
+
+.mailcenter-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.btn-link-action {
+  background: none;
+  border: none;
+  color: var(--color-wine, #6e2a2a);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.btn-link-action:hover {
+  color: #111827;
+}
+
+.btn--danger-outline {
+  border-color: #FCA5A5 !important;
+  color: #DC2626 !important;
+}
+
+.btn--danger-outline:hover {
+  background: #FEF2F2 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .mailcenter-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .mailcenter-tabs {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 

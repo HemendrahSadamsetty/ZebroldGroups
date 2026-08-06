@@ -26,7 +26,7 @@ export const DEFAULT_ADMIN_ACCOUNTS = [
   {
     id: 'admin-manager',
     role: 'Operations Manager',
-    email: 'admin@zebrold.com',
+    email: 'admin@zebrold.de',
     password: 'manager123#',
     department: 'Global Operations',
     permissions: 'CMS Editor & Application Manager',

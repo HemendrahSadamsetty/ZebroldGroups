@@ -14,11 +14,11 @@ const subjects = [
 ];
 
 const offices = [
-  { city: 'Frankfurt', country: 'Germany', role: 'Global Headquarters', phone: '+49 69 2100 4800', email: 'info@zebroldgroup.com' },
-  { city: 'London', country: 'United Kingdom', role: 'EMEA Operations', phone: '+44 20 3892 4400', email: 'emea@zebroldgroup.com' },
-  { city: 'Dubai', country: 'UAE', role: 'Middle East & Africa HQ', phone: '+971 4 305 8800', email: 'mea@zebroldgroup.com' },
-  { city: 'Hyderabad', country: 'India', role: 'Tech Park & R&D', phone: '+91 40 6671 0000', email: 'india@zebroldgroup.com' },
-  { city: 'Sydney', country: 'Australia', role: 'Australia Pacific HQ', phone: '+61 2 8214 7700', email: 'apac@zebroldgroup.com' },
+  { city: 'Frankfurt', country: 'Germany', role: 'Global Headquarters', phone: '+49 69 2100 4800', email: 'info@zebrold.de' },
+  { city: 'London', country: 'United Kingdom', role: 'EMEA Operations', phone: '+44 20 3892 4400', email: 'emea@zebrold.de' },
+  { city: 'Dubai', country: 'UAE', role: 'Middle East & Africa HQ', phone: '+971 4 305 8800', email: 'mea@zebrold.de' },
+  { city: 'Hyderabad', country: 'India', role: 'Tech Park & R&D', phone: '+91 40 6671 0000', email: 'india@zebrold.de' },
+  { city: 'Sydney', country: 'Australia', role: 'Australia Pacific HQ', phone: '+61 2 8214 7700', email: 'apac@zebrold.de' },
 ];
 
 export default function Contact() {
